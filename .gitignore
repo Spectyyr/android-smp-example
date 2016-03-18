@@ -1,0 +1,8 @@
+
+.idea
+.gradle
+build
+android-mmc-example.iml
+local.properties
+gradle/
+app/app.iml
