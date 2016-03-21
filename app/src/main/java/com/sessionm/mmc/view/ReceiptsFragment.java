@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.receipt.ReceiptsListener;
 import com.sessionm.api.receipt.ReceiptsManager;
@@ -32,7 +33,7 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
     private ReceiptsFeedListAdapter _listAdapter;
     List<Receipt> _receipts;
 
-    ReceiptsManager _receiptManager = new ReceiptsManager();
+    ReceiptsManager _receiptManager = SessionM.getInstance().getReceiptManager();
 
     public static ReceiptsFragment newInstance() {
         ReceiptsFragment f = new ReceiptsFragment();
@@ -50,7 +51,6 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
         _swipeRefreshLayout.setOnRefreshListener(this);
 
         _listView = (ObservableListView) rootView.findViewById(R.id.transactions_feed_list);
-        _receiptManager.setListener(_receiptListener);
         _receipts = _receiptManager.getReceipts();
         if (_receipts != null) {
             _listAdapter = new ReceiptsFeedListAdapter(getActivity(), _receipts);
@@ -110,6 +110,18 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
             Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        _receiptManager.setListener(_receiptListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        _receiptManager.setListener(null);
+    }
 
     @Override
     public void onRefresh() {

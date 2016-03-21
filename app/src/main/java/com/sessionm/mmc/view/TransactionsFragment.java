@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.transaction.TransactionsListener;
 import com.sessionm.api.transaction.TransactionsManager;
@@ -30,7 +31,7 @@ public class TransactionsFragment extends BaseScrollAndRefreshFragment{
     private TransactionsFeedListAdapter _listAdapter;
     List<Transaction> _transactions = new ArrayList<>();
 
-    TransactionsManager _transactionsManager = new TransactionsManager();
+    TransactionsManager _transactionsManager = SessionM.getInstance().getTransactionsManager();
 
     public static TransactionsFragment newInstance() {
         TransactionsFragment f = new TransactionsFragment();
@@ -83,6 +84,18 @@ public class TransactionsFragment extends BaseScrollAndRefreshFragment{
             Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
+
+        @Override
+    public void onResume() {
+        super.onResume();
+        _transactionsManager.setListener(_transactionListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        _transactionsManager.setListener(null);
+    }
 
     @Override
     public void onRefresh() {

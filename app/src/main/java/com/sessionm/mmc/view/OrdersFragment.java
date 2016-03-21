@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.reward.RewardsListener;
 import com.sessionm.api.reward.RewardsManager;
@@ -35,7 +36,7 @@ public class OrdersFragment extends BaseScrollAndRefreshFragment {
     private OrdersFeedListAdapter _listAdapter;
     private List<Order> _orders;
 
-    private RewardsManager _rewardsManager = new RewardsManager();
+    private RewardsManager _rewardsManager = SessionM.getInstance().getRewardsManager();
 
     public static OrdersFragment newInstance() {
         OrdersFragment f = new OrdersFragment();
@@ -114,6 +115,18 @@ public class OrdersFragment extends BaseScrollAndRefreshFragment {
         }
 
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        _rewardsManager.setListener(_rewardsListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        _rewardsManager.setListener(null);
+    }
 
     @Override
     public void onRefresh() {

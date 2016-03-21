@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.reward.RewardsListener;
 import com.sessionm.api.reward.RewardsManager;
@@ -37,7 +38,7 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
     private RewardsFeedListAdapter _listAdapter;
     private List<Offer> _offers = new ArrayList<>();
 
-    private RewardsManager _rewardsManager = new RewardsManager();
+    private RewardsManager _rewardsManager = SessionM.getInstance().getRewardsManager();
 
     public static RewardsFragment newInstance() {
         RewardsFragment f = new RewardsFragment();

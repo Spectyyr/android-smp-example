@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 SessionM. All rights reserved.
+ * Copyright (c) 2015 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.view;
@@ -43,6 +43,16 @@ import com.sessionm.mmc.R;
 
 public class MainActivity extends AppCompatActivity implements SessionListener, ViewPager.OnPageChangeListener {
 
+    private ViewPager pager;
+
+    private CampaignsFragment messageFragment;
+    private RewardsFragment rewardsFragment;
+    private TransactionsFragment transactionsFragment;
+    private ReceiptsFragment receiptsFragment;
+    private OrdersFragment ordersFragment;
+    private ActionBar actionBar;
+    private FloatingActionButton newUploadButton;
+
     SessionM sessionM = SessionM.getInstance();
 
     @Override
@@ -50,16 +60,16 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActionBar actionBar = getSupportActionBar();
-        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        actionBar = getSupportActionBar();
+        pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         pager.addOnPageChangeListener(this);
-        FloatingActionButton newUploadButton = (FloatingActionButton) findViewById(R.id.new_upload_button);
+        newUploadButton = (FloatingActionButton) findViewById(R.id.new_upload_button);
 
         newUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ReceiptsManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
+                sessionM.getReceiptManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
                 startActivity(new Intent(MainActivity.this, ReceiptActivity.class));
             }
         });
@@ -91,22 +101,28 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
 
         @Override
         public Fragment getItem(int position) {
+            //TODO: Hide promotions/submissions tabs for now, not fully supported
             Fragment fragment = CampaignsFragment.newInstance();
             switch (position) {
                 case 0:
-                    fragment = CampaignsFragment.newInstance();
+                    messageFragment = CampaignsFragment.newInstance();
+                    fragment = messageFragment;
                     break;
                 case 1:
-                    fragment = RewardsFragment.newInstance();
+                    rewardsFragment = RewardsFragment.newInstance();
+                    fragment = rewardsFragment;
                     break;
                 case 2:
-                    fragment = TransactionsFragment.newInstance();
+                    transactionsFragment = TransactionsFragment.newInstance();
+                    fragment = transactionsFragment;
                     break;
                 case 3:
-                    fragment = ReceiptsFragment.newInstance();
+                    receiptsFragment = ReceiptsFragment.newInstance();
+                    fragment = receiptsFragment;
                     break;
                 case 4:
-                    fragment = OrdersFragment.newInstance();
+                    ordersFragment = OrdersFragment.newInstance();
+                    fragment = ordersFragment;
                     break;
             }
             return fragment;

@@ -40,7 +40,7 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
     //Offline textview
     TextView _offlinePromoTextView;
 
-    private CampaignsManager _campaignsManager = new CampaignsManager();
+    private CampaignsManager _campaignsManager = SessionM.getInstance().getCampaignsManager();
 
     public static CampaignsFragment newInstance() {
         CampaignsFragment f = new CampaignsFragment();
@@ -103,6 +103,13 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
     @Override
     public void onResume() {
         super.onResume();
+        _campaignsManager.setListener(_campaignsListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        _campaignsManager.setListener(null);
     }
 
     @Override
