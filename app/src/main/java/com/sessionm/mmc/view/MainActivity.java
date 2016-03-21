@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SessionM. All rights reserved.
+ * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.view;
@@ -27,6 +27,7 @@ import com.sessionm.api.SessionM;
 import com.sessionm.api.User;
 import com.sessionm.api.message.data.Message;
 import com.sessionm.api.message.feed.ui.ActivityFeedActivity;
+import com.sessionm.api.receipt.ReceiptsManager;
 import com.sessionm.api.receipt.ui.ReceiptActivity;
 import com.sessionm.mmc.R;
 
@@ -42,16 +43,6 @@ import com.sessionm.mmc.R;
 
 public class MainActivity extends AppCompatActivity implements SessionListener, ViewPager.OnPageChangeListener {
 
-    private ViewPager pager;
-
-    private CampaignsFragment messageFragment;
-    private RewardsFragment rewardsFragment;
-    private TransactionsFragment transactionsFragment;
-    private ReceiptsFragment receiptsFragment;
-    private OrdersFragment ordersFragment;
-    private ActionBar actionBar;
-    private FloatingActionButton newUploadButton;
-
     SessionM sessionM = SessionM.getInstance();
 
     @Override
@@ -59,16 +50,16 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        actionBar = getSupportActionBar();
-        pager = (ViewPager) findViewById(R.id.pager);
+        ActionBar actionBar = getSupportActionBar();
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         pager.addOnPageChangeListener(this);
-        newUploadButton = (FloatingActionButton) findViewById(R.id.new_upload_button);
+        FloatingActionButton newUploadButton = (FloatingActionButton) findViewById(R.id.new_upload_button);
 
         newUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sessionM.getReceiptManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
+                new ReceiptsManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
                 startActivity(new Intent(MainActivity.this, ReceiptActivity.class));
             }
         });
@@ -100,28 +91,22 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
 
         @Override
         public Fragment getItem(int position) {
-            //TODO: Hide promotions/submissions tabs for now, not fully supported
             Fragment fragment = CampaignsFragment.newInstance();
             switch (position) {
                 case 0:
-                    messageFragment = CampaignsFragment.newInstance();
-                    fragment = messageFragment;
+                    fragment = CampaignsFragment.newInstance();
                     break;
                 case 1:
-                    rewardsFragment = RewardsFragment.newInstance();
-                    fragment = rewardsFragment;
+                    fragment = RewardsFragment.newInstance();
                     break;
                 case 2:
-                    transactionsFragment = TransactionsFragment.newInstance();
-                    fragment = transactionsFragment;
+                    fragment = TransactionsFragment.newInstance();
                     break;
                 case 3:
-                    receiptsFragment = ReceiptsFragment.newInstance();
-                    fragment = receiptsFragment;
+                    fragment = ReceiptsFragment.newInstance();
                     break;
                 case 4:
-                    ordersFragment = OrdersFragment.newInstance();
-                    fragment = ordersFragment;
+                    fragment = OrdersFragment.newInstance();
                     break;
             }
             return fragment;
@@ -147,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             if (resultType.equals(SessionM.EnrollmentResultType.FAILURE)) {
                 String errorMessage = SessionM.getInstance().getResponseErrorMessage();
                 Toast.makeText(this, "Authentication Failed! " + errorMessage, Toast.LENGTH_SHORT).show();
-                return;
             }
         }
     }

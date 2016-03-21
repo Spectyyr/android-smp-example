@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SessionM. All rights reserved.
+ * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.controller;
@@ -20,24 +20,23 @@ import java.util.List;
 //Adapter class to draw Rewards List and handle Offer Image events
 public class OrdersFeedListAdapter extends BaseAdapter {
 
-    private Activity activity;
-    private LayoutInflater inflater;
-    private List<Order> orders;
-    private String mTAG = "RewardsFragment";
+    private Activity _activity;
+    private LayoutInflater _inflater;
+    private List<Order> _orders;
 
     public OrdersFeedListAdapter(Activity activity, List<Order> orders) {
-        this.activity = activity;
-        this.orders = orders;
+        _activity = activity;
+        _orders = orders;
     }
 
     @Override
     public int getCount() {
-        return orders.size();
+        return _orders.size();
     }
 
     @Override
     public Object getItem(int location) {
-        return orders.get(location);
+        return _orders.get(location);
     }
 
     @Override
@@ -48,11 +47,11 @@ public class OrdersFeedListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if (inflater == null)
-            inflater = (LayoutInflater) activity
+        if (_inflater == null)
+            _inflater = (LayoutInflater) _activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
-            convertView = inflater.inflate(R.layout.feed_item_order, null);
+            convertView = _inflater.inflate(R.layout.feed_item_order, null);
 
         TextView idTextView = (TextView) convertView.findViewById(R.id.order_id);
         TextView nameTextView = (TextView) convertView
@@ -64,7 +63,7 @@ public class OrdersFeedListAdapter extends BaseAdapter {
         TextView descriptionTextView = (TextView) convertView
                 .findViewById(R.id.order_description);
 
-        final Order order = orders.get(position);
+        final Order order = _orders.get(position);
 
         idTextView.setText("ID: " + order.getID());
         nameTextView.setText("Name: " + order.getName());

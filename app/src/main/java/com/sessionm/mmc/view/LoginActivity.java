@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 SessionM. All rights reserved.
+ */
+
 package com.sessionm.mmc.view;
 
 import android.app.ProgressDialog;
@@ -35,9 +39,9 @@ import com.sessionm.mmc.R;
 public class LoginActivity extends AppCompatActivity implements SessionListener {
 
     private static final String DEFAULT_CODE_MESSAGE = "Welcome to SessionM Rewards! Here is your activation code: {code}";
-    protected EditText emailView;
-    protected EditText passwordView;
-    Button loginButton;
+    protected EditText _emailView;
+    protected EditText _passwordView;
+    protected Button _loginButton;
 
     private static final String DEBUG_EMAIL = "";
     private static final String DEBUG_PASSWORD = "";
@@ -47,20 +51,20 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
 
     private ProgressDialog progressDialog;
 
-    private IdentityManager identityManager;
+    private IdentityManager identityManager = new IdentityManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        emailView = (EditText) findViewById(R.id.sign_in_email);
-        passwordView = (EditText) findViewById(R.id.sign_in_password);
-        loginButton = (Button) findViewById(R.id.email_sign_in_button);
+        _emailView = (EditText) findViewById(R.id.sign_in_email);
+        _passwordView = (EditText) findViewById(R.id.sign_in_password);
+        _loginButton = (Button) findViewById(R.id.email_sign_in_button);
         if (DEBUG_MODE)
-            loginButton.setEnabled(true);
+            _loginButton.setEnabled(true);
 
-        passwordView.addTextChangedListener(new TextWatcher() {
+        _passwordView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -68,12 +72,12 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (isPasswordValid(s) && !emailView.getText().toString().isEmpty()) {
-                    loginButton.setEnabled(true);
-                    loginButton.setTextColor(Color.WHITE);
+                if (isPasswordValid(s) && !_emailView.getText().toString().isEmpty()) {
+                    _loginButton.setEnabled(true);
+                    _loginButton.setTextColor(Color.WHITE);
                 } else {
-                    loginButton.setEnabled(false);
-                    loginButton.setTextColor(Color.GRAY);
+                    _loginButton.setEnabled(false);
+                    _loginButton.setTextColor(Color.GRAY);
                 }
             }
 
@@ -83,23 +87,23 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
             }
         });
 
-        loginButton.setOnClickListener(new OnClickListener() {
+        _loginButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(
                         Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(passwordView.getWindowToken(), 0);
-                String email = emailView.getText().toString();
+                imm.hideSoftInputFromWindow(_passwordView.getWindowToken(), 0);
+                String email = _emailView.getText().toString();
                 attemptLogin(email, DEBUG_MODE);
             }
         });
 
         progressDialog = new ProgressDialog(this);
 
-        identityManager = sessionM.getIdentityManager();
+        identityManager.setListener(_identityListener);
     }
 
-    IdentityListener identityListener = new IdentityListener() {
+    IdentityListener _identityListener = new IdentityListener() {
         @Override
         public void onSMSVerificationMessageSent(SMSVerification smsVerification) {
             popUpSMSVerificationDialog("verify_code");
@@ -133,7 +137,7 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     @Override
     public void onResume() {
         super.onResume();
-        identityManager.setListener(identityListener);
+        identityManager.setListener(_identityListener);
     }
 
     @Override
@@ -143,10 +147,10 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     }
 
     public void attemptLogin(String email, boolean debug) {
-        emailView.setError(null);
-        passwordView.setError(null);
+        _emailView.setError(null);
+        _passwordView.setError(null);
 
-        String password = passwordView.getText().toString();
+        String password = _passwordView.getText().toString();
 
         if (debug) {
             email = DEBUG_EMAIL;
@@ -157,18 +161,18 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
         View focusView = null;
 
         if (password.isEmpty() || !isPasswordValid(password)) {
-            passwordView.setError(getString(R.string.error_invalid_password));
-            focusView = passwordView;
+            _passwordView.setError(getString(R.string.error_invalid_password));
+            focusView = _passwordView;
             cancel = true;
         }
 
         if (email.isEmpty()) {
-            emailView.setError(getString(R.string.error_field_required));
-            focusView = emailView;
+            _emailView.setError(getString(R.string.error_field_required));
+            focusView = _emailView;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            emailView.setError(getString(R.string.error_invalid_email));
-            focusView = emailView;
+            _emailView.setError(getString(R.string.error_invalid_email));
+            focusView = _emailView;
             cancel = true;
         }
 

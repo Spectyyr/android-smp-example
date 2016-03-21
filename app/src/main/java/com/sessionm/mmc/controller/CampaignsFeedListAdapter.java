@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SessionM. All rights reserved.
+ * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.controller;
@@ -14,36 +14,32 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sessionm.api.SessionM;
 import com.sessionm.api.message.feed.data.FeedMessage;
-import com.sessionm.api.receipt.ReceiptsManager;
 import com.sessionm.mmc.R;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 //Adapter class to draw the Promotions Message List and handle Feed Message events
 public class CampaignsFeedListAdapter extends BaseAdapter {
 
-    private Activity activity;
-    private LayoutInflater inflater;
-    private List<FeedMessage> messages;
+    private Activity _activity;
+    private LayoutInflater _inflater;
+    private List<FeedMessage> _messages;
 
     public CampaignsFeedListAdapter(Activity activity, List<FeedMessage> messages) {
-        this.activity = activity;
-        this.messages = messages;
+        _activity = activity;
+        _messages = messages;
     }
 
     @Override
     public int getCount() {
-        return messages.size();
+        return _messages.size();
     }
 
     @Override
     public Object getItem(int location) {
-        return messages.get(location);
+        return _messages.get(location);
     }
 
     @Override
@@ -54,11 +50,11 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if (inflater == null)
-            inflater = (LayoutInflater) activity
+        if (_inflater == null)
+            _inflater = (LayoutInflater) _activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
-            convertView = inflater.inflate(R.layout.feed_item_campaign, null);
+            convertView = _inflater.inflate(R.layout.feed_item_campaign, null);
 
         ImageView iconImageView = (ImageView) convertView
                 .findViewById(R.id.promotion_icon_image);
@@ -74,7 +70,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         ImageView feedImageView = (ImageView) convertView
                 .findViewById(R.id.promotion_main_image);
 
-        final FeedMessage item = messages.get(position);
+        final FeedMessage item = _messages.get(position);
 
         //Returns the Message header, String
         headerTextView.setText(item.getHeader());
@@ -104,7 +100,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         //There is no need to draw the image if there is not icon URL
         if (item.getIconURL() != null && !item.getIconURL().equals("null")) {
             //Returns the Message image URL, String
-            Picasso.with(activity).load(item.getIconURL()).into(iconImageView);
+            Picasso.with(_activity).load(item.getIconURL()).into(iconImageView);
             iconImageView.setVisibility(View.VISIBLE);
         } else {
             iconImageView.setVisibility(View.GONE);
@@ -113,7 +109,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         //There is no need to draw the image if there is not image URL
         if (item.getImageURL() != null && !item.getImageURL().equals("null")) {
             //Returns the Message image URL, String
-            Picasso.with(activity).load(item.getImageURL()).into(feedImageView);
+            Picasso.with(_activity).load(item.getImageURL()).into(feedImageView);
             feedImageView.setVisibility(View.VISIBLE);
         } else {
             feedImageView.setVisibility(View.GONE);
@@ -131,21 +127,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    //TODO
     private void showDetails(FeedMessage data){
-    }
-
-    //Starts the Receipt Upload Activity when the user taps on a Feed Message from the list
-    public void uploadReceipt() {
-        Map<String, String> additionalAttributes = new HashMap<>();
-        //Title for the Receipt Upload Activity
-        additionalAttributes.put(ReceiptsManager.RECEIPT_ATTRIBUTE_TITLE, "Attributes");
-        // Description for the Upload Receipt Activity
-        additionalAttributes.put(ReceiptsManager.RECEIPT_ATTRIBUTE_DESCRIPTION, "Please provide additional attributes for this receipt.");
-        //Set description to display on the Upload Receipt Activity
-        additionalAttributes.put("Product Name", "Please provide the name of this product.");
-        additionalAttributes.put("Serial Number", "Please provide serial number of this product.");
-        SessionM.getInstance().getReceiptManager().setUploadReceiptActivityColors(null, null, null, null, null);
-        //Start the Upload Receipt Activity
-        SessionM.getInstance().getReceiptManager().startUploadReceiptActivity(activity, additionalAttributes);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SessionM. All rights reserved.
+ * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.view;
@@ -35,20 +35,20 @@ public class SettingsActivity extends Activity implements SessionListener{
     private static final int BUILD_NUM = BuildConfig.VERSION_CODE;
     private static final int TEST_EVENT_TRIGGER_CAP = 10;
 
-    private boolean geofenceEnabled;
-    private boolean pushNotificationEnabled;
-    private int testEventTriggerCount = 0;
+    private boolean _geofenceEnabled;
+    private boolean _pushNotificationEnabled;
+    private int _testEventTriggerCount = 0;
 
-    private SessionM sessionM;
+    private SessionM _sessionM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        sessionM = SessionM.getInstance();
-        geofenceEnabled = Utility.getLocalStatusBoolean(Utility.GEOFENCE_ENABLED_KEY);
-        pushNotificationEnabled = sessionM.getPushNotificationEnabled();
+        _sessionM = SessionM.getInstance();
+        _geofenceEnabled = Utility.getLocalStatusBoolean(Utility.GEOFENCE_ENABLED_KEY);
+        _pushNotificationEnabled = _sessionM.getPushNotificationEnabled();
         String[] settingsList = getResources().getStringArray(R.array.settings_array);
         SettingsListArrayAdapter settingsListArrayAdapter = new SettingsListArrayAdapter(this, settingsList);
         ListView listView = (ListView) this.findViewById(R.id.settings_listview);
@@ -110,13 +110,13 @@ public class SettingsActivity extends Activity implements SessionListener{
             switch (position) {
                 //Geofence
                 case 0:
-                    checkBox.setChecked(geofenceEnabled);
+                    checkBox.setChecked(_geofenceEnabled);
                     checkBox.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            geofenceEnabled = !geofenceEnabled;
-                            checkBox.setChecked(geofenceEnabled);
-                            if (geofenceEnabled)
+                            _geofenceEnabled = !_geofenceEnabled;
+                            checkBox.setChecked(_geofenceEnabled);
+                            if (_geofenceEnabled)
                                 GeofenceManager.startGeofenceService(getApplicationContext(), null);
                             else
                                 GeofenceManager.stopGeofenceService(getApplicationContext());
@@ -126,47 +126,47 @@ public class SettingsActivity extends Activity implements SessionListener{
                 //Push notification
                 case 1:
                     //TODO: update logic here
-                    checkBox.setChecked(pushNotificationEnabled);
+                    checkBox.setChecked(_pushNotificationEnabled);
                     checkBox.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            pushNotificationEnabled = !pushNotificationEnabled;
-                            checkBox.setChecked(pushNotificationEnabled);
-                            sessionM.setPushNotificationEnabled(pushNotificationEnabled);
+                            _pushNotificationEnabled = !_pushNotificationEnabled;
+                            checkBox.setChecked(_pushNotificationEnabled);
+                            _sessionM.setPushNotificationEnabled(_pushNotificationEnabled);
                         }
                     });
                     break;
                 //Custom loader view
                 case 2:
-                    checkBox.setChecked(SEApplication.sampleCustomLoaderView != null);
+                    checkBox.setChecked(SEApplication._sampleCustomLoaderView != null);
                     checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             if (isChecked)
-                                SEApplication.sampleCustomLoaderView = new CustomLoaderView(getApplicationContext());
+                                SEApplication._sampleCustomLoaderView = new CustomLoaderView(getApplicationContext());
                             else {
-                                SEApplication.sampleCustomLoaderView.removeCustomLoader();
-                                SEApplication.sampleCustomLoaderView = null;
+                                SEApplication._sampleCustomLoaderView.removeCustomLoader();
+                                SEApplication._sampleCustomLoaderView = null;
                             }
                         }
                     });
                     break;
                 //User opt out
                 case 3:
-                    checkBox.setChecked(sessionM.getUser().isOptedOut());
+                    checkBox.setChecked(_sessionM.getUser().isOptedOut());
                     checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             if (isChecked)
-                                sessionM.getUser().setOptedOut(getApplicationContext(), true);
+                                _sessionM.getUser().setOptedOut(getApplicationContext(), true);
                             else
-                                sessionM.getUser().setOptedOut(getApplicationContext(), false);
+                                _sessionM.getUser().setOptedOut(getApplicationContext(), false);
                         }
                     });
                     break;
                 //SDK version
                 case 4:
-                    nameTextView.setText("SDK Version: " + sessionM.getSDKVersion());
+                    nameTextView.setText("SDK Version: " + _sessionM.getSDKVersion());
                     checkBox.setVisibility(View.GONE);
                     break;
                 //App version
@@ -176,9 +176,9 @@ public class SettingsActivity extends Activity implements SessionListener{
                     rowView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            testEventTriggerCount++;
-                            if (testEventTriggerCount == TEST_EVENT_TRIGGER_CAP)
-                                sessionM.logAction("push_trigger");
+                            _testEventTriggerCount++;
+                            if (_testEventTriggerCount == TEST_EVENT_TRIGGER_CAP)
+                                _sessionM.logAction("push_trigger");
                         }
                     });
                     break;
@@ -188,7 +188,7 @@ public class SettingsActivity extends Activity implements SessionListener{
                     rowView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            sessionM.logOutUser();
+                            _sessionM.logOutUser();
                         }
                     });
                     break;
@@ -210,7 +210,7 @@ public class SettingsActivity extends Activity implements SessionListener{
     @Override
     public void onStop() {
         super.onStop();
-        Utility.persistStatusBoolean(Utility.PUSH_NOTIFICATION_ENABLED_KEY, pushNotificationEnabled);
-        Utility.persistStatusBoolean(Utility.GEOFENCE_ENABLED_KEY, geofenceEnabled);
+        Utility.persistStatusBoolean(Utility.PUSH_NOTIFICATION_ENABLED_KEY, _pushNotificationEnabled);
+        Utility.persistStatusBoolean(Utility.GEOFENCE_ENABLED_KEY, _geofenceEnabled);
     }
 }

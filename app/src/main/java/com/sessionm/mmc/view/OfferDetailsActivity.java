@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 SessionM. All rights reserved.
+ */
+
 package com.sessionm.mmc.view;
 
 import android.app.ProgressDialog;
@@ -16,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.reward.RewardsListener;
 import com.sessionm.api.reward.RewardsManager;
@@ -34,11 +37,9 @@ import java.util.Map;
 
 public class OfferDetailsActivity extends AppCompatActivity {
 
-    private List<Offer> offers;
-    private Offer currentOffer;
-    private Button placeOrderButton;
-    private RewardsManager rewardsManager;
-    private ProgressDialog progressDialog;
+    private Offer _currentOffer;
+    private RewardsManager _rewardsManager = new RewardsManager();
+    private ProgressDialog _progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,48 +51,48 @@ public class OfferDetailsActivity extends AppCompatActivity {
         TextView header = (TextView) findViewById(R.id.offer_detail_header);
         WebView subheader = (WebView) findViewById(R.id.offer_detail_subheader);
         TextView desc = (TextView) findViewById(R.id.offer_detail_description);
-        placeOrderButton = (Button) findViewById(R.id.place_order_button);
-        progressDialog = new ProgressDialog(this);
+        Button placeOrderButton = (Button) findViewById(R.id.place_order_button);
+        _progressDialog = new ProgressDialog(this);
 
-        rewardsManager = SessionM.getInstance().getRewardsManager();
-        offers = rewardsManager.getOffers();
+        _rewardsManager.setListener(_rewardsListener);
+        List<Offer> offers = _rewardsManager.getOffers();
         final String offerID = getOfferIntent.getStringExtra("offer_id");
         for (int i = 0; i < offers.size(); i++) {
             if (offers.get(i).getId().equals(offerID)) {
-                currentOffer = offers.get(i);
+                _currentOffer = offers.get(i);
             }
         }
 
-        if (currentOffer == null) {
+        if (_currentOffer == null) {
             Toast.makeText(this, "Expired!", Toast.LENGTH_SHORT).show();
             finish();
         } else {
 
-            if (currentOffer.getLogo() != null && !currentOffer.getLogo().equals("null")) {
-                Picasso.with(this).load(currentOffer.getLogo()).into(imageView);
+            if (_currentOffer.getLogo() != null && !_currentOffer.getLogo().equals("null")) {
+                Picasso.with(this).load(_currentOffer.getLogo()).into(imageView);
                 imageView.setVisibility(View.VISIBLE);
             } else {
                 imageView.setVisibility(View.GONE);
             }
 
-            header.setText(currentOffer.getName());
+            header.setText(_currentOffer.getName());
 
-            Map<String, Object> data = currentOffer.getData();
+            Map<String, Object> data = _currentOffer.getData();
             if (data != null) {
                 String description = (String) data.get("long_description");
                 String shipping = (String) data.get("shipping_information");
                 subheader.loadDataWithBaseURL("", description.replace("\n", "").replace("\\n", ""), "text/html", "UTF-8", "");
                 desc.setText(shipping);
             } else {
-                desc.setText(String.format("Status: %s, Type: %s", currentOffer.getStatus(), currentOffer.getType()));
+                desc.setText(String.format("Status: %s, Type: %s", _currentOffer.getStatus(), _currentOffer.getType()));
             }
         }
 
         placeOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rewardsManager.fetchSkillQuestion();
-                progressDialog.show();
+                _rewardsManager.fetchSkillQuestion();
+                _progressDialog.show();
             }
         });
     }
@@ -104,7 +105,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
 
         @Override
         public void onOrderPlaced(Order order) {
-            progressDialog.dismiss();
+            _progressDialog.dismiss();
             Toast.makeText(getApplicationContext(), "Success: " + order.getID(), Toast.LENGTH_SHORT).show();
         }
 
@@ -115,20 +116,20 @@ public class OfferDetailsActivity extends AppCompatActivity {
 
         @Override
         public void onSkillQuestionFetched(SkillQuestion skillQuestion) {
-            progressDialog.dismiss();
+            _progressDialog.dismiss();
             popUpSkillChallengeDialog(skillQuestion.getID(), skillQuestion.getQuestion());
         }
 
         @Override
         public void onSkillQuestionAnswered(SkillChallenge skillChallenge) {
-            OrderRequest request = makeOrderRequest(skillChallenge.getID(), currentOffer.getId(), 1);
-            rewardsManager.placeOrder(request);
-            progressDialog.show();
+            OrderRequest request = makeOrderRequest(skillChallenge.getID(), _currentOffer.getId(), 1);
+            _rewardsManager.placeOrder(request);
+            _progressDialog.show();
         }
 
         @Override
         public void onFailure(SessionMError error) {
-            progressDialog.dismiss();
+            _progressDialog.dismiss();
             Toast.makeText(getApplicationContext(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
@@ -136,13 +137,13 @@ public class OfferDetailsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        rewardsManager.setListener(_rewardsListener);
+        _rewardsManager.setListener(_rewardsListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        rewardsManager.setListener(null);
+        _rewardsManager.setListener(null);
     }
 
     private OrderRequest makeOrderRequest(String challengeID, String offerID, int quantity) {
@@ -178,7 +179,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String answer = answerEditText.getText().toString();
                 if (!answer.isEmpty())
-                    rewardsManager.answerSkillQuestion(currentOffer.getId(), questionID, answer);
+                    _rewardsManager.answerSkillQuestion(_currentOffer.getId(), questionID, answer);
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override

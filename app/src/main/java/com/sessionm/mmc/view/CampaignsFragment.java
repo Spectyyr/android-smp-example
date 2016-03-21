@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SessionM. All rights reserved.
+ * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.view;
@@ -32,15 +32,15 @@ import java.util.List;
 public class CampaignsFragment extends BaseScrollAndRefreshFragment {
     private static final String TAG = "FeedListActivity";
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private ObservableListView listView;
-    private CampaignsFeedListAdapter listAdapter;
+    private SwipeRefreshLayout _swipeRefreshLayout;
+    private ObservableListView _listView;
+    private CampaignsFeedListAdapter _listAdapter;
     //private List of SessionM Message
-    private List<FeedMessage> messages;
+    private List<FeedMessage> _messages;
     //Offline textview
-    TextView offlinePromoTextView;
+    TextView _offlinePromoTextView;
 
-    private CampaignsManager _campaignsManager;
+    private CampaignsManager _campaignsManager = new CampaignsManager();
 
     public static CampaignsFragment newInstance() {
         CampaignsFragment f = new CampaignsFragment();
@@ -54,18 +54,18 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
         View rootView = inflater.inflate(R.layout.fragment_campaigns, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(this);
+        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout.setOnRefreshListener(this);
 
-        listView = (ObservableListView) rootView.findViewById(R.id.message_feed_list);
-        _campaignsManager = SessionM.getInstance().getCampaignsManager();
-        messages = _campaignsManager.getFeedMessages();
-        offlinePromoTextView = (TextView) rootView.findViewById(R.id.promotion_offline);
-        if (messages != null) {
-            listAdapter = new CampaignsFeedListAdapter(getActivity(), messages);
-            listView.setAdapter(listAdapter);
+        _listView = (ObservableListView) rootView.findViewById(R.id.message_feed_list);
+        _campaignsManager.setListener(_campaignsListener);
+        _messages = _campaignsManager.getFeedMessages();
+        _offlinePromoTextView = (TextView) rootView.findViewById(R.id.promotion_offline);
+        if (_messages != null) {
+            _listAdapter = new CampaignsFeedListAdapter(getActivity(), _messages);
+            _listView.setAdapter(_listAdapter);
         }
-        listView.setScrollViewCallbacks(this);
+        _listView.setScrollViewCallbacks(this);
         updateOfflineLayout();
         return rootView;
     }
@@ -76,26 +76,26 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
         _campaignsManager.fetchFeedMessages();
     }
 
-    CampaignsListener campaignsListener = new CampaignsListener() {
+    CampaignsListener _campaignsListener = new CampaignsListener() {
         @Override
         public void onFeedMessagesFetched(List<FeedMessage> list) {
-            swipeRefreshLayout.setRefreshing(false);
-            if (messages == null) {
-                messages = new ArrayList<>();
+            _swipeRefreshLayout.setRefreshing(false);
+            if (_messages == null) {
+                _messages = new ArrayList<>();
             } else {
-                messages.clear();
+                _messages.clear();
             }
-            messages.addAll(list);
-            if (listAdapter == null) {
-                listAdapter = new CampaignsFeedListAdapter(getActivity(), messages);
-                listView.setAdapter(listAdapter);
+            _messages.addAll(list);
+            if (_listAdapter == null) {
+                _listAdapter = new CampaignsFeedListAdapter(getActivity(), _messages);
+                _listView.setAdapter(_listAdapter);
             }
-            listAdapter.notifyDataSetChanged();
+            _listAdapter.notifyDataSetChanged();
         }
 
         @Override
         public void onFailure(SessionMError error) {
-            swipeRefreshLayout.setRefreshing(false);
+            _swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
@@ -103,13 +103,6 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
     @Override
     public void onResume() {
         super.onResume();
-        _campaignsManager.setListener(campaignsListener);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        _campaignsManager.setListener(null);
     }
 
     @Override
@@ -122,13 +115,13 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
         //Check is session is started
         if (state.equals(SessionM.State.STARTED_ONLINE)) {
             //Do whatever you want
-            listView.setVisibility(View.VISIBLE);
-            offlinePromoTextView.setVisibility(View.GONE);
+            _listView.setVisibility(View.VISIBLE);
+            _offlinePromoTextView.setVisibility(View.GONE);
         }
         //What to do when a Session does not start, handling international users, no WI-Fi connection
         if (state.equals(SessionM.State.STARTED_OFFLINE)) {
-            listView.setVisibility(View.GONE);
-            offlinePromoTextView.setVisibility(View.VISIBLE);
+            _listView.setVisibility(View.GONE);
+            _offlinePromoTextView.setVisibility(View.VISIBLE);
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SessionM. All rights reserved.
+ * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.util;
@@ -9,9 +9,6 @@ import android.content.SharedPreferences;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-/**
- * Created by Zhenhao Lei on 11/12/15.
- */
 public class Utility {
     public static final String GEOFENCE_ENABLED_KEY = "geofence_enable";
     public static final String PUSH_NOTIFICATION_ENABLED_KEY = "push_notification_enable";

@@ -1,6 +1,7 @@
 /*
 * Copyright (c) 2016 SessionM. All rights reserved.
 */
+
 package com.sessionm.mmc.view;
 
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.receipt.ReceiptsListener;
 import com.sessionm.api.receipt.ReceiptsManager;
@@ -26,14 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
-    private static final String TAG = "ReceiptsListActivity";
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private ObservableListView listView;
-    private ReceiptsFeedListAdapter listAdapter;
+    private SwipeRefreshLayout _swipeRefreshLayout;
+    private ObservableListView _listView;
+    private ReceiptsFeedListAdapter _listAdapter;
     List<Receipt> _receipts;
 
-    ReceiptsManager _receiptManager;
+    ReceiptsManager _receiptManager = new ReceiptsManager();
 
     public static ReceiptsFragment newInstance() {
         ReceiptsFragment f = new ReceiptsFragment();
@@ -47,18 +46,18 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
         View rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(this);
+        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout.setOnRefreshListener(this);
 
-        listView = (ObservableListView) rootView.findViewById(R.id.transactions_feed_list);
-        _receiptManager = SessionM.getInstance().getReceiptManager();
+        _listView = (ObservableListView) rootView.findViewById(R.id.transactions_feed_list);
+        _receiptManager.setListener(_receiptListener);
         _receipts = _receiptManager.getReceipts();
         if (_receipts != null) {
-            listAdapter = new ReceiptsFeedListAdapter(getActivity(), _receipts);
-            listView.setAdapter(listAdapter);
+            _listAdapter = new ReceiptsFeedListAdapter(getActivity(), _receipts);
+            _listView.setAdapter(_listAdapter);
         }
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Receipt receipt = _receipts.get(position);
@@ -69,7 +68,7 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
             }
         });
 
-        listView.setScrollViewCallbacks(this);
+        _listView.setScrollViewCallbacks(this);
         return rootView;
     }
 
@@ -86,18 +85,18 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
 
         @Override
         public void onReceiptsFetched(List<Receipt> receipts) {
-            swipeRefreshLayout.setRefreshing(false);
-            if (_receipts == null) {
-                _receipts = new ArrayList<>();
+            _swipeRefreshLayout.setRefreshing(false);
+            if (ReceiptsFragment.this._receipts == null) {
+                ReceiptsFragment.this._receipts = new ArrayList<>();
             } else {
-                _receipts.clear();
+                ReceiptsFragment.this._receipts.clear();
             }
-            _receipts.addAll(receipts);
-            if (listAdapter == null) {
-                listAdapter = new ReceiptsFeedListAdapter(getActivity(), _receipts);
-                listView.setAdapter(listAdapter);
+            ReceiptsFragment.this._receipts.addAll(receipts);
+            if (_listAdapter == null) {
+                _listAdapter = new ReceiptsFeedListAdapter(getActivity(), ReceiptsFragment.this._receipts);
+                _listView.setAdapter(_listAdapter);
             }
-            listAdapter.notifyDataSetChanged();
+            _listAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -107,22 +106,10 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
 
         @Override
         public void onFailure(SessionMError error) {
-            swipeRefreshLayout.setRefreshing(false);
+            _swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        _receiptManager.setListener(_receiptListener);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        _receiptManager.setListener(null);
-    }
 
     @Override
     public void onRefresh() {

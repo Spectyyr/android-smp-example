@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SessionM. All rights reserved.
+ * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.controller;
@@ -19,23 +19,23 @@ import java.util.List;
 //Adapter class to draw Transaction List
 public class ReceiptsFeedListAdapter extends BaseAdapter {
 
-    private final Context context;
-    private final List<Receipt> receipts;
-    private LayoutInflater inflater;
+    private final Context _context;
+    private final List<Receipt> _receipts;
+    private LayoutInflater _inflater;
 
     public ReceiptsFeedListAdapter(Context context, List<Receipt> receipts) {
-        this.context = context;
-        this.receipts = receipts;
+        _context = context;
+        _receipts = receipts;
     }
 
     @Override
     public int getCount() {
-        return receipts.size();
+        return _receipts.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return receipts.get(position);
+        return _receipts.get(position);
     }
 
     @Override
@@ -45,19 +45,19 @@ public class ReceiptsFeedListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (inflater == null)
-            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (_inflater == null)
+            _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null)
-            convertView = inflater.inflate(R.layout.receipt_row, parent, false);
+            convertView = _inflater.inflate(R.layout.receipt_row, parent, false);
 
         TextView textView_name = (TextView) convertView.findViewById(R.id.receiptName);
         TextView textView_status = (TextView) convertView.findViewById(R.id.receiptStatus);
         TextView textView_invalid_code = (TextView) convertView.findViewById(R.id.receiptInvalidCode);
         TextView textView_invalid_reason = (TextView) convertView.findViewById(R.id.receiptInvalidReason);
         TextView textView_upload_time = (TextView) convertView.findViewById(R.id.receiptUploadTime);
-        if (receipts != null && receipts.size() > 0) {
-            Receipt a = receipts.get(position);
+        if (_receipts != null && _receipts.size() > 0) {
+            Receipt a = _receipts.get(position);
             textView_name.setText("ID: " + a.getID());
             textView_status.setText("Status: " + a.getStatus().toString());
             textView_upload_time.setText("Uploaded Time: " + a.getCreatedTime());

@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.transaction.TransactionsListener;
 import com.sessionm.api.transaction.TransactionsManager;
@@ -25,14 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionsFragment extends BaseScrollAndRefreshFragment{
-    private static final String TAG = "FeedListActivity";
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private ObservableListView listView;
-    private TransactionsFeedListAdapter listAdapter;
+    private SwipeRefreshLayout _swipeRefreshLayout;
+    private ObservableListView _listView;
+    private TransactionsFeedListAdapter _listAdapter;
     List<Transaction> _transactions = new ArrayList<>();
 
-    TransactionsManager _transactionsManager;
+    TransactionsManager _transactionsManager = new TransactionsManager();
 
     public static TransactionsFragment newInstance() {
         TransactionsFragment f = new TransactionsFragment();
@@ -46,17 +44,17 @@ public class TransactionsFragment extends BaseScrollAndRefreshFragment{
         View rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(this);
+        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout.setOnRefreshListener(this);
 
-        listView = (ObservableListView) rootView.findViewById(R.id.transactions_feed_list);
-        _transactionsManager = SessionM.getInstance().getTransactionsManager();
+        _listView = (ObservableListView) rootView.findViewById(R.id.transactions_feed_list);
+        _transactionsManager.setListener(_transactionListener);
         _transactions = _transactionsManager.getTransactions();
         if (_transactions != null) {
-            listAdapter = new TransactionsFeedListAdapter(getActivity(), _transactions);
-            listView.setAdapter(listAdapter);
+            _listAdapter = new TransactionsFeedListAdapter(getActivity(), _transactions);
+            _listView.setAdapter(_listAdapter);
         }
-        listView.setScrollViewCallbacks(this);
+        _listView.setScrollViewCallbacks(this);
         return rootView;
     }
 
@@ -69,34 +67,22 @@ public class TransactionsFragment extends BaseScrollAndRefreshFragment{
     TransactionsListener _transactionListener = new TransactionsListener() {
         @Override
         public void onFetchTransactionResult(List<Transaction> transactions, boolean hasMore) {
-            swipeRefreshLayout.setRefreshing(false);
-            if (listAdapter == null) {
-                listAdapter = new TransactionsFeedListAdapter(getActivity(), _transactions);
-                listView.setAdapter(listAdapter);
+            _swipeRefreshLayout.setRefreshing(false);
+            if (_listAdapter == null) {
+                _listAdapter = new TransactionsFeedListAdapter(getActivity(), _transactions);
+                _listView.setAdapter(_listAdapter);
             }
-            listAdapter.notifyDataSetChanged();
+            _listAdapter.notifyDataSetChanged();
             if (hasMore)
                 _transactionsManager.fetchMoreTransactions();
         }
 
         @Override
         public void onFailure(SessionMError error) {
-            swipeRefreshLayout.setRefreshing(false);
+            _swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        _transactionsManager.setListener(_transactionListener);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        _transactionsManager.setListener(null);
-    }
 
     @Override
     public void onRefresh() {

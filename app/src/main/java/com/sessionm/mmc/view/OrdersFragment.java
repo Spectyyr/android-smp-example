@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SessionM. All rights reserved.
+ * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.view;
@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.reward.RewardsListener;
 import com.sessionm.api.reward.RewardsManager;
@@ -31,14 +30,12 @@ import java.util.List;
 //Fragment of SessionM Rewards
 public class OrdersFragment extends BaseScrollAndRefreshFragment {
 
-    private static final String TAG = "FeedListActivity";
-
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private ObservableListView listView;
-    private OrdersFeedListAdapter listAdapter;
+    private SwipeRefreshLayout _swipeRefreshLayout;
+    private ObservableListView _listView;
+    private OrdersFeedListAdapter _listAdapter;
     private List<Order> _orders;
 
-    private RewardsManager _rewardsManager;
+    private RewardsManager _rewardsManager = new RewardsManager();
 
     public static OrdersFragment newInstance() {
         OrdersFragment f = new OrdersFragment();
@@ -52,18 +49,18 @@ public class OrdersFragment extends BaseScrollAndRefreshFragment {
         View rootView = inflater.inflate(R.layout.fragment_orders, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(this);
+        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout.setOnRefreshListener(this);
 
-        listView = (ObservableListView) rootView.findViewById(R.id.orders_feed_list);
-        _rewardsManager = SessionM.getInstance().getRewardsManager();
+        _listView = (ObservableListView) rootView.findViewById(R.id.orders_feed_list);
+        _rewardsManager.setListener(_rewardsListener);
         _orders = _rewardsManager.getOrders();
         if (_orders != null) {
-            listAdapter = new OrdersFeedListAdapter(getActivity(), _orders);
-            listView.setAdapter(listAdapter);
+            _listAdapter = new OrdersFeedListAdapter(getActivity(), _orders);
+            _listView.setAdapter(_listAdapter);
         }
 
-        listView.setScrollViewCallbacks(this);
+        _listView.setScrollViewCallbacks(this);
         return rootView;
     }
 
@@ -73,7 +70,7 @@ public class OrdersFragment extends BaseScrollAndRefreshFragment {
         _rewardsManager.fetchOrders();
     }
 
-    RewardsListener _RewardsListener = new RewardsListener() {
+    RewardsListener _rewardsListener = new RewardsListener() {
         @Override
         public void onOffersFetched(List<Offer> list) {
 
@@ -84,19 +81,20 @@ public class OrdersFragment extends BaseScrollAndRefreshFragment {
 
         }
 
-        @Override public void onOrdersFetched(List<Order> orders) {
-            swipeRefreshLayout.setRefreshing(false);
-            if (_orders == null) {
-                _orders = new ArrayList<>();
+        @Override
+        public void onOrdersFetched(List<Order> orders) {
+            _swipeRefreshLayout.setRefreshing(false);
+            if (OrdersFragment.this._orders == null) {
+                OrdersFragment.this._orders = new ArrayList<>();
             } else {
-                _orders.clear();
+                OrdersFragment.this._orders.clear();
             }
-            _orders.addAll(orders);
-            if (listAdapter == null) {
-                listAdapter = new OrdersFeedListAdapter(getActivity(), _orders);
-                listView.setAdapter(listAdapter);
+            OrdersFragment.this._orders.addAll(orders);
+            if (_listAdapter == null) {
+                _listAdapter = new OrdersFeedListAdapter(getActivity(), OrdersFragment.this._orders);
+                _listView.setAdapter(_listAdapter);
             }
-            listAdapter.notifyDataSetChanged();
+            _listAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -111,23 +109,11 @@ public class OrdersFragment extends BaseScrollAndRefreshFragment {
 
         @Override
         public void onFailure(SessionMError error) {
-            swipeRefreshLayout.setRefreshing(false);
+            _swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
     };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        _rewardsManager.setListener(_RewardsListener);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        _rewardsManager.setListener(null);
-    }
 
     @Override
     public void onRefresh() {

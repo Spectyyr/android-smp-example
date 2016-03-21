@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SessionM. All rights reserved.
+ * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.view;
@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.reward.RewardsListener;
 import com.sessionm.api.reward.RewardsManager;
@@ -33,14 +32,12 @@ import java.util.List;
 //Fragment of SessionM Rewards
 public class RewardsFragment extends BaseScrollAndRefreshFragment {
 
-    private static final String TAG = "FeedListActivity";
+    private SwipeRefreshLayout _swipeRefreshLayout;
+    private ObservableListView _listView;
+    private RewardsFeedListAdapter _listAdapter;
+    private List<Offer> _offers = new ArrayList<>();
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private ObservableListView listView;
-    private RewardsFeedListAdapter listAdapter;
-    private List<Offer> _offers = new ArrayList<Offer>();
-
-    private RewardsManager _rewardsManager;
+    private RewardsManager _rewardsManager = new RewardsManager();
 
     public static RewardsFragment newInstance() {
         RewardsFragment f = new RewardsFragment();
@@ -54,22 +51,22 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
         View rootView = inflater.inflate(R.layout.fragment_rewards, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(this);
+        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout.setOnRefreshListener(this);
 
-        listView = (ObservableListView) rootView.findViewById(R.id.rewards_feed_list);
-        _rewardsManager = SessionM.getInstance().getRewardsManager();
+        _listView = (ObservableListView) rootView.findViewById(R.id.rewards_feed_list);
+        _rewardsManager.setListener(_rewardsListener);
         _offers = _rewardsManager.getOffers();
         if (_offers == null) {
             _offers = new ArrayList<>();
         }
-        listAdapter = new RewardsFeedListAdapter(getActivity(), _offers);
-        listView.setAdapter(listAdapter);
+        _listAdapter = new RewardsFeedListAdapter(getActivity(), _offers);
+        _listView.setAdapter(_listAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RewardsFeedListAdapter.Row row = (RewardsFeedListAdapter.Row) listAdapter.getItem(position);
+                RewardsFeedListAdapter.Row row = (RewardsFeedListAdapter.Row) _listAdapter.getItem(position);
                 Offer offer = row._offer;
                 Intent offerDetailsIntent = new Intent(getActivity(), OfferDetailsActivity.class);
                 offerDetailsIntent.putExtra("offer_id", offer.getId());
@@ -77,7 +74,7 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
             }
         });
 
-        listView.setScrollViewCallbacks(this);
+        _listView.setScrollViewCallbacks(this);
         return rootView;
     }
 
@@ -87,20 +84,20 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
         _rewardsManager.fetchOffers();
     }
 
-    RewardsListener _RewardsListener = new RewardsListener() {
+    RewardsListener _rewardsListener = new RewardsListener() {
         @Override
         public void onOffersFetched(List<Offer> offers) {
-            swipeRefreshLayout.setRefreshing(false);
-            _offers.clear();
+            _swipeRefreshLayout.setRefreshing(false);
+            RewardsFragment.this._offers.clear();
             if (offers == null) {
                 offers = new ArrayList<>();
             }
-            _offers.addAll(offers);
-            if (listAdapter == null) {
-                listAdapter = new RewardsFeedListAdapter(getActivity(), _offers);
-                listView.setAdapter(listAdapter);
+            RewardsFragment.this._offers.addAll(offers);
+            if (_listAdapter == null) {
+                _listAdapter = new RewardsFeedListAdapter(getActivity(), RewardsFragment.this._offers);
+                _listView.setAdapter(_listAdapter);
             }
-            listAdapter.notifyDataSetChanged();
+            _listAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -125,7 +122,7 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
 
         @Override
         public void onFailure(SessionMError error) {
-            swipeRefreshLayout.setRefreshing(false);
+            _swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
@@ -133,7 +130,7 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
     @Override
     public void onResume() {
         super.onResume();
-        _rewardsManager.setListener(_RewardsListener);
+        _rewardsManager.setListener(_rewardsListener);
     }
 
     @Override
