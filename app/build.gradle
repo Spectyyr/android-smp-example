@@ -31,6 +31,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
     compile 'com.google.android.gms:play-services-ads:8.4.0'
     compile 'com.jpardogo.materialtabstrip:library:1.1.0'
+    compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.squareup.picasso:picasso:2.5.2'

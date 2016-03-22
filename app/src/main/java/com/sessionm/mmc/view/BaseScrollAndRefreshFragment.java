@@ -40,10 +40,12 @@ public class BaseScrollAndRefreshFragment extends Fragment implements SwipeRefre
             if (scrollState == ScrollState.UP) {
                 if (ab.isShowing()) {
                     ab.hide();
+                    MainActivity.hideFAB();
                 }
             } else if (scrollState == ScrollState.DOWN) {
                 if (!ab.isShowing()) {
                     ab.show();
+                    MainActivity.showFAB();
                 }
             }
         }

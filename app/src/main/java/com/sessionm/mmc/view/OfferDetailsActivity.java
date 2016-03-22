@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.reward.RewardsListener;
 import com.sessionm.api.reward.RewardsManager;
@@ -38,7 +39,7 @@ import java.util.Map;
 public class OfferDetailsActivity extends AppCompatActivity {
 
     private Offer _currentOffer;
-    private RewardsManager _rewardsManager = new RewardsManager();
+    private RewardsManager _rewardsManager;
     private ProgressDialog _progressDialog;
 
     @Override
@@ -54,7 +55,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
         Button placeOrderButton = (Button) findViewById(R.id.place_order_button);
         _progressDialog = new ProgressDialog(this);
 
-        _rewardsManager.setListener(_rewardsListener);
+        _rewardsManager = SessionM.getInstance().getRewardsManager();
         List<Offer> offers = _rewardsManager.getOffers();
         final String offerID = getOfferIntent.getStringExtra("offer_id");
         for (int i = 0; i < offers.size(); i++) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SessionM. All rights reserved.
+ * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
 package com.sessionm.mmc.view;
@@ -7,7 +7,6 @@ package com.sessionm.mmc.view;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,13 +20,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.sessionm.api.AchievementData;
 import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.User;
 import com.sessionm.api.message.data.Message;
 import com.sessionm.api.message.feed.ui.ActivityFeedActivity;
-import com.sessionm.api.receipt.ReceiptsManager;
 import com.sessionm.api.receipt.ui.ReceiptActivity;
 import com.sessionm.mmc.R;
 
@@ -51,7 +50,9 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     private ReceiptsFragment receiptsFragment;
     private OrdersFragment ordersFragment;
     private ActionBar actionBar;
-    private FloatingActionButton newUploadButton;
+    private static FloatingActionsMenu actionsMenu;
+    private static com.getbase.floatingactionbutton.FloatingActionButton newUploadButton;
+    private static com.getbase.floatingactionbutton.FloatingActionButton linkCardButton;
 
     SessionM sessionM = SessionM.getInstance();
 
@@ -64,13 +65,23 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         pager.addOnPageChangeListener(this);
-        newUploadButton = (FloatingActionButton) findViewById(R.id.new_upload_button);
+        actionsMenu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+        newUploadButton = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.action_upload_receipt);
+        linkCardButton = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.action_link_card);
 
         newUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                actionsMenu.collapse();
                 sessionM.getReceiptManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
                 startActivity(new Intent(MainActivity.this, ReceiptActivity.class));
+            }
+        });
+
+        linkCardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionsMenu.collapse();
             }
         });
 
@@ -212,5 +223,14 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public static void hideFAB() {
+        actionsMenu.collapse();
+        actionsMenu.setVisibility(View.GONE);
+    }
+
+    public static void showFAB() {
+        actionsMenu.setVisibility(View.VISIBLE);
     }
 }
