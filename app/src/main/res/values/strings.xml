@@ -3,7 +3,7 @@
     <string name="receipts">Receipts</string>
     <string name="offers">Offers</string>
     <!--Please set your SessionM app api key-->
-    <string name="app_key"></string>
+    <string name="app_key">a781330c8dbdadda3fe68308ee037c8724a38cd2</string>
     <!--Please set your GCM sender id-->
     <string name="gcm_sender_id"></string>
     <string name="learn_more">Learn More</string>
@@ -73,5 +73,7 @@
     <string name="action_sign_in">Log In</string>
     <string name="sms_validation">SMS Validation</string>
     <string name="please_enter_you_phone_number">Please enter you phone number:</string>
+    <string name="ok">Unlink</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

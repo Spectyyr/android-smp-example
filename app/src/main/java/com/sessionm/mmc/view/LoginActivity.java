@@ -43,9 +43,9 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     protected EditText _passwordView;
     protected Button _loginButton;
 
-    private static final String DEBUG_EMAIL = "";
-    private static final String DEBUG_PASSWORD = "";
-    private static final boolean DEBUG_MODE = false;
+    private static final String DEBUG_EMAIL = "unitTestLogin@sessionm.com";
+    private static final String DEBUG_PASSWORD = "sessionm";
+    private static final boolean DEBUG_MODE = true;
 
     private SessionM sessionM = SessionM.getInstance();
 
