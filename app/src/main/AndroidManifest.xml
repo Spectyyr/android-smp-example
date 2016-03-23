@@ -49,7 +49,6 @@
             android:value="@string/app_key" />
 
         <activity android:name="com.sessionm.api.receipt.ui.ReceiptActivity" />
-        <activity android:name="com.sessionm.mmc.view.LoyaltyActivity"/>
         <activity
             android:name="com.sessionm.ui.SessionMActivity"
             android:configChanges="keyboard|orientation|screenSize"
@@ -60,7 +59,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="sessionm62fb1400638ab32d0050b0d9ae894fe61740c4f5" />
+                <data android:scheme="sessionm" />
             </intent-filter>
         </activity>
         <activity
