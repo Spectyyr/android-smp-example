@@ -66,7 +66,12 @@ public class BaseScrollAndRefreshFragment extends Fragment implements SwipeRefre
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_image, null);
         ImageView imageView = (ImageView) dialogLayout.findViewById(R.id.dialog_imageview);
-        Picasso.with(getActivity()).load(url).into(imageView);
+        Picasso.with(getActivity())
+                .load(url)
+                .resize(1280, 800)
+                .onlyScaleDown()
+                .centerInside()
+                .into(imageView);
 
         dialog.setView(dialogLayout);
         dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);

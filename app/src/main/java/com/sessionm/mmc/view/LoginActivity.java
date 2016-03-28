@@ -38,20 +38,17 @@ import com.sessionm.mmc.R;
 
 public class LoginActivity extends AppCompatActivity implements SessionListener {
 
-    private static final String DEFAULT_CODE_MESSAGE = "Welcome to SessionM Rewards! Here is your activation code: {code}";
     protected EditText _emailView;
     protected EditText _passwordView;
     protected Button _loginButton;
 
-    private static final String DEBUG_EMAIL = "";
-    private static final String DEBUG_PASSWORD = "";
+    private static final String DEBUG_EMAIL = "unitTestLogin@sessionm.com";
+    private static final String DEBUG_PASSWORD = "sessionm";
     private static final boolean DEBUG_MODE = false;
 
     private SessionM sessionM = SessionM.getInstance();
 
     private ProgressDialog progressDialog;
-
-    private IdentityManager identityManager = new IdentityManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,51 +96,16 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
         });
 
         progressDialog = new ProgressDialog(this);
-
-        identityManager.setListener(_identityListener);
     }
-
-    IdentityListener _identityListener = new IdentityListener() {
-        @Override
-        public void onSMSVerificationMessageSent(SMSVerification smsVerification) {
-            popUpSMSVerificationDialog("verify_code");
-        }
-
-        @Override
-        public void onSMSVerificationCodeChecked(SMSVerification smsVerification) {
-            Toast.makeText(LoginActivity.this, smsVerification.getString(), Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finishAffinity();
-        }
-
-        @Override
-        public void onSMSVerificationFetched(SMSVerification smsVerification) {
-            if (smsVerification.isValid()) {
-                Toast.makeText(LoginActivity.this, smsVerification.getString(), Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finishAffinity();
-            } else {
-                popUpSMSVerificationDialog("send_code");
-            }
-
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            Toast.makeText(LoginActivity.this, "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
 
     @Override
     public void onResume() {
         super.onResume();
-        identityManager.setListener(_identityListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        identityManager.setListener(null);
     }
 
     public void attemptLogin(String email, boolean debug) {
@@ -208,7 +170,8 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
             SessionM.EnrollmentResultType resultType = SessionM.getInstance().getEnrollmentResult();
             if (resultType.equals(SessionM.EnrollmentResultType.SUCCESS)) {
                 Toast.makeText(this, "Success: " + user.toString(), Toast.LENGTH_SHORT).show();
-                identityManager.fetchSMSVerification();
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finishAffinity();
             } else if (resultType.equals(SessionM.EnrollmentResultType.FAILURE)) {
                 Toast.makeText(this, "Failed: " + SessionM.getInstance().getResponseErrorMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -241,45 +204,6 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
 
     public boolean isPasswordValid(CharSequence target) {
         return target.length() > 0;
-    }
-
-    protected void popUpSMSVerificationDialog(final String type) {
-
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogLayout = inflater.inflate(R.layout.dialog_sms_validation, null);
-        TextView descriptionTextView = (TextView) dialogLayout.findViewById(R.id.sms_validation_description);
-        final EditText inputEditText = (EditText) dialogLayout.findViewById(R.id.sms_validation_edittext);
-
-        if (type.equals("send_code")) {
-            descriptionTextView.setText("Please enter your phone number.");
-            inputEditText.setHint("Phone Number");
-        } else if (type.equals("verify_code")) {
-            descriptionTextView.setText("Please enter your verification code.");
-            inputEditText.setHint("Code");
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (type.equals("send_code")) {
-                    String phone = inputEditText.getText().toString();
-                    identityManager.sendSMSVerificationMessage(phone, DEFAULT_CODE_MESSAGE);
-                } else if (type.equals("verify_code")) {
-                    String code = inputEditText.getText().toString();
-                    identityManager.checkSMSVerificationCode(code);
-                }
-            }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-
-        AlertDialog dialog = builder.create();
-        dialog.setView(dialogLayout);
-        dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.show();
     }
 }
 

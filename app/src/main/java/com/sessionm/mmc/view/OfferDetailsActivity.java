@@ -22,6 +22,9 @@ import android.widget.Toast;
 
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
+import com.sessionm.api.identity.IdentityListener;
+import com.sessionm.api.identity.IdentityManager;
+import com.sessionm.api.identity.data.SMSVerification;
 import com.sessionm.api.reward.RewardsListener;
 import com.sessionm.api.reward.RewardsManager;
 import com.sessionm.api.reward.data.offer.Offer;
@@ -38,9 +41,12 @@ import java.util.Map;
 
 public class OfferDetailsActivity extends AppCompatActivity {
 
+    private static final String DEFAULT_CODE_MESSAGE = "Welcome to SessionM Rewards! Here is your activation code: {code}";
     private Offer _currentOffer;
     private RewardsManager _rewardsManager;
     private ProgressDialog _progressDialog;
+
+    private IdentityManager _identityManager = SessionM.getInstance().getIdentityManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +98,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
         placeOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _rewardsManager.fetchSkillQuestion();
+                _identityManager.fetchSMSVerification();
                 _progressDialog.show();
             }
         });
@@ -135,16 +141,48 @@ public class OfferDetailsActivity extends AppCompatActivity {
         }
     };
 
+    IdentityListener _identityListener = new IdentityListener() {
+        @Override
+        public void onSMSVerificationMessageSent(SMSVerification smsVerification) {
+            _progressDialog.dismiss();
+            popUpSMSVerificationDialog("verify_code");
+        }
+
+        @Override
+        public void onSMSVerificationCodeChecked(SMSVerification smsVerification) {
+            Toast.makeText(OfferDetailsActivity.this, smsVerification.getString(), Toast.LENGTH_SHORT).show();
+            _rewardsManager.fetchSkillQuestion();
+            _progressDialog.show();
+        }
+
+        @Override
+        public void onSMSVerificationFetched(SMSVerification smsVerification) {
+            _progressDialog.dismiss();
+            if (smsVerification.isValid()) {
+                _rewardsManager.fetchSkillQuestion();
+                _progressDialog.show();
+            } else {
+                popUpSMSVerificationDialog("send_code");
+            }
+
+        }
+
+        @Override
+        public void onFailure(SessionMError error) {
+            Toast.makeText(OfferDetailsActivity.this, "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
         _rewardsManager.setListener(_rewardsListener);
+        _identityManager.setListener(_identityListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        _rewardsManager.setListener(null);
     }
 
     private OrderRequest makeOrderRequest(String challengeID, String offerID, int quantity) {
@@ -164,6 +202,45 @@ public class OfferDetailsActivity extends AppCompatActivity {
                 .address(address)
                 .challengeID(challengeID)
                 .build();
+    }
+
+    protected void popUpSMSVerificationDialog(final String type) {
+
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogLayout = inflater.inflate(R.layout.dialog_sms_validation, null);
+        TextView descriptionTextView = (TextView) dialogLayout.findViewById(R.id.sms_validation_description);
+        final EditText inputEditText = (EditText) dialogLayout.findViewById(R.id.sms_validation_edittext);
+
+        if (type.equals("send_code")) {
+            descriptionTextView.setText("Please enter your phone number.");
+            inputEditText.setHint("Phone Number");
+        } else if (type.equals("verify_code")) {
+            descriptionTextView.setText("Please enter your verification code.");
+            inputEditText.setHint("Code");
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (type.equals("send_code")) {
+                    String phone = inputEditText.getText().toString();
+                    _identityManager.sendSMSVerificationMessage(phone, DEFAULT_CODE_MESSAGE);
+                } else if (type.equals("verify_code")) {
+                    String code = inputEditText.getText().toString();
+                    _identityManager.checkSMSVerificationCode(code);
+                }
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.setView(dialogLayout);
+        dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.show();
     }
 
     protected void popUpSkillChallengeDialog(final String questionID, String question) {

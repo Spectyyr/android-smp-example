@@ -71,7 +71,13 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Log In</string>
-    <string name="sms_validation">SMS Validation</string>
+    <string name="sms_validation">SMS Verification</string>
     <string name="please_enter_you_phone_number">Please enter you phone number:</string>
+    <string name="ok">Unlink</string>
+    <string name="cancel">Cancel</string>
+    <string name="link">Link</string>
+    <string name="loyalty_card">Loyalty Card Linking</string>
+    <string name="select_retailer">Select Retailer</string>
+    <string name="card_number">Card #</string>
 
 </resources>

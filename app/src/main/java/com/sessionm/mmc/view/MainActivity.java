@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     private TransactionsFragment transactionsFragment;
     private ReceiptsFragment receiptsFragment;
     private OrdersFragment ordersFragment;
+    private Fragment loyaltyFragment;
     private ActionBar actionBar;
     private static FloatingActionsMenu actionsMenu;
     private static com.getbase.floatingactionbutton.FloatingActionButton newUploadButton;
@@ -82,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             @Override
             public void onClick(View v) {
                 actionsMenu.collapse();
+                startActivity(new Intent(MainActivity.this, LoyaltyCardActivity.class));
             }
         });
 
@@ -91,13 +94,22 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         tabs.setViewPager(pager);
     }
 
+    private final String[] TITLES = {"Opportunities", "Rewards", "Transactions", "Loyalty Card", "Receipts", "Orders"};
+
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
         //TODO: Hide promotions/submissions tabs for now, not fully supported
-        private final String[] TITLES = {"Opportunities", "Rewards", "Transactions", "Receipts", "Orders"};
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
+        }
+
+
+
+        @Override
+        public long getItemId(int position) {
+            Log.d("getItemId", String.format("%d", position));
+            return super.getItemId(position);
         }
 
         @Override
@@ -112,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
 
         @Override
         public Fragment getItem(int position) {
+            Log.d("getItem", String.format("%d", position));
             //TODO: Hide promotions/submissions tabs for now, not fully supported
             Fragment fragment = CampaignsFragment.newInstance();
             switch (position) {
@@ -128,10 +141,14 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
                     fragment = transactionsFragment;
                     break;
                 case 3:
+                    loyaltyFragment = LoyaltyFragment.newInstance();
+                    fragment = loyaltyFragment;
+                    break;
+                case 4:
                     receiptsFragment = ReceiptsFragment.newInstance();
                     fragment = receiptsFragment;
                     break;
-                case 4:
+                case 5:
                     ordersFragment = OrdersFragment.newInstance();
                     fragment = ordersFragment;
                     break;
@@ -169,20 +186,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
 
     @Override
     public void onNotificationMessage(SessionM sessionM, Message message) {
-
-    }
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
 
     }
 
@@ -227,10 +230,23 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
 
     public static void hideFAB() {
         actionsMenu.collapse();
-        actionsMenu.setVisibility(View.GONE);
     }
 
     public static void showFAB() {
-        actionsMenu.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

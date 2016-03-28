@@ -109,7 +109,6 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
     @Override
     public void onPause() {
         super.onPause();
-        _campaignsManager.setListener(null);
     }
 
     @Override

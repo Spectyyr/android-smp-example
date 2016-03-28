@@ -57,7 +57,6 @@ public class RewardsFeedListAdapter extends BaseAdapter {
         for (Offer o : this._offers) {
             _rows.add(new Row(TYPES.PARENT, o));
             for (Offer oo : o.getOptions()) {
-                Log.d("TAG", String.format("[%s][%s]", o.getName(), oo.getName()));
                 _rows.add(new Row(TYPES.CHILD, o));
             }
         }
