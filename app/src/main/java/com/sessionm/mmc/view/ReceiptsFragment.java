@@ -45,13 +45,13 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_receipts, container, false);
         ViewCompat.setElevation(rootView, 50);
 
         _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _listView = (ObservableListView) rootView.findViewById(R.id.transactions_feed_list);
+        _listView = (ObservableListView) rootView.findViewById(R.id.receipts_feed_list);
         _receipts = _receiptManager.getReceipts();
         if (_receipts != null) {
             _listAdapter = new ReceiptsFeedListAdapter(getActivity(), _receipts);
@@ -63,8 +63,8 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Receipt receipt = _receipts.get(position);
                 if (receipt.getImageCount() > 0 && receipt.getImageUrls().size() > 0) {
-                    String url = receipt.getImageUrls().get(0);
-                    popUpImageDialog(url);
+                    List<String> urls = receipt.getImageUrls();
+                    popUpImageDialog(urls);
                 }
             }
         });

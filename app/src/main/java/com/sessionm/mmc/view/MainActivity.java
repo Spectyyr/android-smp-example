@@ -52,9 +52,9 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     private OrdersFragment ordersFragment;
     private Fragment loyaltyFragment;
     private ActionBar actionBar;
-    private static FloatingActionsMenu actionsMenu;
-    private static com.getbase.floatingactionbutton.FloatingActionButton newUploadButton;
-    private static com.getbase.floatingactionbutton.FloatingActionButton linkCardButton;
+    private FloatingActionsMenu actionsMenu;
+    private com.getbase.floatingactionbutton.FloatingActionButton newUploadButton;
+    private com.getbase.floatingactionbutton.FloatingActionButton linkCardButton;
 
     SessionM sessionM = SessionM.getInstance();
 
@@ -226,13 +226,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    public static void hideFAB() {
-        actionsMenu.collapse();
-    }
-
-    public static void showFAB() {
     }
 
     @Override

@@ -68,7 +68,7 @@ public class TransactionsFragment extends BaseScrollAndRefreshFragment{
 
     TransactionsListener _transactionListener = new TransactionsListener() {
         @Override
-        public void onFetchTransactionResult(List<Transaction> transactions, boolean hasMore) {
+        public void onTransactionsFetched(List<Transaction> transactions, boolean hasMore) {
             _swipeRefreshLayout.setRefreshing(false);
             if (_listAdapter == null) {
                 _listAdapter = new TransactionsFeedListAdapter(getActivity(), _transactions);

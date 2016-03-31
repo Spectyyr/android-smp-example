@@ -24,13 +24,12 @@
             <LinearLayout
                 android:id="@+id/rewards_description_layout"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/reward_overlay_height"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:orientation="vertical"
                 android:paddingBottom="5dp"
                 android:paddingLeft="8dp"
-                android:paddingTop="5dp"
-                >
+                android:paddingTop="5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -42,12 +41,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:fontFamily="sans-serif-light"
-                        android:maxLines="1"
                         android:paddingBottom="1dp"
                         android:textColor="@color/black"
-                        android:textSize="20dp"
-                        />
+                        android:textSize="20sp"/>
 
                     <TextView
                         android:id="@+id/reward_value_text"
@@ -60,8 +56,7 @@
                         android:paddingRight="15dp"
                         android:paddingTop="3dp"
                         android:textColor="@android:color/white"
-                        android:textSize="20dp"
-                        />
+                        android:textSize="20sp"/>
 
                 </LinearLayout>
 
@@ -69,24 +64,22 @@
                     android:id="@+id/reward_subheader_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-condensed"
-                    android:maxLines="1"
-                    android:paddingBottom="5dp"
-                    android:paddingRight="8dp"
-                    android:textColor="@color/black"
-                    android:textSize="12dp"
-                    />
+                    android:layout_marginTop="8dp"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/reward_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="12sp"/>
 
                 <TextView
                     android:id="@+id/reward_detail_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-condensed"
-                    android:maxLines="2"
-                    android:paddingRight="8dp"
-                    android:textColor="@color/black"
-                    android:textSize="13dp"
-                    />
+                    android:layout_marginTop="8dp"
+                    android:textSize="15sp"/>
 
             </LinearLayout>
 

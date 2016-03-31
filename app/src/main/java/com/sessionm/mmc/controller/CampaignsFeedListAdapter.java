@@ -14,6 +14,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sessionm.api.SessionM;
+import com.sessionm.api.message.data.Message;
 import com.sessionm.api.message.feed.data.FeedMessage;
 import com.sessionm.mmc.R;
 import com.squareup.picasso.Picasso;
@@ -62,6 +64,8 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         TextView headerTextView = (TextView) convertView.findViewById(R.id.promotion_header_text);
         TextView subHeaderTextView = (TextView) convertView
                 .findViewById(R.id.promotion_subheader_text);
+        TextView periodTextView = (TextView) convertView
+                .findViewById(R.id.promotion_period_text);
         TextView descriptionTextView = (TextView) convertView
                 .findViewById(R.id.promotion_detail_text);
         TextView valueTextView = (TextView) convertView
@@ -72,11 +76,14 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
 
         final FeedMessage item = _messages.get(position);
 
-        //Returns the Message header, String
+        //Returns the message header
         headerTextView.setText(item.getHeader());
 
-        //Returns the Message sub header, String
+        //Returns the message sub header
         subHeaderTextView.setText(item.getSubHeader());
+
+        //Returns the message period
+        periodTextView.setText(item.getStartTime() + " - " + item.getEndTime());
 
         //There is no need to draw the description if it was not set
         if (!TextUtils.isEmpty(item.getDescription())) {
@@ -129,5 +136,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
 
     //TODO
     private void showDetails(FeedMessage data){
+        if (data.getActionType().equals(Message.MessageActionType.FULL_SCREEN))
+            SessionM.getInstance().presentActivity(SessionM.ActivityType.PORTAL, data.getActionURL());
     }
 }

@@ -104,6 +104,7 @@ public class RewardsFeedListAdapter extends BaseAdapter {
 
             TextView headerTextView = (TextView) convertView.findViewById(R.id.reward_header_text);
             TextView subHeaderTextView = (TextView) convertView.findViewById(R.id.reward_subheader_text);
+            TextView statusTextView = (TextView) convertView.findViewById(R.id.reward_status_text);
             TextView descriptionTextView = (TextView) convertView.findViewById(R.id.reward_detail_text);
             TextView valueTextView = (TextView) convertView.findViewById(R.id.reward_value_text);
             ImageView feedImageView = (ImageView) convertView.findViewById(R.id.reward_main_image);
@@ -117,6 +118,7 @@ public class RewardsFeedListAdapter extends BaseAdapter {
             String endTime = offer.getEndTime();
             String out = String.format("%s - %s", startTime != null ? startTime : "", endTime != null ? endTime : "");
             subHeaderTextView.setText(out);
+            statusTextView.setText(offer.getStatus().toString());
             descriptionTextView.setText(offer.getDescription() != null ? offer.getDescription() : "");
             valueTextView.setText("" + offer.getPoints());
             Picasso.with(_activity).load(offer.getLogo()).into(feedImageView);

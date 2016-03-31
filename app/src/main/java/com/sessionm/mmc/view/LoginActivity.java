@@ -38,12 +38,13 @@ import com.sessionm.mmc.R;
 
 public class LoginActivity extends AppCompatActivity implements SessionListener {
 
-    protected EditText _emailView;
-    protected EditText _passwordView;
-    protected Button _loginButton;
+    private EditText _emailView;
+    private EditText _passwordView;
+    private Button _loginButton;
+    private TextView _notNowTextView;
 
-    private static final String DEBUG_EMAIL = "unitTestLogin@sessionm.com";
-    private static final String DEBUG_PASSWORD = "sessionm";
+    private static final String DEBUG_EMAIL = "";
+    private static final String DEBUG_PASSWORD = "";
     private static final boolean DEBUG_MODE = false;
 
     private SessionM sessionM = SessionM.getInstance();
@@ -58,6 +59,8 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
         _emailView = (EditText) findViewById(R.id.sign_in_email);
         _passwordView = (EditText) findViewById(R.id.sign_in_password);
         _loginButton = (Button) findViewById(R.id.email_sign_in_button);
+        _notNowTextView = (TextView) findViewById(R.id.email_sign_in_not_now_text);
+
         if (DEBUG_MODE)
             _loginButton.setEnabled(true);
 
@@ -96,6 +99,14 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
         });
 
         progressDialog = new ProgressDialog(this);
+
+        _notNowTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finishAffinity();
+            }
+        });
     }
 
     @Override

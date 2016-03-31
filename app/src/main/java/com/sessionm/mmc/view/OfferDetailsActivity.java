@@ -150,7 +150,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
 
         @Override
         public void onSMSVerificationCodeChecked(SMSVerification smsVerification) {
-            Toast.makeText(OfferDetailsActivity.this, smsVerification.getString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(OfferDetailsActivity.this, smsVerification.toString(), Toast.LENGTH_SHORT).show();
             _rewardsManager.fetchSkillQuestion();
             _progressDialog.show();
         }

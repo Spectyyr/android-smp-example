@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/onboarding_top_margin"
             android:gravity="center"
-            android:text="@string/log_in_instruction"/>
+            android:text="@string/log_in_instruction"
+            android:textSize="18sp"/>
 
         <EditText
             android:id="@+id/sign_in_email"
@@ -53,6 +54,16 @@
             android:text="@string/action_sign_in"
             android:enabled="false"
             android:background="@color/colorPrimary"/>
+
+        <TextView
+            android:id="@+id/email_sign_in_not_now_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/email_sign_in_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+            android:text="@string/not_now"
+            android:textSize="18sp"/>
 
     </RelativeLayout>
 </RelativeLayout>

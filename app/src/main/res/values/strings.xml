@@ -79,5 +79,6 @@
     <string name="loyalty_card">Loyalty Card Linking</string>
     <string name="select_retailer">Select Retailer</string>
     <string name="card_number">Card #</string>
+    <string name="not_now">Not now</string>
 
 </resources>
