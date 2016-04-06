@@ -7,6 +7,7 @@ package com.sessionm.mmc.view.custom;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.IdRes;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -21,6 +22,9 @@ public class CustomLoaderView extends com.sessionm.api.CustomLoaderView {
     private RelativeLayout _failedLayout;
     private RelativeLayout _unavailableLayout;
     Context _context;
+
+    @IdRes
+    int resIdOne = 1, resIdTwo = 2, resIdThree = 3;
 
     public CustomLoaderView(Context context) {
         super();
@@ -49,7 +53,7 @@ public class CustomLoaderView extends com.sessionm.api.CustomLoaderView {
         titleTextView.setLayoutParams(titleLayoutParams);
 
         titleTextView.setTextColor(Color.BLACK);
-        titleTextView.setId(1);
+        titleTextView.setId(resIdOne);
 
         RelativeLayout.LayoutParams progrssBarLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         progrssBarLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
@@ -69,7 +73,7 @@ public class CustomLoaderView extends com.sessionm.api.CustomLoaderView {
         failedTextView.setLayoutParams(titleLayoutParams);
         failedTextView.setTextSize(40);
         failedTextView.setTextColor(Color.BLACK);
-        failedTextView.setId(2);
+        failedTextView.setId(resIdTwo);
 
         RelativeLayout.LayoutParams retryButtonLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         retryButtonLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
@@ -98,7 +102,7 @@ public class CustomLoaderView extends com.sessionm.api.CustomLoaderView {
         unavailableTextView.setLayoutParams(titleLayoutParams);
         unavailableTextView.setTextSize(40);
         unavailableTextView.setTextColor(Color.BLACK);
-        unavailableTextView.setId(3);
+        unavailableTextView.setId(resIdThree);
 
         RelativeLayout.LayoutParams dismissButtonLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         dismissButtonLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);

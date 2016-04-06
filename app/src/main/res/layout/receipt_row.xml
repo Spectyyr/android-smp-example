@@ -21,34 +21,46 @@
                       android:padding="@dimen/item_row_padding">
 
             <TextView
-                android:id="@+id/receiptName"
+                android:id="@+id/receipt_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/reward_name"/>
+                android:text="@string/name"/>
 
             <TextView
-                android:id="@+id/receiptStatus"
+                android:id="@+id/receipt_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/status"/>
 
             <TextView
-                android:id="@+id/receiptInvalidCode"
+                android:id="@+id/receipt_invalid_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/invalid_code"/>
 
             <TextView
-                android:id="@+id/receiptInvalidReason"
+                android:id="@+id/receipt_invalid_reason"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/invalid_reason"/>
 
             <TextView
-                android:id="@+id/receiptUploadTime"
+                android:id="@+id/receipt_create_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/upload_time"/>
+                android:text="@string/create_time"/>
+
+            <TextView
+                android:id="@+id/receipt_update_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/update_time"/>
+
+            <TextView
+                android:id="@+id/receipt_image_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/image_count"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

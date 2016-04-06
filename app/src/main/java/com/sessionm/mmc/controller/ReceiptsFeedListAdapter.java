@@ -51,24 +51,28 @@ public class ReceiptsFeedListAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = _inflater.inflate(R.layout.receipt_row, parent, false);
 
-        TextView textView_name = (TextView) convertView.findViewById(R.id.receiptName);
-        TextView textView_status = (TextView) convertView.findViewById(R.id.receiptStatus);
-        TextView textView_invalid_code = (TextView) convertView.findViewById(R.id.receiptInvalidCode);
-        TextView textView_invalid_reason = (TextView) convertView.findViewById(R.id.receiptInvalidReason);
-        TextView textView_upload_time = (TextView) convertView.findViewById(R.id.receiptUploadTime);
+        TextView textViewName = (TextView) convertView.findViewById(R.id.receipt_name);
+        TextView textViewStatus = (TextView) convertView.findViewById(R.id.receipt_status);
+        TextView textViewInvalidCode = (TextView) convertView.findViewById(R.id.receipt_invalid_code);
+        TextView textViewInvalidReason = (TextView) convertView.findViewById(R.id.receipt_invalid_reason);
+        TextView textViewCreateTime = (TextView) convertView.findViewById(R.id.receipt_create_time);
+        TextView textViewUpdateTime = (TextView) convertView.findViewById(R.id.receipt_update_time);
+        TextView textViewImageCount = (TextView) convertView.findViewById(R.id.receipt_image_count);
         if (_receipts != null && _receipts.size() > 0) {
             Receipt a = _receipts.get(position);
-            textView_name.setText("ID: " + a.getID());
-            textView_status.setText("Status: " + a.getStatus().toString());
-            textView_upload_time.setText("Uploaded Time: " + a.getCreatedTime());
+            textViewName.setText("ID: " + a.getID());
+            textViewStatus.setText("Status: " + a.getStatus().toString());
+            textViewCreateTime.setText("Created Time: " + a.getCreatedTime());
+            textViewUpdateTime.setText("Updated Time: " + a.getUpdatedTime());
+            textViewImageCount.setText("Image Count: " + a.getImageCount());
             if (!a.getStatus().equals(Receipt.ReceiptStatusType.INVALID)) {
-                textView_invalid_code.setVisibility(View.GONE);
-                textView_invalid_reason.setVisibility(View.GONE);
+                textViewInvalidCode.setVisibility(View.GONE);
+                textViewInvalidReason.setVisibility(View.GONE);
             } else {
-                textView_invalid_code.setText("Invalid Code: " + a.getInvalidCode());
-                textView_invalid_reason.setText("Invalid Reason: " + a.getInvalidReason());
-                textView_invalid_code.setVisibility(View.VISIBLE);
-                textView_invalid_reason.setVisibility(View.VISIBLE);
+                textViewInvalidCode.setText("Invalid Code: " + a.getInvalidCode());
+                textViewInvalidReason.setText("Invalid Reason: " + a.getInvalidReason());
+                textViewInvalidCode.setVisibility(View.VISIBLE);
+                textViewInvalidReason.setVisibility(View.VISIBLE);
             }
         }
         return convertView;

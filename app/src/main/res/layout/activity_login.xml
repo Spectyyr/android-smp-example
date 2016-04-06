@@ -1,7 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@color/base_white">
 
     <RelativeLayout
@@ -12,6 +12,7 @@
         android:paddingLeft="@dimen/onboarding_left_margin"
         android:paddingRight="@dimen/onboarding_right_margin"
         android:paddingStart="@dimen/onboarding_left_margin"
+        android:paddingBottom="@dimen/onboarding_bottom_padding"
         tools:context="com.sessionm.mmc.view.LoginActivity">
 
         <TextView
@@ -56,16 +57,26 @@
             android:background="@color/colorPrimary"/>
 
         <TextView
-            android:id="@+id/email_sign_in_not_now_text"
+            android:id="@+id/email_sign_in_with_sample_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/email_sign_in_button"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="100dp"
+            android:text="@string/log_in_with_sample_user"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/email_sign_in_not_now_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/email_sign_in_with_sample_user"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
             android:text="@string/not_now"
             android:textSize="18sp"/>
 
     </RelativeLayout>
-</RelativeLayout>
+</ScrollView>
 
 

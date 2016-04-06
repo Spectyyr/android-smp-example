@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -41,11 +42,13 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     private EditText _emailView;
     private EditText _passwordView;
     private Button _loginButton;
-    private TextView _notNowTextView;
 
     private static final String DEBUG_EMAIL = "";
     private static final String DEBUG_PASSWORD = "";
     private static final boolean DEBUG_MODE = false;
+
+    private static final String SAMPLE_EMAIL = "mmcsampleuser@sessionm.com";
+    private static final String SAMPLE_PASSWORD = "sessionmtest";
 
     private SessionM sessionM = SessionM.getInstance();
 
@@ -59,7 +62,11 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
         _emailView = (EditText) findViewById(R.id.sign_in_email);
         _passwordView = (EditText) findViewById(R.id.sign_in_password);
         _loginButton = (Button) findViewById(R.id.email_sign_in_button);
-        _notNowTextView = (TextView) findViewById(R.id.email_sign_in_not_now_text);
+        TextView loginWithSampleUserTextView = (TextView) findViewById(R.id.email_sign_in_with_sample_user);
+        TextView notNowTextView = (TextView) findViewById(R.id.email_sign_in_not_now_text);
+
+        loginWithSampleUserTextView.setPaintFlags(loginWithSampleUserTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        notNowTextView.setPaintFlags(notNowTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         if (DEBUG_MODE)
             _loginButton.setEnabled(true);
@@ -93,14 +100,20 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
                 InputMethodManager imm = (InputMethodManager) getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(_passwordView.getWindowToken(), 0);
-                String email = _emailView.getText().toString();
-                attemptLogin(email, DEBUG_MODE);
+                attemptLogin(DEBUG_MODE, false);
             }
         });
 
         progressDialog = new ProgressDialog(this);
 
-        _notNowTextView.setOnClickListener(new OnClickListener() {
+        loginWithSampleUserTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attemptLogin(DEBUG_MODE, true);
+            }
+        });
+
+        notNowTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
@@ -119,15 +132,21 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
         super.onPause();
     }
 
-    public void attemptLogin(String email, boolean debug) {
+    public void attemptLogin(boolean debug, boolean sampleUser) {
         _emailView.setError(null);
         _passwordView.setError(null);
 
+        String email = _emailView.getText().toString();
         String password = _passwordView.getText().toString();
 
         if (debug) {
             email = DEBUG_EMAIL;
             password = DEBUG_PASSWORD;
+        }
+
+        if (sampleUser) {
+            email = SAMPLE_EMAIL;
+            password = SAMPLE_PASSWORD;
         }
 
         boolean cancel = false;
