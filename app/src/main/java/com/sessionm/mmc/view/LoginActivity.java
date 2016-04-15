@@ -35,6 +35,7 @@ import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.identity.data.SMSVerification;
 import com.sessionm.api.message.data.Message;
+import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.mmc.R;
 
 public class LoginActivity extends AppCompatActivity implements SessionListener {
@@ -54,11 +55,14 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
 
     private ProgressDialog progressDialog;
 
+    Bundle extras;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        extras = getIntent().getExtras();
         _emailView = (EditText) findViewById(R.id.sign_in_email);
         _passwordView = (EditText) findViewById(R.id.sign_in_password);
         _loginButton = (Button) findViewById(R.id.email_sign_in_button);
@@ -125,6 +129,12 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     @Override
     public void onResume() {
         super.onResume();
+        if (extras != null && extras.containsKey(NotificationMessage.SESSIONM_MESSAGE_DATA_KEY))
+            sessionM.getMessageManager().executePendingNotificationFromPush(extras, 1);
+        if (sessionM.getSessionState().equals(SessionM.State.STARTED_ONLINE) && sessionM.getUser().isRegistered()) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finishAffinity();
+        }
     }
 
     @Override
@@ -214,7 +224,7 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     }
 
     @Override
-    public void onNotificationMessage(SessionM sessionM, Message message) {
+    public void onNotificationMessage(SessionM sessionM, NotificationMessage message) {
 
     }
 

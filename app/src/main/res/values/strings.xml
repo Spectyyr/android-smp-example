@@ -34,6 +34,7 @@
     <array name="settings_array">
         <item>Geofence</item>
         <item>Push Notification</item>
+        <item>Receipt Background Uploading</item>
         <item>Custom Loader</item>
         <item>User Opted Out</item>
         <item>SDK Version: </item>
@@ -84,5 +85,7 @@
     <string name="image_count">Image Count</string>
     <string name="create_time">Create Time:</string>
     <string name="log_in_with_sample_user">Log in with sample user</string>
+    <string name="incomplete_receipt">Incomplete Receipt</string>
+    <string name="incomplete_receipt_description">You have incomplete receipt, do you want to upload them now?</string>
 
 </resources>

@@ -24,6 +24,7 @@ import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
+import com.sessionm.api.identity.data.MMCUser;
 import com.sessionm.api.identity.data.SMSVerification;
 import com.sessionm.api.reward.RewardsListener;
 import com.sessionm.api.reward.RewardsManager;
@@ -164,6 +165,11 @@ public class OfferDetailsActivity extends AppCompatActivity {
             } else {
                 popUpSMSVerificationDialog("send_code");
             }
+
+        }
+
+        @Override
+        public void onMMCUserFetched(MMCUser mmcUser) {
 
         }
 

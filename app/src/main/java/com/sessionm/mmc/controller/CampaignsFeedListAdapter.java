@@ -95,7 +95,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         }
 
         //TODO: set value, might be points
-        valueTextView.setText("10");
+        valueTextView.setText(item.getPoints() + " pts");
 
         //Any customized value in data field
         /*JSONObject data = item.getData();

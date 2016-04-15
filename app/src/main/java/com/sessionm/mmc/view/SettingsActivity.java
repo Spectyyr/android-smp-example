@@ -24,12 +24,13 @@ import com.sessionm.api.SessionM;
 import com.sessionm.api.User;
 import com.sessionm.api.geofence.GeofenceManager;
 import com.sessionm.api.message.data.Message;
+import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.mmc.BuildConfig;
 import com.sessionm.mmc.R;
 import com.sessionm.mmc.util.Utility;
 import com.sessionm.mmc.view.custom.CustomLoaderView;
 
-public class SettingsActivity extends Activity implements SessionListener{
+public class SettingsActivity extends Activity implements SessionListener {
 
     private static final String VERSION_NUM = BuildConfig.VERSION_NAME;
     private static final int BUILD_NUM = BuildConfig.VERSION_CODE;
@@ -37,6 +38,7 @@ public class SettingsActivity extends Activity implements SessionListener{
 
     private boolean _geofenceEnabled;
     private boolean _pushNotificationEnabled;
+    private boolean _backgroundReceiptUploadingEnabled;
     private int _testEventTriggerCount = 0;
 
     private SessionM _sessionM;
@@ -48,6 +50,7 @@ public class SettingsActivity extends Activity implements SessionListener{
 
         _sessionM = SessionM.getInstance();
         _geofenceEnabled = Utility.getLocalStatusBoolean(Utility.GEOFENCE_ENABLED_KEY);
+        _backgroundReceiptUploadingEnabled = Utility.getLocalStatusBoolean(Utility.BACKGROUND_RECEIPT_UPLOADING_ENABLED_KEY);
         _pushNotificationEnabled = _sessionM.getPushNotificationEnabled();
         String[] settingsList = getResources().getStringArray(R.array.settings_array);
         SettingsListArrayAdapter settingsListArrayAdapter = new SettingsListArrayAdapter(this, settingsList);
@@ -84,7 +87,7 @@ public class SettingsActivity extends Activity implements SessionListener{
     }
 
     @Override
-    public void onNotificationMessage(SessionM sessionM, Message message) {
+    public void onNotificationMessage(SessionM sessionM, NotificationMessage message) {
 
     }
 
@@ -136,8 +139,19 @@ public class SettingsActivity extends Activity implements SessionListener{
                         }
                     });
                     break;
-                //Custom loader view
+                //Background receipt uploading
                 case 2:
+                    checkBox.setChecked(_backgroundReceiptUploadingEnabled);
+                    checkBox.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            _backgroundReceiptUploadingEnabled = !_backgroundReceiptUploadingEnabled;
+                            checkBox.setChecked(_backgroundReceiptUploadingEnabled);
+                        }
+                    });
+                    break;
+                //Custom loader view
+                case 3:
                     checkBox.setChecked(SEApplication._sampleCustomLoaderView != null);
                     checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
@@ -152,7 +166,7 @@ public class SettingsActivity extends Activity implements SessionListener{
                     });
                     break;
                 //User opt out
-                case 3:
+                case 4:
                     checkBox.setChecked(_sessionM.getUser().isOptedOut());
                     checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
@@ -165,12 +179,12 @@ public class SettingsActivity extends Activity implements SessionListener{
                     });
                     break;
                 //SDK version
-                case 4:
+                case 5:
                     nameTextView.setText("SDK Version: " + _sessionM.getSDKVersion());
                     checkBox.setVisibility(View.GONE);
                     break;
                 //App version
-                case 5:
+                case 6:
                     nameTextView.setText("App Version: " + VERSION_NUM);
                     checkBox.setVisibility(View.GONE);
                     rowView.setOnClickListener(new View.OnClickListener() {
@@ -183,7 +197,7 @@ public class SettingsActivity extends Activity implements SessionListener{
                     });
                     break;
                 //Log out
-                case 6:
+                case 7:
                     checkBox.setVisibility(View.GONE);
                     rowView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -193,7 +207,7 @@ public class SettingsActivity extends Activity implements SessionListener{
                     });
                     break;
                 //Exit
-                case 7:
+                case 8:
                     checkBox.setVisibility(View.GONE);
                     rowView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -212,5 +226,6 @@ public class SettingsActivity extends Activity implements SessionListener{
         super.onStop();
         Utility.persistStatusBoolean(Utility.PUSH_NOTIFICATION_ENABLED_KEY, _pushNotificationEnabled);
         Utility.persistStatusBoolean(Utility.GEOFENCE_ENABLED_KEY, _geofenceEnabled);
+        Utility.persistStatusBoolean(Utility.BACKGROUND_RECEIPT_UPLOADING_ENABLED_KEY, _backgroundReceiptUploadingEnabled);
     }
 }

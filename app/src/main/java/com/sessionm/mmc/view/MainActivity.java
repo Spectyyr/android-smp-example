@@ -4,6 +4,8 @@
 
 package com.sessionm.mmc.view;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,12 +14,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -25,11 +31,18 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.sessionm.api.AchievementData;
 import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
+import com.sessionm.api.SessionMError;
 import com.sessionm.api.User;
-import com.sessionm.api.message.data.Message;
+import com.sessionm.api.identity.IdentityListener;
+import com.sessionm.api.identity.data.MMCUser;
+import com.sessionm.api.identity.data.SMSVerification;
 import com.sessionm.api.message.feed.ui.ActivityFeedActivity;
+import com.sessionm.api.message.notification.data.NotificationMessage;
+import com.sessionm.api.receipt.ReceiptsManager;
 import com.sessionm.api.receipt.ui.ReceiptActivity;
 import com.sessionm.mmc.R;
+import com.sessionm.mmc.service.ReceiptUploadingService;
+import com.sessionm.mmc.util.Utility;
 
 //Having the MainActivity implement the SessionM SessionListener allows the developer to listen on the SessionM Session State and update the activity:
 //- when the Session.State changes (Starting, Started_online, Started_offline, Stopped, Stopping)
@@ -52,9 +65,12 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     private OrdersFragment ordersFragment;
     private Fragment loyaltyFragment;
     private ActionBar actionBar;
+    private TextView userNameTextView;
+    private TextView userPointsTextView;
     private FloatingActionsMenu actionsMenu;
     private com.getbase.floatingactionbutton.FloatingActionButton newUploadButton;
     private com.getbase.floatingactionbutton.FloatingActionButton linkCardButton;
+    ProgressDialog progressDialog;
 
     SessionM sessionM = SessionM.getInstance();
 
@@ -64,6 +80,12 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         setContentView(R.layout.activity_main);
 
         actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setCustomView(R.layout.mmc_action_bar);
+        }
+        userNameTextView = (TextView) findViewById(R.id.action_bar_name_textview);
+        userPointsTextView = (TextView) findViewById(R.id.action_bar_points_textview);
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         pager.addOnPageChangeListener(this);
@@ -75,8 +97,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             @Override
             public void onClick(View v) {
                 actionsMenu.collapse();
-                sessionM.getReceiptManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
-                startActivity(new Intent(MainActivity.this, ReceiptActivity.class));
+                checkHasIncompleteReceipts();
             }
         });
 
@@ -94,6 +115,18 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         tabs.setViewPager(pager);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sessionM.getIdentityManager().setListener(_identifyListener);
+        sessionM.getIdentityManager().fetchMMCUser();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     private final String[] TITLES = {"Opportunities", "Rewards", "Transactions", "Loyalty Card", "Receipts", "Orders"};
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
@@ -103,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
-
 
 
         @Override
@@ -177,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
                 String errorMessage = SessionM.getInstance().getResponseErrorMessage();
                 Toast.makeText(this, "Authentication Failed! " + errorMessage, Toast.LENGTH_SHORT).show();
             }
+            sessionM.getIdentityManager().fetchMMCUser();
         }
     }
 
@@ -185,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     }
 
     @Override
-    public void onNotificationMessage(SessionM sessionM, Message message) {
+    public void onNotificationMessage(SessionM sessionM, NotificationMessage message) {
 
     }
 
@@ -241,5 +274,75 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    IdentityListener _identifyListener = new IdentityListener() {
+        @Override
+        public void onSMSVerificationMessageSent(SMSVerification smsVerification) {
+
+        }
+
+        @Override
+        public void onSMSVerificationCodeChecked(SMSVerification smsVerification) {
+
+        }
+
+        @Override
+        public void onSMSVerificationFetched(SMSVerification smsVerification) {
+
+        }
+
+        @Override
+        public void onMMCUserFetched(MMCUser mmcUser) {
+            userNameTextView.setText(mmcUser.getFirstName() + " " + mmcUser.getLastName());
+            userPointsTextView.setText(mmcUser.getAvailablePoints() + " pts");
+        }
+
+        @Override
+        public void onFailure(SessionMError sessionMError) {
+
+        }
+    };
+
+    private void checkHasIncompleteReceipts() {
+        ReceiptsManager receiptsManager = SessionM.getInstance().getReceiptManager();
+        if (receiptsManager.hasIncompleteReceipts()) {
+            popUpUploadIncompleteReceiptsDialog();
+        } else {
+            sessionM.getReceiptManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
+            if (Utility.getLocalStatusBoolean(Utility.BACKGROUND_RECEIPT_UPLOADING_ENABLED_KEY))
+                sessionM.getReceiptManager().startUploadReceiptActivityWithoutListener(this, null, null, null);
+            else
+                sessionM.getReceiptManager().startUploadReceiptActivity(this, null, null, null);
+            Intent startIntent = new Intent(MainActivity.this, ReceiptUploadingService.class);
+            startService(startIntent);
+        }
+    }
+
+    protected void popUpUploadIncompleteReceiptsDialog() {
+
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogLayout = inflater.inflate(R.layout.dialog_upload_incomplete_receipts, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialog = new ProgressDialog(MainActivity.this);
+                sessionM.getReceiptManager().uploadIncompleteReceipts();
+                progressDialog.setMessage(getString(R.string.uploading));
+                progressDialog.show();
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(), "Incomplete receipt uploading canceled!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.setView(dialogLayout);
+        dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.show();
     }
 }

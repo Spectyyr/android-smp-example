@@ -101,7 +101,7 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
         }
 
         @Override
-        public void onProgress(int i) {
+        public void onProgress(Receipt receipt) {
 
         }
 

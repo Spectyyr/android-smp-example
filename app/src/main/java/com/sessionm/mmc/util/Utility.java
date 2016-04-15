@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 public class Utility {
     public static final String GEOFENCE_ENABLED_KEY = "geofence_enable";
     public static final String PUSH_NOTIFICATION_ENABLED_KEY = "push_notification_enable";
+    public static final String BACKGROUND_RECEIPT_UPLOADING_ENABLED_KEY = "background_receipt_uploading";
 
     private static Context _context;
     public static SharedPreferences _prefs;
