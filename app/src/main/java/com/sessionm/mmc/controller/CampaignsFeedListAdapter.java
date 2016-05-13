@@ -6,6 +6,9 @@ package com.sessionm.mmc.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.sessionm.api.SessionM;
 import com.sessionm.api.message.data.Message;
@@ -51,51 +55,55 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (_inflater == null)
-            _inflater = (LayoutInflater) _activity
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null)
+        ViewHolder holder;
+        if (convertView == null) {
+            if (_inflater == null)
+                _inflater = (LayoutInflater) _activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = _inflater.inflate(R.layout.feed_item_campaign, null);
 
-        ImageView iconImageView = (ImageView) convertView
-                .findViewById(R.id.promotion_icon_image);
+            holder = new ViewHolder();
+            holder.iconImageView = (ImageView) convertView
+                    .findViewById(R.id.promotion_icon_image);
+            holder.headerTextView = (TextView) convertView.findViewById(R.id.promotion_header_text);
+            holder.subHeaderTextView = (TextView) convertView
+                    .findViewById(R.id.promotion_subheader_text);
+            holder.periodTextView = (TextView) convertView
+                    .findViewById(R.id.promotion_period_text);
+            holder.descriptionTextView = (TextView) convertView
+                    .findViewById(R.id.promotion_detail_text);
+            holder.valueTextView = (TextView) convertView
+                    .findViewById(R.id.promotion_value_text);
+            holder.feedImageView = (ImageView) convertView
+                    .findViewById(R.id.promotion_main_image);
+            holder.videoView = (VideoView) convertView.findViewById(R.id.promotion_main_video);
 
-        TextView headerTextView = (TextView) convertView.findViewById(R.id.promotion_header_text);
-        TextView subHeaderTextView = (TextView) convertView
-                .findViewById(R.id.promotion_subheader_text);
-        TextView periodTextView = (TextView) convertView
-                .findViewById(R.id.promotion_period_text);
-        TextView descriptionTextView = (TextView) convertView
-                .findViewById(R.id.promotion_detail_text);
-        TextView valueTextView = (TextView) convertView
-                .findViewById(R.id.promotion_value_text);
-
-        ImageView feedImageView = (ImageView) convertView
-                .findViewById(R.id.promotion_main_image);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
 
         final FeedMessage item = _messages.get(position);
 
         //Returns the message header
-        headerTextView.setText(item.getHeader());
+        holder.headerTextView.setText(item.getHeader());
 
         //Returns the message sub header
-        subHeaderTextView.setText(item.getSubHeader());
+        holder.subHeaderTextView.setText(item.getSubHeader());
 
         //Returns the message period
-        periodTextView.setText(item.getStartTime() + " - " + item.getEndTime());
+        holder.periodTextView.setText(item.getStartTime() + " - " + item.getEndTime());
 
         //There is no need to draw the description if it was not set
         if (!TextUtils.isEmpty(item.getDescription())) {
             //Returns the Message description, String
-            descriptionTextView.setText(item.getDescription());
-            descriptionTextView.setVisibility(View.VISIBLE);
+            holder.descriptionTextView.setText(item.getDescription());
+            holder.descriptionTextView.setVisibility(View.VISIBLE);
         } else {
-            descriptionTextView.setVisibility(View.GONE);
+            holder.descriptionTextView.setVisibility(View.GONE);
         }
 
         //TODO: set value, might be points
-        valueTextView.setText(item.getPoints() + " pts");
+        holder.valueTextView.setText(item.getPoints() + " pts");
 
         //Any customized value in data field
         /*JSONObject data = item.getData();
@@ -107,19 +115,40 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         //There is no need to draw the image if there is not icon URL
         if (item.getIconURL() != null && !item.getIconURL().equals("null")) {
             //Returns the Message image URL, String
-            Picasso.with(_activity).load(item.getIconURL()).into(iconImageView);
-            iconImageView.setVisibility(View.VISIBLE);
+            Picasso.with(_activity).load(item.getIconURL()).into(holder.iconImageView);
+            holder.iconImageView.setVisibility(View.VISIBLE);
         } else {
-            iconImageView.setVisibility(View.GONE);
+            holder.iconImageView.setVisibility(View.GONE);
         }
 
         //There is no need to draw the image if there is not image URL
-        if (item.getImageURL() != null && !item.getImageURL().equals("null")) {
-            //Returns the Message image URL, String
-            Picasso.with(_activity).load(item.getImageURL()).into(feedImageView);
-            feedImageView.setVisibility(View.VISIBLE);
+        String imageURL = item.getImageURL();
+        if (imageURL != null && !imageURL.equals("null")) {
+            if (imageURL.endsWith("mp4")) {
+                final Uri videoUri = Uri.parse(imageURL);
+                holder.feedImageView.setVisibility(View.GONE);
+                holder.videoView.setVisibility(View.VISIBLE);
+                holder.videoView.setVideoURI(videoUri);
+                holder.videoView.start();
+                holder.videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                    }
+                });
+                holder.videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                    }
+                });
+            } else {
+                //Returns the Message image URL, String
+                Picasso.with(_activity).load(item.getImageURL()).into(holder.feedImageView);
+                holder.feedImageView.setVisibility(View.VISIBLE);
+                holder.videoView.setVisibility(View.GONE);
+            }
         } else {
-            feedImageView.setVisibility(View.GONE);
+            holder.feedImageView.setVisibility(View.GONE);
+            holder.videoView.setVisibility(View.GONE);
         }
 
         convertView.setOnClickListener(new View.OnClickListener() {
@@ -135,8 +164,26 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
     }
 
     //TODO
-    private void showDetails(FeedMessage data){
-        if (data.getActionType().equals(Message.MessageActionType.FULL_SCREEN))
+    private void showDetails(FeedMessage data) {
+        Message.MessageActionType actionType = data.getActionType();
+        if (actionType.equals(Message.MessageActionType.FULL_SCREEN))
             SessionM.getInstance().presentActivity(SessionM.ActivityType.PORTAL, data.getActionURL());
+        //Open deep link in external browser for now
+        else if (actionType.equals(Message.MessageActionType.DEEP_LINK) || actionType.equals(Message.MessageActionType.EXTERNAL_LINK)) {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(data.getActionURL()));
+            _activity.startActivity(i);
+        }
+    }
+
+    private static class ViewHolder {
+        ImageView iconImageView;
+        TextView headerTextView;
+        TextView subHeaderTextView;
+        TextView periodTextView;
+        TextView descriptionTextView;
+        TextView valueTextView;
+        ImageView feedImageView;
+        VideoView videoView;
     }
 }

@@ -56,11 +56,9 @@ public class OrdersFragment extends BaseScrollAndRefreshFragment {
 
         _listView = (ObservableListView) rootView.findViewById(R.id.orders_feed_list);
         _rewardsManager.setListener(_rewardsListener);
-        _orders = _rewardsManager.getOrders();
-        if (_orders != null) {
-            _listAdapter = new OrdersFeedListAdapter(getActivity(), _orders);
-            _listView.setAdapter(_listAdapter);
-        }
+        _orders = new ArrayList<>(_rewardsManager.getOrders());
+        _listAdapter = new OrdersFeedListAdapter(getActivity(), _orders);
+        _listView.setAdapter(_listAdapter);
 
         _listView.setScrollViewCallbacks(this);
         return rootView;

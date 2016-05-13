@@ -67,7 +67,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data android:scheme="sessionm62fb1400638ab32d0050b0d9ae894fe61740c4f5"/>
+                <data android:scheme="sessionma781330c8dbdadda3fe68308ee037c8724a38cd2"/>
             </intent-filter>
         </activity>
         <activity

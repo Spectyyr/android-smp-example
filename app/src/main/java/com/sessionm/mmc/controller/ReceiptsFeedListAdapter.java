@@ -45,36 +45,51 @@ public class ReceiptsFeedListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (_inflater == null)
-            _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        if (convertView == null)
+        ViewHolder holder;
+        if (convertView == null) {
+            if (_inflater == null)
+                _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = _inflater.inflate(R.layout.receipt_row, parent, false);
+            holder = new ViewHolder();
+            holder.textViewName = (TextView) convertView.findViewById(R.id.receipt_name);
+            holder.textViewStatus = (TextView) convertView.findViewById(R.id.receipt_status);
+            holder.textViewInvalidCode = (TextView) convertView.findViewById(R.id.receipt_invalid_code);
+            holder.textViewInvalidReason = (TextView) convertView.findViewById(R.id.receipt_invalid_reason);
+            holder.textViewCreateTime = (TextView) convertView.findViewById(R.id.receipt_create_time);
+            holder.textViewUpdateTime = (TextView) convertView.findViewById(R.id.receipt_update_time);
+            holder.textViewImageCount = (TextView) convertView.findViewById(R.id.receipt_image_count);
 
-        TextView textViewName = (TextView) convertView.findViewById(R.id.receipt_name);
-        TextView textViewStatus = (TextView) convertView.findViewById(R.id.receipt_status);
-        TextView textViewInvalidCode = (TextView) convertView.findViewById(R.id.receipt_invalid_code);
-        TextView textViewInvalidReason = (TextView) convertView.findViewById(R.id.receipt_invalid_reason);
-        TextView textViewCreateTime = (TextView) convertView.findViewById(R.id.receipt_create_time);
-        TextView textViewUpdateTime = (TextView) convertView.findViewById(R.id.receipt_update_time);
-        TextView textViewImageCount = (TextView) convertView.findViewById(R.id.receipt_image_count);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
         if (_receipts != null && _receipts.size() > 0) {
             Receipt a = _receipts.get(position);
-            textViewName.setText("ID: " + a.getID());
-            textViewStatus.setText("Status: " + a.getStatus().toString());
-            textViewCreateTime.setText("Created Time: " + a.getCreatedTime());
-            textViewUpdateTime.setText("Updated Time: " + a.getUpdatedTime());
-            textViewImageCount.setText("Image Count: " + a.getImageCount());
+            holder.textViewName.setText("ID: " + a.getID());
+            holder.textViewStatus.setText("Status: " + a.getStatus().toString());
+            holder.textViewCreateTime.setText("Created Time: " + a.getCreatedTime());
+            holder.textViewUpdateTime.setText("Updated Time: " + a.getUpdatedTime());
+            holder.textViewImageCount.setText("Image Count: " + a.getImageCount());
             if (!a.getStatus().equals(Receipt.ReceiptStatusType.INVALID)) {
-                textViewInvalidCode.setVisibility(View.GONE);
-                textViewInvalidReason.setVisibility(View.GONE);
+                holder.textViewInvalidCode.setVisibility(View.GONE);
+                holder.textViewInvalidReason.setVisibility(View.GONE);
             } else {
-                textViewInvalidCode.setText("Invalid Code: " + a.getInvalidCode());
-                textViewInvalidReason.setText("Invalid Reason: " + a.getInvalidReason());
-                textViewInvalidCode.setVisibility(View.VISIBLE);
-                textViewInvalidReason.setVisibility(View.VISIBLE);
+                holder.textViewInvalidCode.setText("Invalid Code: " + a.getInvalidCode());
+                holder.textViewInvalidReason.setText("Invalid Reason: " + a.getInvalidReason());
+                holder.textViewInvalidCode.setVisibility(View.VISIBLE);
+                holder.textViewInvalidReason.setVisibility(View.VISIBLE);
             }
         }
         return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView textViewName;
+        TextView textViewStatus;
+        TextView textViewInvalidCode;
+        TextView textViewInvalidReason;
+        TextView textViewCreateTime;
+        TextView textViewUpdateTime;
+        TextView textViewImageCount;
     }
 }

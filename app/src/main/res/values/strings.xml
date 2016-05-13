@@ -84,8 +84,17 @@
     <string name="not_now">Not now</string>
     <string name="image_count">Image Count</string>
     <string name="create_time">Create Time:</string>
+    <string name="uploading">Uploading</string>
     <string name="log_in_with_sample_user">Log in with sample user</string>
     <string name="incomplete_receipt">Incomplete Receipt</string>
     <string name="incomplete_receipt_description">You have incomplete receipt, do you want to upload them now?</string>
+    <string name="send_referrals">Send Referrals</string>
+    <string name="referral_id">Referrals ID</string>
+    <string name="filter_by">Filter by</string>
+    <string name="referee">Referee</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="origin">Origin</string>
+    <string name="client_data">Client Data</string>
+    <string name="pending_at">Pending At</string>
 
 </resources>

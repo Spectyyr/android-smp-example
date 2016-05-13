@@ -37,6 +37,7 @@ import com.sessionm.api.reward.data.skill.SkillQuestion;
 import com.sessionm.mmc.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +64,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
         _progressDialog = new ProgressDialog(this);
 
         _rewardsManager = SessionM.getInstance().getRewardsManager();
-        List<Offer> offers = _rewardsManager.getOffers();
+        List<Offer> offers = new ArrayList<>(_rewardsManager.getOffers());
         final String offerID = getOfferIntent.getStringExtra("offer_id");
         for (int i = 0; i < offers.size(); i++) {
             if (offers.get(i).getId().equals(offerID)) {
@@ -152,7 +153,12 @@ public class OfferDetailsActivity extends AppCompatActivity {
         @Override
         public void onSMSVerificationCodeChecked(SMSVerification smsVerification) {
             Toast.makeText(OfferDetailsActivity.this, smsVerification.toString(), Toast.LENGTH_SHORT).show();
-            _rewardsManager.fetchSkillQuestion();
+            if (_currentOffer.isSkillTestRequired()) {
+                _rewardsManager.fetchSkillQuestion();
+            } else {
+                OrderRequest request = makeOrderRequest(null, _currentOffer.getId(), 1);
+                _rewardsManager.placeOrder(request);
+            }
             _progressDialog.show();
         }
 
@@ -160,7 +166,12 @@ public class OfferDetailsActivity extends AppCompatActivity {
         public void onSMSVerificationFetched(SMSVerification smsVerification) {
             _progressDialog.dismiss();
             if (smsVerification.isValid()) {
-                _rewardsManager.fetchSkillQuestion();
+                if (_currentOffer.isSkillTestRequired()) {
+                    _rewardsManager.fetchSkillQuestion();
+                } else {
+                    OrderRequest request = makeOrderRequest(null, _currentOffer.getId(), 1);
+                    _rewardsManager.placeOrder(request);
+                }
                 _progressDialog.show();
             } else {
                 popUpSMSVerificationDialog("send_code");

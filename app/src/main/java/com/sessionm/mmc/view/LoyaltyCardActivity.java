@@ -48,10 +48,7 @@ public class LoyaltyCardActivity extends AppCompatActivity {
 
         _listView = (ListView) findViewById(R.id.retailer_list);
         _loyaltyManager = SessionM.getInstance().getLoyaltyCardsManager();
-        _retailers = _loyaltyManager.getRetailers();
-        if (_retailers == null) {
-            _retailers = new ArrayList<>();
-        }
+        _retailers = new ArrayList<>(_loyaltyManager.getRetailers());
         _listAdapter = new RetailerListAdapter(this, _retailers);
         _listView.setAdapter(_listAdapter);
 

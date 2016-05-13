@@ -87,6 +87,7 @@ public class RewardsFeedListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        ViewHolder holder;
         if (_inflater == null)
             _inflater = (LayoutInflater) _activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -100,30 +101,44 @@ public class RewardsFeedListAdapter extends BaseAdapter {
             headerTextView.setText(offer.getName());
             valueTextView.setText("" + offer.getPoints());
         } else {
-            convertView = _inflater.inflate(R.layout.feed_item_parent_reward, null);
+            if (convertView == null) {
+                convertView = _inflater.inflate(R.layout.feed_item_parent_reward, null);
+                holder = new ViewHolder();
+                holder.headerTextView = (TextView) convertView.findViewById(R.id.reward_header_text);
+                holder.subHeaderTextView = (TextView) convertView.findViewById(R.id.reward_subheader_text);
+                holder.statusTextView = (TextView) convertView.findViewById(R.id.reward_status_text);
+                holder.descriptionTextView = (TextView) convertView.findViewById(R.id.reward_detail_text);
+                holder.valueTextView = (TextView) convertView.findViewById(R.id.reward_value_text);
+                holder.feedImageView = (ImageView) convertView.findViewById(R.id.reward_main_image);
 
-            TextView headerTextView = (TextView) convertView.findViewById(R.id.reward_header_text);
-            TextView subHeaderTextView = (TextView) convertView.findViewById(R.id.reward_subheader_text);
-            TextView statusTextView = (TextView) convertView.findViewById(R.id.reward_status_text);
-            TextView descriptionTextView = (TextView) convertView.findViewById(R.id.reward_detail_text);
-            TextView valueTextView = (TextView) convertView.findViewById(R.id.reward_value_text);
-            ImageView feedImageView = (ImageView) convertView.findViewById(R.id.reward_main_image);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
 
             if (offer.getOptions().size() > 0) {
                 Log.d("TAG", "Size: " + offer.getOptions().size());
             }
 
-            headerTextView.setText(offer.getName());
+            holder.headerTextView.setText(offer.getName());
             String startTime = offer.getStartTime();
             String endTime = offer.getEndTime();
             String out = String.format("%s - %s", startTime != null ? startTime : "", endTime != null ? endTime : "");
-            subHeaderTextView.setText(out);
-            statusTextView.setText(offer.getStatus().toString());
-            descriptionTextView.setText(offer.getDescription() != null ? offer.getDescription() : "");
-            valueTextView.setText("" + offer.getPoints());
-            Picasso.with(_activity).load(offer.getLogo()).into(feedImageView);
+            holder.subHeaderTextView.setText(out);
+            holder.statusTextView.setText(offer.getStatus().toString());
+            holder.descriptionTextView.setText(offer.getDescription() != null ? offer.getDescription() : "");
+            holder.valueTextView.setText("" + offer.getPoints());
+            Picasso.with(_activity).load(offer.getLogo()).into(holder.feedImageView);
         }
         return convertView;
     }
 
+    private static class ViewHolder {
+        TextView headerTextView;
+        TextView subHeaderTextView;
+        TextView statusTextView;
+        TextView descriptionTextView;
+        TextView valueTextView;
+        ImageView feedImageView;
+    }
 }

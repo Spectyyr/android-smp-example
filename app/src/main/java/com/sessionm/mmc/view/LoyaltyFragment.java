@@ -51,10 +51,7 @@ public class LoyaltyFragment extends BaseScrollAndRefreshFragment {
 
         _listView = (ObservableListView) rootView.findViewById(R.id.card_list);
         _loyaltyManager = SessionM.getInstance().getLoyaltyCardsManager();
-        _cards = _loyaltyManager.getLoyaltyCards();
-        if (_cards == null) {
-            _cards = new ArrayList<>();
-        }
+        _cards = new ArrayList<>(_loyaltyManager.getLoyaltyCards());
         _listAdapter = new LoyaltyCardsListAdapter(getActivity(), _cards);
         _listView.setAdapter(_listAdapter);
 

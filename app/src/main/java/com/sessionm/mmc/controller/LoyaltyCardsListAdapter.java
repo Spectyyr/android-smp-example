@@ -55,28 +55,42 @@ public class LoyaltyCardsListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        if (convertView == null) {
+            if (inflater == null)
+                inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (inflater == null)
-            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.card_list_row, null);
 
-        convertView = inflater.inflate(R.layout.card_list_row, null);
-
-        TextView cardNumber = (TextView) convertView.findViewById(R.id.card_number);
-        TextView retailerName = (TextView) convertView.findViewById(R.id.retailer_name);
-        TextView cardID = (TextView) convertView.findViewById(R.id.id);
-        ImageView icon = (ImageView) convertView.findViewById(R.id.retailer_icon);
-        CheckBox linked = (CheckBox)convertView.findViewById(R.id.linked_chb);
+            holder = new ViewHolder();
+            holder.cardNumber = (TextView) convertView.findViewById(R.id.card_number);
+            holder.retailerName = (TextView) convertView.findViewById(R.id.retailer_name);
+            holder.cardID = (TextView) convertView.findViewById(R.id.id);
+            holder.icon = (ImageView) convertView.findViewById(R.id.retailer_icon);
+            holder.linked = (CheckBox) convertView.findViewById(R.id.linked_chb);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
 
         LoyaltyCard card = cards.get(position);
 
-        cardNumber.setText(card.getCardNumber());
-        cardID.setText(card.getID());
-        retailerName.setText(card.getRetailer().getName());
+        holder.cardNumber.setText(card.getCardNumber());
+        holder.cardID.setText(card.getID());
+        holder.retailerName.setText(card.getRetailer().getName());
         if ((card.getRetailer() != null) && (card.getRetailer().getIcon() != null)) {
-            Picasso.with(activity).load(card.getRetailer().getIcon()).into(icon);
+            Picasso.with(activity).load(card.getRetailer().getIcon()).into(holder.icon);
         }
-        linked.setChecked(card.getLinked());
+        holder.linked.setChecked(card.getLinked());
 
         return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView cardNumber;
+        TextView retailerName;
+        TextView cardID;
+        ImageView icon;
+        CheckBox linked;
     }
 }

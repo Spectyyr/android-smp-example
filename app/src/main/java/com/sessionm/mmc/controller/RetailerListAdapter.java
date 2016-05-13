@@ -55,31 +55,43 @@ public class RetailerListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
 
-        if (inflater == null)
-            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (convertView == null) {
+            if (inflater == null)
+                inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.retailer_list_row, null);
+            holder = new ViewHolder();
+            holder.name = (TextView) convertView.findViewById(R.id.retailer);
+            holder.card = (TextView) convertView.findViewById(R.id.card);
+            holder.icon = (ImageView) convertView.findViewById(R.id.retailer_icon);
+            holder.image = (ImageView) convertView.findViewById(R.id.image);
+
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
 
         Retailer row = retailers.get(position);
 
-        convertView = inflater.inflate(R.layout.retailer_list_row, null);
-        TextView name = (TextView)convertView.findViewById(R.id.retailer);
-        TextView card = (TextView)convertView.findViewById(R.id.card);
-
-        ImageView icon = (ImageView)convertView.findViewById(R.id.retailer_icon);
-        ImageView image = (ImageView)convertView.findViewById(R.id.image);
-
-        name.setText(row.getName());
-        card.setText(row.getCard());
+        holder.name.setText(row.getName());
+        holder.card.setText(row.getCard());
 
         String iconURL = row.getIcon();
         if (iconURL != null && !iconURL.equals("null")) {
-            Picasso.with(activity).load(iconURL).into(icon);
-            icon.setVisibility(View.VISIBLE);
+            Picasso.with(activity).load(iconURL).into(holder.icon);
+            holder.icon.setVisibility(View.VISIBLE);
         } else {
-            icon.setVisibility(View.GONE);
+            holder.icon.setVisibility(View.GONE);
         }
 
         return convertView;
     }
 
+    private static class ViewHolder {
+        TextView name;
+        TextView card;
+        ImageView icon;
+        ImageView image;
+    }
 }

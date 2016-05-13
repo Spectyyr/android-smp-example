@@ -59,12 +59,10 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
 
         _listView = (ObservableListView) rootView.findViewById(R.id.message_feed_list);
         _campaignsManager.setListener(_campaignsListener);
-        _messages = _campaignsManager.getFeedMessages();
+        _messages = new ArrayList<>(_campaignsManager.getFeedMessages());
         _offlinePromoTextView = (TextView) rootView.findViewById(R.id.promotion_offline);
-        if (_messages != null) {
-            _listAdapter = new CampaignsFeedListAdapter(getActivity(), _messages);
-            _listView.setAdapter(_listAdapter);
-        }
+        _listAdapter = new CampaignsFeedListAdapter(getActivity(), _messages);
+        _listView.setAdapter(_listAdapter);
         _listView.setScrollViewCallbacks(this);
         updateOfflineLayout();
         return rootView;

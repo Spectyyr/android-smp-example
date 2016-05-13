@@ -58,10 +58,8 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
 
         _listView = (ObservableListView) rootView.findViewById(R.id.rewards_feed_list);
         _rewardsManager.setListener(_rewardsListener);
-        _offers = _rewardsManager.getOffers();
-        if (_offers == null) {
-            _offers = new ArrayList<>();
-        }
+        _offers = new ArrayList<>(_rewardsManager.getOffers());
+
         _listAdapter = new RewardsFeedListAdapter(getActivity(), _offers);
         _listView.setAdapter(_listAdapter);
 
@@ -90,13 +88,13 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
         @Override
         public void onOffersFetched(List<Offer> offers) {
             _swipeRefreshLayout.setRefreshing(false);
-            RewardsFragment.this._offers.clear();
+            _offers.clear();
             if (offers == null) {
                 offers = new ArrayList<>();
             }
-            RewardsFragment.this._offers.addAll(offers);
+            _offers.addAll(offers);
             if (_listAdapter == null) {
-                _listAdapter = new RewardsFeedListAdapter(getActivity(), RewardsFragment.this._offers);
+                _listAdapter = new RewardsFeedListAdapter(getActivity(), _offers);
                 _listView.setAdapter(_listAdapter);
             }
             _listAdapter.notifyDataSetChanged();

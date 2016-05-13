@@ -25,7 +25,7 @@ import com.sessionm.mmc.controller.TransactionsFeedListAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransactionsFragment extends BaseScrollAndRefreshFragment{
+public class TransactionsFragment extends BaseScrollAndRefreshFragment {
 
     private SwipeRefreshLayout _swipeRefreshLayout;
     private ObservableListView _listView;
@@ -51,11 +51,9 @@ public class TransactionsFragment extends BaseScrollAndRefreshFragment{
 
         _listView = (ObservableListView) rootView.findViewById(R.id.transactions_feed_list);
         _transactionsManager.setListener(_transactionListener);
-        _transactions = _transactionsManager.getTransactions();
-        if (_transactions != null) {
-            _listAdapter = new TransactionsFeedListAdapter(getActivity(), _transactions);
-            _listView.setAdapter(_listAdapter);
-        }
+        _transactions = new ArrayList<>(_transactionsManager.getTransactions());
+        _listAdapter = new TransactionsFeedListAdapter(getActivity(), _transactions);
+        _listView.setAdapter(_listAdapter);
         _listView.setScrollViewCallbacks(this);
         return rootView;
     }
@@ -70,6 +68,14 @@ public class TransactionsFragment extends BaseScrollAndRefreshFragment{
         @Override
         public void onTransactionsFetched(List<Transaction> transactions, boolean hasMore) {
             _swipeRefreshLayout.setRefreshing(false);
+
+            if (_transactions == null) {
+                _transactions = new ArrayList<>();
+            } else {
+                _transactions.clear();
+            }
+            _transactions.addAll(transactions);
+
             if (_listAdapter == null) {
                 _listAdapter = new TransactionsFeedListAdapter(getActivity(), _transactions);
                 _listView.setAdapter(_listAdapter);

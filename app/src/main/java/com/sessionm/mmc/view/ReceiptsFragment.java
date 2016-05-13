@@ -52,11 +52,9 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
         _swipeRefreshLayout.setOnRefreshListener(this);
 
         _listView = (ObservableListView) rootView.findViewById(R.id.receipts_feed_list);
-        _receipts = _receiptManager.getReceipts();
-        if (_receipts != null) {
-            _listAdapter = new ReceiptsFeedListAdapter(getActivity(), _receipts);
-            _listView.setAdapter(_listAdapter);
-        }
+        _receipts = new ArrayList<>(_receiptManager.getReceipts());
+        _listAdapter = new ReceiptsFeedListAdapter(getActivity(), _receipts);
+        _listView.setAdapter(_listAdapter);
 
         _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

@@ -45,29 +45,47 @@ public class TransactionsFeedListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (_inflater == null)
-            _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        if (convertView == null)
+        ViewHolder holder;
+        if (convertView == null) {
+            if (_inflater == null)
+                _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = _inflater.inflate(R.layout.transaction_row, parent, false);
-        TextView textView_balance = (TextView) convertView.findViewById(R.id.transaction_balance);
-        TextView textView_date = (TextView) convertView.findViewById(R.id.transaction_date);
-        TextView textView_description = (TextView) convertView.findViewById(R.id.transaction_description);
-        TextView textView_points = (TextView) convertView.findViewById(R.id.transaction_points);
-        TextView textView_record_id = (TextView) convertView.findViewById(R.id.transaction_record_id);
-        TextView textView_transaction = (TextView) convertView.findViewById(R.id.transaction_transaction);
-        TextView textView_source = (TextView) convertView.findViewById(R.id.transaction_source);
-        TextView textView_type = (TextView) convertView.findViewById(R.id.transaction_type);
+            holder = new ViewHolder();
+            holder.textView_balance = (TextView) convertView.findViewById(R.id.transaction_balance);
+            holder.textView_date = (TextView) convertView.findViewById(R.id.transaction_date);
+            holder.textView_description = (TextView) convertView.findViewById(R.id.transaction_description);
+            holder.textView_points = (TextView) convertView.findViewById(R.id.transaction_points);
+            holder.textView_record_id = (TextView) convertView.findViewById(R.id.transaction_record_id);
+            holder.textView_transaction = (TextView) convertView.findViewById(R.id.transaction_transaction);
+            holder.textView_source = (TextView) convertView.findViewById(R.id.transaction_source);
+            holder.textView_type = (TextView) convertView.findViewById(R.id.transaction_type);
+
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
         final Transaction transaction = _transactions.get(position);
-        textView_balance.setText("Balance: " + transaction.getBalance());
-        textView_date.setText("Date: " + transaction.getDate());
-        textView_description.setText("Description: " + transaction.getDescription());
-        textView_points.setText("Points: " + transaction.getPoints());
-        textView_record_id.setText("Record ID: " + transaction.getRecordID());
-        textView_transaction.setText("Transaction: " + transaction.getTransaction());
-        textView_source.setText("Source: " + transaction.getSource());
-        textView_type.setText("Type: " + transaction.getType());
+        holder.textView_balance.setText("Balance: " + transaction.getBalance());
+        holder.textView_date.setText("Date: " + transaction.getDate());
+        holder.textView_description.setText("Description: " + transaction.getDescription());
+        holder.textView_points.setText("Points: " + transaction.getPoints());
+        holder.textView_record_id.setText("Record ID: " + transaction.getRecordID());
+        holder.textView_transaction.setText("Transaction: " + transaction.getTransaction());
+        holder.textView_source.setText("Source: " + transaction.getSource());
+        holder.textView_type.setText("Type: " + transaction.getType());
 
         return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView textView_balance;
+        TextView textView_date;
+        TextView textView_description;
+        TextView textView_points;
+        TextView textView_record_id;
+        TextView textView_transaction;
+        TextView textView_source;
+        TextView textView_type;
     }
 }

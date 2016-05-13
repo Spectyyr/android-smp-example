@@ -39,7 +39,6 @@ import com.sessionm.api.identity.data.SMSVerification;
 import com.sessionm.api.message.feed.ui.ActivityFeedActivity;
 import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.api.receipt.ReceiptsManager;
-import com.sessionm.api.receipt.ui.ReceiptActivity;
 import com.sessionm.mmc.R;
 import com.sessionm.mmc.service.ReceiptUploadingService;
 import com.sessionm.mmc.util.Utility;
@@ -63,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     private TransactionsFragment transactionsFragment;
     private ReceiptsFragment receiptsFragment;
     private OrdersFragment ordersFragment;
+    private ReferralsFragment referralsFragment;
     private Fragment loyaltyFragment;
     private ActionBar actionBar;
     private TextView userNameTextView;
@@ -119,7 +119,10 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     protected void onResume() {
         super.onResume();
         sessionM.getIdentityManager().setListener(_identifyListener);
-        sessionM.getIdentityManager().fetchMMCUser();
+        User user = sessionM.getUser();
+        if (user != null) {
+            sessionM.getIdentityManager().fetchMMCUser();
+        }
     }
 
     @Override
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         super.onDestroy();
     }
 
-    private final String[] TITLES = {"Opportunities", "Rewards", "Transactions", "Loyalty Card", "Receipts", "Orders"};
+    private final String[] TITLES = {"Opportunities", "Rewards", "Transactions", "Loyalty Card", "Receipts", "Orders", "Referrals"};
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
@@ -183,6 +186,10 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
                 case 5:
                     ordersFragment = OrdersFragment.newInstance();
                     fragment = ordersFragment;
+                    break;
+                case 6:
+                    referralsFragment = ReferralsFragment.newInstance();
+                    fragment = referralsFragment;
                     break;
             }
             return fragment;
@@ -294,7 +301,14 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
 
         @Override
         public void onMMCUserFetched(MMCUser mmcUser) {
-            userNameTextView.setText(mmcUser.getFirstName() + " " + mmcUser.getLastName());
+            String firstName = mmcUser.getFirstName();
+            String lastName = mmcUser.getLastName();
+            String name = "Anonymous";
+            if ((firstName != null) || (lastName != null)) {
+                name = String.format("%s %s", firstName != null ? firstName : "",
+                                              lastName != null ? lastName : "");
+            }
+            userNameTextView.setText(name);
             userPointsTextView.setText(mmcUser.getAvailablePoints() + " pts");
         }
 
@@ -329,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 progressDialog = new ProgressDialog(MainActivity.this);
-                sessionM.getReceiptManager().uploadIncompleteReceipts();
+                sessionM.getReceiptManager().uploadIncompleteReceipt(null, false);
                 progressDialog.setMessage(getString(R.string.uploading));
                 progressDialog.show();
             }
