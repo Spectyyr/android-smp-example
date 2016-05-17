@@ -48,8 +48,8 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     private static final String DEBUG_PASSWORD = "";
     private static final boolean DEBUG_MODE = false;
 
-    private static final String SAMPLE_EMAIL = "mmcsampleuser@sessionm.com";
-    private static final String SAMPLE_PASSWORD = "sessionmtest";
+    private static final String DEBUG_TOKEN = "";
+    private static final String SAMPLE_TOKEN = "nKBO9+Ti8QAI9Qn0PPI0vybafJPHLRIUzWb2o3PQq9AdqmGTRnpAa5Q+CDf3mwSnzWmyePm2iNe4i/3ENCuCAQ==";
 
     private SessionM sessionM = SessionM.getInstance();
 
@@ -66,10 +66,11 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
         _emailView = (EditText) findViewById(R.id.sign_in_email);
         _passwordView = (EditText) findViewById(R.id.sign_in_password);
         _loginButton = (Button) findViewById(R.id.email_sign_in_button);
-        TextView loginWithSampleUserTextView = (TextView) findViewById(R.id.email_sign_in_with_sample_user);
+        Button autoTokenLoginButton = (Button) findViewById(R.id.auth_token_login_button);
+        TextView autoTokenLoginWithSampleUserTextView = (TextView) findViewById(R.id.sample_auth_token_login_text);
         TextView notNowTextView = (TextView) findViewById(R.id.email_sign_in_not_now_text);
 
-        loginWithSampleUserTextView.setPaintFlags(loginWithSampleUserTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        autoTokenLoginWithSampleUserTextView.setPaintFlags(autoTokenLoginWithSampleUserTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         notNowTextView.setPaintFlags(notNowTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         if (DEBUG_MODE)
@@ -104,16 +105,23 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
                 InputMethodManager imm = (InputMethodManager) getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(_passwordView.getWindowToken(), 0);
-                attemptLogin(DEBUG_MODE, false);
+                attemptLogin(DEBUG_MODE);
             }
         });
 
         progressDialog = new ProgressDialog(this);
 
-        loginWithSampleUserTextView.setOnClickListener(new OnClickListener() {
+        autoTokenLoginButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                attemptLogin(DEBUG_MODE, true);
+                attemptAuthTokenLogin(DEBUG_TOKEN);
+            }
+        });
+
+        autoTokenLoginWithSampleUserTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attemptAuthTokenLogin(SAMPLE_TOKEN);
             }
         });
 
@@ -142,7 +150,7 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
         super.onPause();
     }
 
-    public void attemptLogin(boolean debug, boolean sampleUser) {
+    public void attemptLogin(boolean debug) {
         _emailView.setError(null);
         _passwordView.setError(null);
 
@@ -152,11 +160,6 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
         if (debug) {
             email = DEBUG_EMAIL;
             password = DEBUG_PASSWORD;
-        }
-
-        if (sampleUser) {
-            email = SAMPLE_EMAIL;
-            password = SAMPLE_PASSWORD;
         }
 
         boolean cancel = false;
@@ -188,6 +191,10 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
             } else
                 Toast.makeText(this, "Network Error!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void attemptAuthTokenLogin(String token) {
+        sessionM.authenticateWithToken("api_auth_token", token);
     }
 
     @Override
