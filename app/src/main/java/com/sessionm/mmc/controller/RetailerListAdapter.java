@@ -17,6 +17,7 @@ import com.sessionm.api.loyaltycard.data.Retailer;
 import com.sessionm.mmc.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //Adapter class to draw Rewards List and handle Offer Image events
@@ -24,28 +25,28 @@ public class RetailerListAdapter extends BaseAdapter {
 
     private Activity activity;
     private LayoutInflater inflater;
-    private List<Retailer> retailers;
+    private List<Retailer> _retailer;
+    private List<Retailer> _searched;
     private String mTAG = "LoyaltyFragment";
 
     public RetailerListAdapter(Activity activity, List<Retailer> cards) {
         this.activity = activity;
-        this.retailers = cards;
+        setRetailers(cards);
     }
 
     @Override
     public int getCount() {
-        return retailers.size();
+        return _searched.size();
     }
 
-    @Override
-    public void notifyDataSetChanged() {
-//                rows.add(new Row(TYPES.CHILD, o));
-        super.notifyDataSetChanged();
+    public void setRetailers(List<Retailer> retailers) {
+        _retailer = retailers;
+        _searched = new ArrayList(retailers);
     }
 
     @Override
     public Object getItem(int location) {
-        return retailers.get(location);
+        return _searched.get(location);
     }
 
     @Override
@@ -72,12 +73,12 @@ public class RetailerListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Retailer row = retailers.get(position);
+        Retailer row = _searched.get(position);
 
         holder.name.setText(row.getName());
         holder.card.setText(row.getCard());
 
-        String iconURL = row.getIcon();
+        String iconURL = row.getIconURL();
         if (iconURL != null && !iconURL.equals("null")) {
             Picasso.with(activity).load(iconURL).into(holder.icon);
             holder.icon.setVisibility(View.VISIBLE);
@@ -86,6 +87,16 @@ public class RetailerListAdapter extends BaseAdapter {
         }
 
         return convertView;
+    }
+
+    public void filter(String s) {
+        _searched.clear();
+        for (Retailer retailer : _retailer) {
+            if (retailer.getName().toLowerCase().contains(s.toLowerCase()) || retailer.getCard().toLowerCase().contains(s.toLowerCase())) {
+                _searched.add(retailer);
+            }
+        }
+        notifyDataSetChanged();
     }
 
     private static class ViewHolder {

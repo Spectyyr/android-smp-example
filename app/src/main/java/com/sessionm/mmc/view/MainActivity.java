@@ -41,6 +41,7 @@ import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.api.receipt.ReceiptsManager;
 import com.sessionm.mmc.R;
 import com.sessionm.mmc.service.ReceiptUploadingService;
+import com.sessionm.mmc.util.LocationObserver;
 import com.sessionm.mmc.util.Utility;
 
 //Having the MainActivity implement the SessionM SessionListener allows the developer to listen on the SessionM Session State and update the activity:
@@ -53,7 +54,8 @@ import com.sessionm.mmc.util.Utility;
 //- if a push notification is available
 //- when a user has unclaimed achievements
 
-public class MainActivity extends AppCompatActivity implements SessionListener, ViewPager.OnPageChangeListener {
+public class MainActivity extends AppCompatActivity implements SessionListener, ViewPager.OnPageChangeListener,
+        CampaignsFragment.OnDeepLinkTappedListener {
 
     private ViewPager pager;
 
@@ -63,7 +65,8 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     private ReceiptsFragment receiptsFragment;
     private OrdersFragment ordersFragment;
     private ReferralsFragment referralsFragment;
-    private Fragment loyaltyFragment;
+    private LoyaltyFragment loyaltyFragment;
+    private PlacesFragment placesFragment;
     private ActionBar actionBar;
     private TextView userNameTextView;
     private TextView userPointsTextView;
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     ProgressDialog progressDialog;
 
     SessionM sessionM = SessionM.getInstance();
+    private LocationObserver locationObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +117,21 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setIndicatorColor(Color.WHITE);
         tabs.setViewPager(pager);
+
+        // Create an instance of location observer.
+        locationObserver = LocationObserver.getInstance(this);
+    }
+
+    @Override
+    protected void onStart() {
+        locationObserver.connect();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        locationObserver.disconnect();
+        super.onStop();
     }
 
     @Override
@@ -130,7 +149,31 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         super.onDestroy();
     }
 
-    private final String[] TITLES = {"Opportunities", "Rewards", "Transactions", "Loyalty Card", "Receipts", "Orders", "Referrals"};
+    private final String[] TITLES = {"Opportunities", "Rewards", "Places", "Transactions", "Loyalty Card", "Receipts", "Orders", "Referrals"};
+
+    //Handle deep link from campaigns fragment
+    @Override
+    public void onDeepLinkTapped(String typeURL) {
+        String actionType = parseActionType(typeURL);
+        switch (actionType.toLowerCase()) {
+            case "place":
+                //2 for places fragment
+                pager.setCurrentItem(2);
+                placesFragment.fetchPlaces(parseActionID(typeURL));
+                break;
+        }
+    }
+
+    //TODO: Hacked with place / ad unit id 9363 for now. Need to parse from real url
+    private String parseActionType(String typeURL) {
+        String actionType = "place";
+        return actionType;
+    }
+
+    private String parseActionID(String typeURL) {
+        String actionID = "9363";
+        return actionID;
+    }
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
@@ -172,22 +215,26 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
                     fragment = rewardsFragment;
                     break;
                 case 2:
+                    placesFragment = PlacesFragment.newInstance();
+                    fragment = placesFragment;
+                    break;
+                case 3:
                     transactionsFragment = TransactionsFragment.newInstance();
                     fragment = transactionsFragment;
                     break;
-                case 3:
+                case 4:
                     loyaltyFragment = LoyaltyFragment.newInstance();
                     fragment = loyaltyFragment;
                     break;
-                case 4:
+                case 5:
                     receiptsFragment = ReceiptsFragment.newInstance();
                     fragment = receiptsFragment;
                     break;
-                case 5:
+                case 6:
                     ordersFragment = OrdersFragment.newInstance();
                     fragment = ordersFragment;
                     break;
-                case 6:
+                case 7:
                     referralsFragment = ReferralsFragment.newInstance();
                     fragment = referralsFragment;
                     break;
@@ -306,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             String name = "Anonymous";
             if ((firstName != null) || (lastName != null)) {
                 name = String.format("%s %s", firstName != null ? firstName : "",
-                                              lastName != null ? lastName : "");
+                        lastName != null ? lastName : "");
             }
             userNameTextView.setText(name);
             userPointsTextView.setText(mmcUser.getAvailablePoints() + " pts");

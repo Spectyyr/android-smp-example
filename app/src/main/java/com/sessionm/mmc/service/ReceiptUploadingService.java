@@ -39,7 +39,7 @@ public class ReceiptUploadingService extends Service {
 
     ReceiptsListener _receiptListener = new ReceiptsListener() {
         @Override
-        public void onReceiptsUploaded(Receipt receipt) {
+        public void onReceiptUploaded(Receipt receipt) {
             sendNotification("Success!", "Your receipt has been uploaded successfully!");
             stopSelf();
         }
@@ -50,7 +50,7 @@ public class ReceiptUploadingService extends Service {
 
         @Override
         public void onProgress(Receipt receipt) {
-            startForegroundNotification("Uploading receipt...", receipt.getImageUrls().size() + " images has been uploaded.");
+            startForegroundNotification("Uploading receipt...", receipt.getImageURLs().size() + " images has been uploaded.");
         }
 
         @Override

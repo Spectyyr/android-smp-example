@@ -4,7 +4,6 @@
 
 package com.sessionm.mmc.controller;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -22,6 +21,7 @@ import com.sessionm.api.SessionM;
 import com.sessionm.api.message.data.Message;
 import com.sessionm.api.message.feed.data.FeedMessage;
 import com.sessionm.mmc.R;
+import com.sessionm.mmc.view.CampaignsFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -29,12 +29,12 @@ import java.util.List;
 //Adapter class to draw the Promotions Message List and handle Feed Message events
 public class CampaignsFeedListAdapter extends BaseAdapter {
 
-    private Activity _activity;
+    private CampaignsFragment _fragment;
     private LayoutInflater _inflater;
     private List<FeedMessage> _messages;
 
-    public CampaignsFeedListAdapter(Activity activity, List<FeedMessage> messages) {
-        _activity = activity;
+    public CampaignsFeedListAdapter(CampaignsFragment fragment, List<FeedMessage> messages) {
+        _fragment = fragment;
         _messages = messages;
     }
 
@@ -58,7 +58,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         ViewHolder holder;
         if (convertView == null) {
             if (_inflater == null)
-                _inflater = (LayoutInflater) _activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                _inflater = (LayoutInflater) _fragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = _inflater.inflate(R.layout.feed_item_campaign, null);
 
             holder = new ViewHolder();
@@ -115,7 +115,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         //There is no need to draw the image if there is not icon URL
         if (item.getIconURL() != null && !item.getIconURL().equals("null")) {
             //Returns the Message image URL, String
-            Picasso.with(_activity).load(item.getIconURL()).into(holder.iconImageView);
+            Picasso.with(_fragment.getActivity()).load(item.getIconURL()).into(holder.iconImageView);
             holder.iconImageView.setVisibility(View.VISIBLE);
         } else {
             holder.iconImageView.setVisibility(View.GONE);
@@ -142,7 +142,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
                 });
             } else {
                 //Returns the Message image URL, String
-                Picasso.with(_activity).load(item.getImageURL()).into(holder.feedImageView);
+                Picasso.with(_fragment.getActivity()).load(item.getImageURL()).into(holder.feedImageView);
                 holder.feedImageView.setVisibility(View.VISIBLE);
                 holder.videoView.setVisibility(View.GONE);
             }
@@ -163,16 +163,13 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    //TODO
+    //TODO Needs to handle more events
     private void showDetails(FeedMessage data) {
         Message.MessageActionType actionType = data.getActionType();
-        if (actionType.equals(Message.MessageActionType.FULL_SCREEN))
+        if (actionType.equals(Message.MessageActionType.FULL_SCREEN)) {
             SessionM.getInstance().presentActivity(SessionM.ActivityType.PORTAL, data.getActionURL());
-        //Open deep link in external browser for now
-        else if (actionType.equals(Message.MessageActionType.DEEP_LINK) || actionType.equals(Message.MessageActionType.EXTERNAL_LINK)) {
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(data.getActionURL()));
-            _activity.startActivity(i);
+        } else if (actionType.equals(Message.MessageActionType.DEEP_LINK) || actionType.equals(Message.MessageActionType.EXTERNAL_LINK)) {
+            _fragment.onItemTapped(data.getActionURL());
         }
     }
 

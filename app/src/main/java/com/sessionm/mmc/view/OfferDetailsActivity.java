@@ -67,7 +67,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
         List<Offer> offers = new ArrayList<>(_rewardsManager.getOffers());
         final String offerID = getOfferIntent.getStringExtra("offer_id");
         for (int i = 0; i < offers.size(); i++) {
-            if (offers.get(i).getId().equals(offerID)) {
+            if (offers.get(i).getID().equals(offerID)) {
                 _currentOffer = offers.get(i);
             }
         }
@@ -77,8 +77,8 @@ public class OfferDetailsActivity extends AppCompatActivity {
             finish();
         } else {
 
-            if (_currentOffer.getLogo() != null && !_currentOffer.getLogo().equals("null")) {
-                Picasso.with(this).load(_currentOffer.getLogo()).into(imageView);
+            if (_currentOffer.getLogoURL() != null && !_currentOffer.getLogoURL().equals("null")) {
+                Picasso.with(this).load(_currentOffer.getLogoURL()).into(imageView);
                 imageView.setVisibility(View.VISIBLE);
             } else {
                 imageView.setVisibility(View.GONE);
@@ -131,7 +131,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
 
         @Override
         public void onSkillQuestionAnswered(SkillChallenge skillChallenge) {
-            OrderRequest request = makeOrderRequest(skillChallenge.getID(), _currentOffer.getId(), 1);
+            OrderRequest request = makeOrderRequest(skillChallenge.getID(), _currentOffer.getID(), 1);
             _rewardsManager.placeOrder(request);
             _progressDialog.show();
         }
@@ -153,10 +153,10 @@ public class OfferDetailsActivity extends AppCompatActivity {
         @Override
         public void onSMSVerificationCodeChecked(SMSVerification smsVerification) {
             Toast.makeText(OfferDetailsActivity.this, smsVerification.toString(), Toast.LENGTH_SHORT).show();
-            if (_currentOffer.isSkillTestRequired()) {
+            if (_currentOffer.isSkillChallengeRequired()) {
                 _rewardsManager.fetchSkillQuestion();
             } else {
-                OrderRequest request = makeOrderRequest(null, _currentOffer.getId(), 1);
+                OrderRequest request = makeOrderRequest(null, _currentOffer.getID(), 1);
                 _rewardsManager.placeOrder(request);
             }
             _progressDialog.show();
@@ -166,10 +166,10 @@ public class OfferDetailsActivity extends AppCompatActivity {
         public void onSMSVerificationFetched(SMSVerification smsVerification) {
             _progressDialog.dismiss();
             if (smsVerification.isValid()) {
-                if (_currentOffer.isSkillTestRequired()) {
+                if (_currentOffer.isSkillChallengeRequired()) {
                     _rewardsManager.fetchSkillQuestion();
                 } else {
-                    OrderRequest request = makeOrderRequest(null, _currentOffer.getId(), 1);
+                    OrderRequest request = makeOrderRequest(null, _currentOffer.getID(), 1);
                     _rewardsManager.placeOrder(request);
                 }
                 _progressDialog.show();
@@ -274,7 +274,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String answer = answerEditText.getText().toString();
                 if (!answer.isEmpty())
-                    _rewardsManager.answerSkillQuestion(_currentOffer.getId(), questionID, answer);
+                    _rewardsManager.answerSkillQuestion(_currentOffer.getID(), questionID, answer);
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override

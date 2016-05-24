@@ -60,8 +60,8 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Receipt receipt = _receipts.get(position);
-                if (receipt.getImageCount() > 0 && receipt.getImageUrls().size() > 0) {
-                    List<String> urls = receipt.getImageUrls();
+                if (receipt.getImageCount() > 0 && receipt.getImageURLs().size() > 0) {
+                    List<String> urls = receipt.getImageURLs();
                     popUpImageDialog(urls);
                 }
             }
@@ -79,7 +79,7 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
 
     ReceiptsListener _receiptListener = new ReceiptsListener() {
         @Override
-        public void onReceiptsUploaded(Receipt receipt) {
+        public void onReceiptUploaded(Receipt receipt) {
         }
 
         @Override

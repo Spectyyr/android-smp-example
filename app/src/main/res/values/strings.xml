@@ -99,5 +99,11 @@
     <string name="pending_at">Pending At</string>
     <string name="authenticate_with_token">Authenticate With Token</string>
     <string name="or">-- or --</string>
+    <string name="store">Store</string>
+    <string name="results">Results</string>
+    <string name="address">Address</string>
+    <string name="distance">Distance</string>
+    <string name="bonus">Bonus</string>
+    <string name="success">Success</string>
 
 </resources>

@@ -4,6 +4,7 @@
 
 package com.sessionm.mmc.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
@@ -40,6 +41,8 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
     //Offline textview
     TextView _offlinePromoTextView;
 
+    OnDeepLinkTappedListener onDeepLinkTappedListener;
+
     private CampaignsManager _campaignsManager = SessionM.getInstance().getCampaignsManager();
 
     public static CampaignsFragment newInstance() {
@@ -61,7 +64,7 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
         _campaignsManager.setListener(_campaignsListener);
         _messages = new ArrayList<>(_campaignsManager.getFeedMessages());
         _offlinePromoTextView = (TextView) rootView.findViewById(R.id.promotion_offline);
-        _listAdapter = new CampaignsFeedListAdapter(getActivity(), _messages);
+        _listAdapter = new CampaignsFeedListAdapter(this, _messages);
         _listView.setAdapter(_listAdapter);
         _listView.setScrollViewCallbacks(this);
         updateOfflineLayout();
@@ -85,7 +88,7 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
             }
             _messages.addAll(list);
             if (_listAdapter == null) {
-                _listAdapter = new CampaignsFeedListAdapter(getActivity(), _messages);
+                _listAdapter = new CampaignsFeedListAdapter(CampaignsFragment.this, _messages);
                 _listView.setAdapter(_listAdapter);
             }
             _listAdapter.notifyDataSetChanged();
@@ -126,6 +129,27 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
         if (state.equals(SessionM.State.STARTED_OFFLINE)) {
             _listView.setVisibility(View.GONE);
             _offlinePromoTextView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void onItemTapped(String type) {
+        onDeepLinkTappedListener.onDeepLinkTapped(type);
+    }
+    
+    //On deep link listener to talk up to activity
+    public interface OnDeepLinkTappedListener {
+        void onDeepLinkTapped(String type);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            onDeepLinkTappedListener = (OnDeepLinkTappedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnDeepLinkTappedListener");
         }
     }
 }

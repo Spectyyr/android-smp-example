@@ -69,7 +69,7 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
                 RewardsFeedListAdapter.Row row = (RewardsFeedListAdapter.Row) _listAdapter.getItem(position);
                 Offer offer = row._offer;
                 Intent offerDetailsIntent = new Intent(getActivity(), OfferDetailsActivity.class);
-                offerDetailsIntent.putExtra("offer_id", offer.getId());
+                offerDetailsIntent.putExtra("offer_id", offer.getID());
                 startActivity(offerDetailsIntent);
             }
         });

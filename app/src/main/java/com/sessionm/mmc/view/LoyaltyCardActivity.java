@@ -7,11 +7,14 @@ package com.sessionm.mmc.view;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,9 +39,11 @@ public class LoyaltyCardActivity extends AppCompatActivity {
     private ListView _listView;
     private LoyaltyCardsManager _loyaltyManager;
     private List<Retailer> _retailers;
+    private EditText _searchView;
     private RetailerListAdapter _listAdapter;
     private Retailer _pickedRetailer;
     private ProgressDialog _progressDialog;
+    private ImageButton _clearSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +51,9 @@ public class LoyaltyCardActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_loyalty_card);
 
+        _searchView = (EditText)findViewById(R.id.search);
         _listView = (ListView) findViewById(R.id.retailer_list);
+        _clearSearch = (ImageButton)findViewById(R.id.clear_search);
         _loyaltyManager = SessionM.getInstance().getLoyaltyCardsManager();
         _retailers = new ArrayList<>(_loyaltyManager.getRetailers());
         _listAdapter = new RetailerListAdapter(this, _retailers);
@@ -60,6 +67,22 @@ public class LoyaltyCardActivity extends AppCompatActivity {
                 rt.setText(_pickedRetailer.getCard());
                 return;
             }
+        });
+
+        _clearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _searchView.setText("");
+            }
+        });
+
+        _searchView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                _listAdapter.filter(s.toString());
+            }
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void afterTextChanged(Editable s) { }
         });
 
         final EditText et = (EditText) findViewById(R.id.card_number);
@@ -112,6 +135,8 @@ public class LoyaltyCardActivity extends AppCompatActivity {
             if (_listAdapter == null) {
                 _listAdapter = new RetailerListAdapter(LoyaltyCardActivity.this, _retailers);
                 _listView.setAdapter(_listAdapter);
+            } else {
+                _listAdapter.setRetailers(_retailers);
             }
             _listAdapter.notifyDataSetChanged();
         }

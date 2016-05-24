@@ -78,10 +78,10 @@ public class LoyaltyCardsListAdapter extends BaseAdapter {
         holder.cardNumber.setText(card.getCardNumber());
         holder.cardID.setText(card.getID());
         holder.retailerName.setText(card.getRetailer().getName());
-        if ((card.getRetailer() != null) && (card.getRetailer().getIcon() != null)) {
-            Picasso.with(activity).load(card.getRetailer().getIcon()).into(holder.icon);
+        if ((card.getRetailer() != null) && (card.getRetailer().getIconURL() != null)) {
+            Picasso.with(activity).load(card.getRetailer().getIconURL()).into(holder.icon);
         }
-        holder.linked.setChecked(card.getLinked());
+        holder.linked.setChecked(card.isLinked());
 
         return convertView;
     }

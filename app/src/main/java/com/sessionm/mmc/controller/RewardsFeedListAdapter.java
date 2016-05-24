@@ -128,7 +128,7 @@ public class RewardsFeedListAdapter extends BaseAdapter {
             holder.statusTextView.setText(offer.getStatus().toString());
             holder.descriptionTextView.setText(offer.getDescription() != null ? offer.getDescription() : "");
             holder.valueTextView.setText("" + offer.getPoints());
-            Picasso.with(_activity).load(offer.getLogo()).into(holder.feedImageView);
+            Picasso.with(_activity).load(offer.getLogoURL()).into(holder.feedImageView);
         }
         return convertView;
     }

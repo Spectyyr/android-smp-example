@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.sessionm.api.receipt.data.Receipt;
+import com.sessionm.api.receipt.data.ReceiptResult;
 import com.sessionm.mmc.R;
 
 import java.util.List;
@@ -58,6 +59,9 @@ public class ReceiptsFeedListAdapter extends BaseAdapter {
             holder.textViewCreateTime = (TextView) convertView.findViewById(R.id.receipt_create_time);
             holder.textViewUpdateTime = (TextView) convertView.findViewById(R.id.receipt_update_time);
             holder.textViewImageCount = (TextView) convertView.findViewById(R.id.receipt_image_count);
+            holder.textViewValidPurchaseDate = (TextView) convertView.findViewById(R.id.receipt_valid_purchase_date);
+            holder.textViewValidStoreName = (TextView) convertView.findViewById(R.id.receipt_valid_store);
+            holder.textViewValidResults = (TextView) convertView.findViewById(R.id.receipt_valid_results);
 
             convertView.setTag(holder);
         } else {
@@ -70,14 +74,27 @@ public class ReceiptsFeedListAdapter extends BaseAdapter {
             holder.textViewCreateTime.setText("Created Time: " + a.getCreatedTime());
             holder.textViewUpdateTime.setText("Updated Time: " + a.getUpdatedTime());
             holder.textViewImageCount.setText("Image Count: " + a.getImageCount());
-            if (!a.getStatus().equals(Receipt.ReceiptStatusType.INVALID)) {
+            if (a.getStatus().equals(Receipt.ReceiptStatus.VALID)) {
+                String resultsString = "";
+                for (ReceiptResult receiptResult : a.getResults()) {
+                    resultsString += "\n" + receiptResult.toString();
+                }
+                holder.textViewValidPurchaseDate.setVisibility(View.VISIBLE);
+                holder.textViewValidStoreName.setVisibility(View.VISIBLE);
+                holder.textViewValidResults.setVisibility(View.VISIBLE);
                 holder.textViewInvalidCode.setVisibility(View.GONE);
                 holder.textViewInvalidReason.setVisibility(View.GONE);
-            } else {
-                holder.textViewInvalidCode.setText("Invalid Code: " + a.getInvalidCode());
-                holder.textViewInvalidReason.setText("Invalid Reason: " + a.getInvalidReason());
+                holder.textViewValidPurchaseDate.setText("Purchase Date: " + a.getReceiptDate());
+                holder.textViewValidStoreName.setText("Store Name: " + a.getStoreName());
+                holder.textViewValidResults.setText("Results: " + resultsString);
+            } else if (a.getStatus().equals(Receipt.ReceiptStatus.INVALID)) {
                 holder.textViewInvalidCode.setVisibility(View.VISIBLE);
                 holder.textViewInvalidReason.setVisibility(View.VISIBLE);
+                holder.textViewValidPurchaseDate.setVisibility(View.GONE);
+                holder.textViewValidStoreName.setVisibility(View.GONE);
+                holder.textViewValidResults.setVisibility(View.GONE);
+                holder.textViewInvalidCode.setText("Invalid Code: " + a.getInvalidCode());
+                holder.textViewInvalidReason.setText("Invalid Reason: " + a.getInvalidReason());
             }
         }
         return convertView;
@@ -91,5 +108,8 @@ public class ReceiptsFeedListAdapter extends BaseAdapter {
         TextView textViewCreateTime;
         TextView textViewUpdateTime;
         TextView textViewImageCount;
+        TextView textViewValidPurchaseDate;
+        TextView textViewValidStoreName;
+        TextView textViewValidResults;
     }
 }
