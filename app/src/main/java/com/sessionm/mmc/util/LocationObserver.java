@@ -53,6 +53,7 @@ public class LocationObserver extends Observable implements GoogleApiClient.Conn
 
     public void disconnect() {
         mGoogleApiClient.disconnect();
+        instance = null;
     }
 
     @Override

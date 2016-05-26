@@ -168,8 +168,8 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         Message.MessageActionType actionType = data.getActionType();
         if (actionType.equals(Message.MessageActionType.FULL_SCREEN)) {
             SessionM.getInstance().presentActivity(SessionM.ActivityType.PORTAL, data.getActionURL());
-        } else if (actionType.equals(Message.MessageActionType.DEEP_LINK) || actionType.equals(Message.MessageActionType.EXTERNAL_LINK)) {
-            _fragment.onItemTapped(data.getActionURL());
+        } else {
+            _fragment.onItemTapped(actionType, data.getActionURL());
         }
     }
 

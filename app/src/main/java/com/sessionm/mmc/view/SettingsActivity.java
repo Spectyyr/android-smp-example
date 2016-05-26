@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sessionm.api.AchievementData;
 import com.sessionm.api.SessionListener;
@@ -34,7 +35,7 @@ public class SettingsActivity extends Activity implements SessionListener {
 
     private static final String VERSION_NUM = BuildConfig.VERSION_NAME;
     private static final int BUILD_NUM = BuildConfig.VERSION_CODE;
-    private static final int TEST_EVENT_TRIGGER_CAP = 10;
+    private static final int TEST_EVENT_TRIGGER_CAP = 5;
 
     private boolean _geofenceEnabled;
     private boolean _pushNotificationEnabled;
@@ -138,6 +139,18 @@ public class SettingsActivity extends Activity implements SessionListener {
                             _sessionM.setPushNotificationEnabled(_pushNotificationEnabled);
                         }
                     });
+
+                    nameTextView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            _testEventTriggerCount++;
+                            if (_testEventTriggerCount == TEST_EVENT_TRIGGER_CAP) {
+                                _sessionM.logAction("trigger_push");
+                                _testEventTriggerCount = 0;
+                                Toast.makeText(SettingsActivity.this, "Trigger push sent!", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
                     break;
                 //Background receipt uploading
                 case 2:
@@ -187,14 +200,7 @@ public class SettingsActivity extends Activity implements SessionListener {
                 case 6:
                     nameTextView.setText("App Version: " + VERSION_NUM);
                     checkBox.setVisibility(View.GONE);
-                    rowView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            _testEventTriggerCount++;
-                            if (_testEventTriggerCount == TEST_EVENT_TRIGGER_CAP)
-                                _sessionM.logAction("push_trigger");
-                        }
-                    });
+
                     break;
                 //Log out
                 case 7:

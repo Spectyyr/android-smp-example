@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,6 +37,7 @@ import com.sessionm.api.User;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.data.MMCUser;
 import com.sessionm.api.identity.data.SMSVerification;
+import com.sessionm.api.message.data.Message;
 import com.sessionm.api.message.feed.ui.ActivityFeedActivity;
 import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.api.receipt.ReceiptsManager;
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     private OrdersFragment ordersFragment;
     private ReferralsFragment referralsFragment;
     private LoyaltyFragment loyaltyFragment;
-    private PlacesFragment placesFragment;
+    private PlacesFragment placesFragment = PlacesFragment.newInstance();
     private ActionBar actionBar;
     private TextView userNameTextView;
     private TextView userPointsTextView;
@@ -153,25 +155,32 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
 
     //Handle deep link from campaigns fragment
     @Override
-    public void onDeepLinkTapped(String typeURL) {
-        String actionType = parseActionType(typeURL);
-        switch (actionType.toLowerCase()) {
-            case "place":
+    public void onDeepLinkTapped(Message.MessageActionType actionType, String actionURL) {
+        if (actionURL == null)
+            return;
+        //Handle external link
+        if (actionType.equals(Message.MessageActionType.EXTERNAL_LINK)) {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(actionURL));
+            startActivity(i);
+            return;
+        }
+        //Handle deep link
+        if (actionType.equals(Message.MessageActionType.DEEP_LINK)) {
+            if (actionURL.contains("places")) {
                 //2 for places fragment
                 pager.setCurrentItem(2);
-                placesFragment.fetchPlaces(parseActionID(typeURL));
-                break;
+                placesFragment.fetchPlaces(parseActionID(actionURL));
+            }
         }
     }
 
-    //TODO: Hacked with place / ad unit id 9363 for now. Need to parse from real url
-    private String parseActionType(String typeURL) {
-        String actionType = "place";
-        return actionType;
-    }
-
     private String parseActionID(String typeURL) {
-        String actionID = "9363";
+        String actionID = "";
+        if (typeURL == null)
+            return actionID;
+        if (typeURL.toLowerCase().contains("filter_by"))
+            actionID = typeURL.toLowerCase().substring(typeURL.indexOf('=') + 1);
         return actionID;
     }
 
@@ -215,7 +224,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
                     fragment = rewardsFragment;
                     break;
                 case 2:
-                    placesFragment = PlacesFragment.newInstance();
                     fragment = placesFragment;
                     break;
                 case 3:
