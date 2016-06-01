@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         String actionID = "";
         if (typeURL == null)
             return actionID;
-        if (typeURL.toLowerCase().contains("filter_by"))
+        if (typeURL.toLowerCase().contains("id"))
             actionID = typeURL.toLowerCase().substring(typeURL.indexOf('=') + 1);
         return actionID;
     }
