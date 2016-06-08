@@ -95,6 +95,12 @@ public class ReceiptsFeedListAdapter extends BaseAdapter {
                 holder.textViewValidResults.setVisibility(View.GONE);
                 holder.textViewInvalidCode.setText("Invalid Code: " + a.getInvalidCode());
                 holder.textViewInvalidReason.setText("Invalid Reason: " + a.getInvalidReason());
+            } else {
+                holder.textViewInvalidCode.setVisibility(View.GONE);
+                holder.textViewInvalidReason.setVisibility(View.GONE);
+                holder.textViewValidPurchaseDate.setVisibility(View.GONE);
+                holder.textViewValidStoreName.setVisibility(View.GONE);
+                holder.textViewValidResults.setVisibility(View.GONE);
             }
         }
         return convertView;

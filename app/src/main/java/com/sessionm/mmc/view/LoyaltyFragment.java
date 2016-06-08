@@ -24,6 +24,7 @@ import com.sessionm.api.SessionMError;
 import com.sessionm.api.loyaltycard.LoyaltyCardsListener;
 import com.sessionm.api.loyaltycard.LoyaltyCardsManager;
 import com.sessionm.api.loyaltycard.data.LoyaltyCard;
+import com.sessionm.api.loyaltycard.data.LoyaltyCardTransaction;
 import com.sessionm.api.loyaltycard.data.Retailer;
 import com.sessionm.api.reward.data.offer.Offer;
 import com.sessionm.mmc.R;
@@ -104,6 +105,11 @@ public class LoyaltyFragment extends BaseScrollAndRefreshFragment {
                 _listView.setAdapter(_listAdapter);
             }
             _listAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onLoyaltyCardTransactionsFetched(List<LoyaltyCardTransaction> list) {
+
         }
 
         @Override

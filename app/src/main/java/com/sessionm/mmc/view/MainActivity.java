@@ -80,10 +80,16 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     SessionM sessionM = SessionM.getInstance();
     private LocationObserver locationObserver;
 
+    NotificationMessage notificationMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Gets pending push notification
+        Bundle extras = getIntent().getExtras();
+        notificationMessage = sessionM.getMessageManager().getPendingNotification(extras);
 
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -139,6 +145,9 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     @Override
     protected void onResume() {
         super.onResume();
+        if (notificationMessage != null) {
+            sessionM.getMessageManager().executePendingNotificationFromPush(notificationMessage);
+        }
         sessionM.getIdentityManager().setListener(_identifyListener);
         User user = sessionM.getUser();
         if (user != null) {
@@ -170,7 +179,8 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             if (actionURL.contains("places")) {
                 //2 for places fragment
                 pager.setCurrentItem(2);
-                placesFragment.fetchPlaces(parseActionID(actionURL));
+                if (placesFragment.isResumed())
+                    placesFragment.fetchPlaces(parseActionID(actionURL));
             }
         }
     }
@@ -179,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         String actionID = "";
         if (typeURL == null)
             return actionID;
-        if (typeURL.toLowerCase().contains("filter_by"))
+        if (typeURL.toLowerCase().contains("id"))
             actionID = typeURL.toLowerCase().substring(typeURL.indexOf('=') + 1);
         return actionID;
     }
@@ -281,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
 
     @Override
     public void onNotificationMessage(SessionM sessionM, NotificationMessage message) {
-
+        handlePushNotification(message);
     }
 
     @Override
@@ -413,5 +423,17 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         dialog.setView(dialogLayout);
         dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.show();
+    }
+
+    private void handlePushNotification(NotificationMessage message) {
+        if (message == null)
+            return;
+        Message.MessageActionType actionType = message.getActionType();
+        String actionURL = message.getActionURL();
+        if (actionType == null || actionURL == null) {
+            return;
+        }
+        onDeepLinkTapped(actionType, actionURL);
+        notificationMessage = null;
     }
 }

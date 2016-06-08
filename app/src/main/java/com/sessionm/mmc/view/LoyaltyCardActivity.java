@@ -25,6 +25,7 @@ import com.sessionm.api.SessionMError;
 import com.sessionm.api.loyaltycard.LoyaltyCardsListener;
 import com.sessionm.api.loyaltycard.LoyaltyCardsManager;
 import com.sessionm.api.loyaltycard.data.LoyaltyCard;
+import com.sessionm.api.loyaltycard.data.LoyaltyCardTransaction;
 import com.sessionm.api.loyaltycard.data.Retailer;
 import com.sessionm.mmc.R;
 import com.sessionm.mmc.controller.RetailerListAdapter;
@@ -155,6 +156,11 @@ public class LoyaltyCardActivity extends AppCompatActivity {
 
         @Override
         public void onLoyaltyCardsFetched(List<LoyaltyCard> cards) {
+        }
+
+        @Override
+        public void onLoyaltyCardTransactionsFetched(List<LoyaltyCardTransaction> list) {
+
         }
 
         @Override

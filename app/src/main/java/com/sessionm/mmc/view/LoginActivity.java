@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,8 @@ import com.sessionm.api.identity.data.SMSVerification;
 import com.sessionm.api.message.data.Message;
 import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.mmc.R;
+
+import java.util.Locale;
 
 public class LoginActivity extends AppCompatActivity implements SessionListener {
 
@@ -128,8 +131,7 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
         notNowTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finishAffinity();
+                startMainActivity();
             }
         });
     }
@@ -137,11 +139,8 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     @Override
     public void onResume() {
         super.onResume();
-        if (extras != null && extras.containsKey(NotificationMessage.SESSIONM_MESSAGE_DATA_KEY))
-            sessionM.getMessageManager().executePendingNotificationFromPush(extras, 1);
         if (sessionM.getSessionState().equals(SessionM.State.STARTED_ONLINE) && sessionM.getUser().isRegistered()) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finishAffinity();
+            startMainActivity();
         }
     }
 
@@ -200,8 +199,7 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     @Override
     public void onSessionStateChanged(SessionM sessionM, SessionM.State state) {
         if (state.equals(SessionM.State.STARTED_ONLINE) && sessionM.getUser().isRegistered()) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finishAffinity();
+            startMainActivity();
         }
     }
 
@@ -217,8 +215,7 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
             SessionM.EnrollmentResultType resultType = SessionM.getInstance().getEnrollmentResult();
             if (resultType.equals(SessionM.EnrollmentResultType.SUCCESS)) {
                 Toast.makeText(this, "Success: " + user.toString(), Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finishAffinity();
+                startMainActivity();
             } else if (resultType.equals(SessionM.EnrollmentResultType.FAILURE)) {
                 Toast.makeText(this, "Failed: " + SessionM.getInstance().getResponseErrorMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -251,6 +248,14 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
 
     public boolean isPasswordValid(CharSequence target) {
         return target.length() > 0;
+    }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        if (extras != null)
+            intent.putExtras(extras);
+        startActivity(intent);
+        finishAffinity();
     }
 }
 
