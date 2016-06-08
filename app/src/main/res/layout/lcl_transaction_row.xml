@@ -19,26 +19,26 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="@dimen/item_row_padding">
-
-            <TextView
-                android:id="@+id/transaction_balance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/balance"/>
+            android:padding="@dimen/item_row_padding"
+            android:background="#e3f8cf">
 
             <TextView
                 android:id="@+id/transaction_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/date"/>
+                android:text="@string/date" />
+
+            <TextView
+                android:id="@+id/transaction_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"/>
 
             <TextView
                 android:id="@+id/transaction_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/description"/>
-
 
             <TextView
                 android:id="@+id/transaction_points"
@@ -47,34 +47,34 @@
                 android:text="@string/points"/>
 
             <TextView
-                android:id="@+id/transaction_record_id"
+                android:id="@+id/transaction_quantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/record_id"/>
+                android:text="@string/quantity"/>
 
             <TextView
-                android:id="@+id/transaction_transaction"
+                android:id="@+id/transaction_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/transaction"/>
+                android:text="@string/price"/>
 
             <TextView
-                android:id="@+id/transaction_source"
+                android:id="@+id/transaction_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/source"/>
+                android:text="@string/id"/>
 
             <TextView
-                android:id="@+id/transaction_type"
+                android:id="@+id/created_at"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/type"/>
+                android:text="@string/create_time"/>
 
             <TextView
-                android:id="@+id/record_model_id"
+                android:id="@+id/updated_at"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/transaction_ref"/>
+                android:text="@string/update_time"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

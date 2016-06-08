@@ -105,5 +105,7 @@
     <string name="distance">Distance</string>
     <string name="bonus">Bonus</string>
     <string name="success">Success</string>
+    <string name="price">Price</string>
+    <string name="transaction_ref">Ref:</string>
 
 </resources>

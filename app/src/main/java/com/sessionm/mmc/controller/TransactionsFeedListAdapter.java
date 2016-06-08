@@ -5,27 +5,55 @@
 package com.sessionm.mmc.controller;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sessionm.api.transaction.data.Transaction;
 import com.sessionm.mmc.R;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 //Adapter class to draw Transaction List
 public class TransactionsFeedListAdapter extends BaseAdapter {
 
     private final Context _context;
-    private final List<Transaction> _transactions;
+    private final List<Transaction> _transactions = new ArrayList<>();
     private LayoutInflater _inflater;
 
-    public TransactionsFeedListAdapter(Context context, List<Transaction> transactions) {
+    public TransactionsFeedListAdapter(Context context) {
         _context = context;
-        _transactions = transactions;
+    }
+
+    public void addTransactions(List<Transaction> transactions, boolean clear) {
+        if (clear) {
+            _transactions.clear();
+        }
+        _transactions.addAll(transactions);
+        Log.d("TAG", "Trans: " + transactions.size() + ", _Trans: " + _transactions.size());
+
+        Collections.sort(_transactions, new Comparator() {
+            @Override
+            public int compare(Object lhs, Object rhs) {
+                String ldate;
+                String rdate;
+                ldate = ((Transaction) lhs).getDate().replace("T", " ").replaceAll("[.][0-9]*Z", "");
+                rdate = ((Transaction) rhs).getDate().replace("T", " ").replaceAll("[.][0-9]+Z$", "");
+                return rdate.compareTo(ldate);
+            }
+        });
+        notifyDataSetChanged();
     }
 
     @Override
@@ -49,8 +77,8 @@ public class TransactionsFeedListAdapter extends BaseAdapter {
         if (convertView == null) {
             if (_inflater == null)
                 _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = _inflater.inflate(R.layout.transaction_row, parent, false);
             holder = new ViewHolder();
+            convertView = _inflater.inflate(R.layout.transaction_row, parent, false);
             holder.textView_balance = (TextView) convertView.findViewById(R.id.transaction_balance);
             holder.textView_date = (TextView) convertView.findViewById(R.id.transaction_date);
             holder.textView_description = (TextView) convertView.findViewById(R.id.transaction_description);
@@ -59,13 +87,14 @@ public class TransactionsFeedListAdapter extends BaseAdapter {
             holder.textView_transaction = (TextView) convertView.findViewById(R.id.transaction_transaction);
             holder.textView_source = (TextView) convertView.findViewById(R.id.transaction_source);
             holder.textView_type = (TextView) convertView.findViewById(R.id.transaction_type);
+            holder.textView_record_model_id = (TextView) convertView.findViewById(R.id.record_model_id);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        final Transaction transaction = _transactions.get(position);
+        final Transaction transaction = (Transaction) _transactions.get(position);
         holder.textView_balance.setText("Balance: " + transaction.getBalance());
         holder.textView_date.setText("Date: " + transaction.getDate());
         holder.textView_description.setText("Description: " + transaction.getDescription());
@@ -74,6 +103,7 @@ public class TransactionsFeedListAdapter extends BaseAdapter {
         holder.textView_transaction.setText("Transaction: " + transaction.getTransaction());
         holder.textView_source.setText("Source: " + transaction.getSource());
         holder.textView_type.setText("Type: " + transaction.getType());
+        holder.textView_record_model_id.setText("Ref: " + transaction.getRecordModelID());
 
         return convertView;
     }
@@ -87,5 +117,6 @@ public class TransactionsFeedListAdapter extends BaseAdapter {
         TextView textView_transaction;
         TextView textView_source;
         TextView textView_type;
+        TextView textView_record_model_id;
     }
 }

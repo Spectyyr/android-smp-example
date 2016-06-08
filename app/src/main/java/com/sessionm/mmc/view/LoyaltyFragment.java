@@ -65,6 +65,7 @@ public class LoyaltyFragment extends BaseScrollAndRefreshFragment {
                         .setTitle("Unlink Loyalty Card");
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        _loyaltyManager.setListener(_loyaltyListener);
                         _loyaltyManager.unlinkLoyaltyCard(row.getID());
                     }
                 });
@@ -90,7 +91,12 @@ public class LoyaltyFragment extends BaseScrollAndRefreshFragment {
         @Override public void onRetailersFetched(List<Retailer> retailers) { }
         @Override public void onLoyaltyCardLinked(String cardNumber) { }
         @Override public void onLoyaltyCardUnlinked() {
-            _loyaltyManager.fetchLinkedCards();
+            fetchLinkedCards();
+        }
+
+        @Override
+        public void onLoyaltyCardTransactionsFetched(List<LoyaltyCardTransaction> list) {
+
         }
 
         @Override public void onLoyaltyCardsFetched(List<LoyaltyCard>cards) {
@@ -108,20 +114,19 @@ public class LoyaltyFragment extends BaseScrollAndRefreshFragment {
         }
 
         @Override
-        public void onLoyaltyCardTransactionsFetched(List<LoyaltyCardTransaction> list) {
-
-        }
-
-        @Override
         public void onFailure(SessionMError sessionMError) {
             _swipeRefreshLayout.setRefreshing(false);
-            _loyaltyManager.fetchLinkedCards();
+            fetchLinkedCards();
         }
     };
 
     @Override
     public void onResume() {
         super.onResume();
+        fetchLinkedCards();
+    }
+
+    private void fetchLinkedCards() {
         _loyaltyManager.setListener(_loyaltyListener);
         _loyaltyManager.fetchLinkedCards();
     }
@@ -134,7 +139,7 @@ public class LoyaltyFragment extends BaseScrollAndRefreshFragment {
 
     @Override
     public void onRefresh() {
-        _loyaltyManager.fetchLinkedCards();
+        fetchLinkedCards();
     }
 
     public static LoyaltyFragment newInstance() {

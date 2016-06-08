@@ -160,7 +160,6 @@ public class LoyaltyCardActivity extends AppCompatActivity {
 
         @Override
         public void onLoyaltyCardTransactionsFetched(List<LoyaltyCardTransaction> list) {
-
         }
 
         @Override
