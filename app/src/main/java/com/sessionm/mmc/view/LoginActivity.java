@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     private static final String DEBUG_PASSWORD = "";
     private static final boolean DEBUG_MODE = false;
 
-    private static final String DEBUG_TOKEN = "";
+    private static final String DEBUG_TOKEN = "6++lLP031DxVrOvLvK7eHktNf03vChbZcb/l/Du+m7/UIYfRtDKAhual4pYDpE9B8z94lPPhQrcjU4vbvbbfKA==";
     private static final String SAMPLE_TOKEN = "djWHM2uVaUy0FtbHIjoYgiGt164ye8pU3A9svuyXKK0xmMk4yrWQYznIBp8NFyjH";
 
     private SessionM sessionM = SessionM.getInstance();

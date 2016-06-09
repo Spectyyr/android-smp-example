@@ -155,19 +155,23 @@ public class PlacesFragment extends BaseScrollAndRefreshFragment implements Obse
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_checkin, null);
         TextView statusTextView = (TextView) dialogLayout.findViewById(R.id.checkin_result_status);
-        TextView bonusTextView = (TextView) dialogLayout.findViewById(R.id.checkin_result_bonus);
+        final TextView bonusTextView = (TextView) dialogLayout.findViewById(R.id.checkin_result_bonus);
 
         if (checkinResult == null) {
             statusTextView.setText("Failed!");
             bonusTextView.setText(errorMessage);
         } else {
             statusTextView.setText("Success!");
+            if (checkinResult.getMessage() == null)
+                bonusTextView.setText("Dismiss");
             bonusTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String actionURL = checkinResult.getActionUrl();
-                    if (actionURL != null)
-                        SessionM.getInstance().presentActivity(SessionM.ActivityType.PORTAL, checkinResult.getActionUrl());
+                    if (checkinResult.getMessage() != null) {
+                        String actionURL = checkinResult.getMessage().getActionURL();
+                        if (actionURL != null)
+                            SessionM.getInstance().presentActivity(SessionM.ActivityType.PORTAL, actionURL);
+                    }
                     dialog.dismiss();
                 }
             });
