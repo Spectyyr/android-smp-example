@@ -5,6 +5,7 @@
 package com.sessionm.mmc.view;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -171,7 +172,10 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         if (actionType.equals(Message.MessageActionType.EXTERNAL_LINK)) {
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(actionURL));
-            startActivity(i);
+            try {
+                startActivity(i);
+            } catch (ActivityNotFoundException e) {
+            }
             return;
         }
         //Handle deep link
@@ -181,6 +185,14 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
                 pager.setCurrentItem(2);
                 if (placesFragment.isResumed())
                     placesFragment.fetchPlaces(parseActionID(actionURL));
+            } else if (actionURL.contains("receipt")) {
+                checkHasIncompleteReceipts();
+            } else if (actionURL.contains("history")) {
+                //3 for redeem fragment
+                pager.setCurrentItem(3);
+            } else if (actionURL.contains("redeem")) {
+                //1 for redeem fragment
+                pager.setCurrentItem(1);
             }
         }
     }
@@ -375,6 +387,11 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             }
             userNameTextView.setText(name);
             userPointsTextView.setText(mmcUser.getAvailablePoints() + " pts");
+        }
+
+        @Override
+        public void onMMCUserUpdated(MMCUser mmcUser) {
+
         }
 
         @Override

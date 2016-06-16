@@ -24,7 +24,6 @@ import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.User;
 import com.sessionm.api.geofence.GeofenceManager;
-import com.sessionm.api.message.data.Message;
 import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.mmc.BuildConfig;
 import com.sessionm.mmc.R;

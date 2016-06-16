@@ -29,7 +29,6 @@ import com.sessionm.api.place.data.Place;
 import com.sessionm.mmc.R;
 import com.sessionm.mmc.controller.PlacesListAdapter;
 import com.sessionm.mmc.util.LocationObserver;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;

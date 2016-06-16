@@ -12,8 +12,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.sessionm.api.place.data.Place;
-import com.sessionm.api.receipt.data.Receipt;
-import com.sessionm.api.receipt.data.ReceiptResult;
 import com.sessionm.mmc.R;
 
 import java.util.List;

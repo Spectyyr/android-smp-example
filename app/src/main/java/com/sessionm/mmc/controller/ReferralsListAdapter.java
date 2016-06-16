@@ -12,7 +12,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.sessionm.api.referral.data.Referral;
-import com.sessionm.api.transaction.data.Transaction;
 import com.sessionm.mmc.R;
 
 import java.util.List;

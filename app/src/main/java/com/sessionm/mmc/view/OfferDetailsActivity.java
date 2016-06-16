@@ -43,7 +43,6 @@ import java.util.Map;
 
 public class OfferDetailsActivity extends AppCompatActivity {
 
-    private static final String DEFAULT_CODE_MESSAGE = "Welcome to SessionM Rewards! Here is your activation code: {code}";
     private Offer _currentOffer;
     private RewardsManager _rewardsManager;
     private ProgressDialog _progressDialog;
@@ -185,6 +184,11 @@ public class OfferDetailsActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onMMCUserUpdated(MMCUser mmcUser) {
+
+        }
+
+        @Override
         public void onFailure(SessionMError error) {
             Toast.makeText(OfferDetailsActivity.this, "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -242,7 +246,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 if (type.equals("send_code")) {
                     String phone = inputEditText.getText().toString();
-                    _identityManager.sendSMSVerificationMessage(phone, DEFAULT_CODE_MESSAGE);
+                    _identityManager.sendSMSVerificationMessage(phone);
                 } else if (type.equals("verify_code")) {
                     String code = inputEditText.getText().toString();
                     _identityManager.checkSMSVerificationCode(code);

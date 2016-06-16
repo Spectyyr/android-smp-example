@@ -5,13 +5,11 @@
 package com.sessionm.mmc.view;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +24,8 @@ import com.sessionm.api.loyaltycard.LoyaltyCardsManager;
 import com.sessionm.api.loyaltycard.data.LoyaltyCard;
 import com.sessionm.api.loyaltycard.data.LoyaltyCardTransaction;
 import com.sessionm.api.loyaltycard.data.Retailer;
-import com.sessionm.api.reward.data.offer.Offer;
 import com.sessionm.mmc.R;
 import com.sessionm.mmc.controller.LoyaltyCardsListAdapter;
-import com.sessionm.mmc.controller.RewardsFeedListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

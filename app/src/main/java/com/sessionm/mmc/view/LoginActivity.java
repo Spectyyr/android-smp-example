@@ -6,21 +6,16 @@ package com.sessionm.mmc.view;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,16 +25,9 @@ import android.widget.Toast;
 import com.sessionm.api.AchievementData;
 import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
 import com.sessionm.api.User;
-import com.sessionm.api.identity.IdentityListener;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.data.SMSVerification;
-import com.sessionm.api.message.data.Message;
 import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.mmc.R;
-
-import java.util.Locale;
 
 public class LoginActivity extends AppCompatActivity implements SessionListener {
 
@@ -51,8 +39,8 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     private static final String DEBUG_PASSWORD = "";
     private static final boolean DEBUG_MODE = false;
 
-    private static final String DEBUG_TOKEN = "6++lLP031DxVrOvLvK7eHktNf03vChbZcb/l/Du+m7/UIYfRtDKAhual4pYDpE9B8z94lPPhQrcjU4vbvbbfKA==";
-    private static final String SAMPLE_TOKEN = "djWHM2uVaUy0FtbHIjoYgiGt164ye8pU3A9svuyXKK0xmMk4yrWQYznIBp8NFyjH";
+    private static final String DEBUG_TOKEN = "TUu7k8kKHDjkAaR+pcMdlY/fJD209X2eJ3goO+p4kp8sKvH7/ItDP2WY/6mo8LEi";
+    private static final String SAMPLE_TOKEN = "4mYlkJkb17QYkA1OJn9eCySw9sI+nUZJLJSxQnNME63bbmNeq75sEEWmEhVEEOEos7YTp5gvvB5ovxdUCmowaQ==";
 
     private SessionM sessionM = SessionM.getInstance();
 
