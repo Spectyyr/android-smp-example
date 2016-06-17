@@ -99,7 +99,7 @@ public class LoyaltyCardActivity extends AppCompatActivity {
                     Toast.makeText(LoyaltyCardActivity.this, "Please enter the Card Number!", Toast.LENGTH_LONG).show();
                     return;
                 }
-                linkCard(_pickedRetailer.getId(), et.getText().toString());
+                linkCard(et.getText().toString(), _pickedRetailer.getId());
                 _progressDialog.setTitle("Linking Card...");
                 _progressDialog.show();
             }
@@ -108,8 +108,8 @@ public class LoyaltyCardActivity extends AppCompatActivity {
         _progressDialog = new ProgressDialog(this);
     }
 
-    private void linkCard(String retailerId, String cardNumber) {
-        _loyaltyManager.linkLoyaltyCard(retailerId, cardNumber);
+    private void linkCard(String cardNumber, String retailerId) {
+        _loyaltyManager.linkLoyaltyCard(cardNumber, retailerId);
     }
 
     @Override
