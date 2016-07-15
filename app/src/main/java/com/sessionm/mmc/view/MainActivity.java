@@ -443,14 +443,13 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     }
 
     private void handlePushNotification(NotificationMessage message) {
-        if (message == null)
-            return;
-        Message.MessageActionType actionType = message.getActionType();
-        String actionURL = message.getActionURL();
-        if (actionType == null || actionURL == null) {
-            return;
+        if (message != null) {
+            Message.MessageActionType actionType = message.getActionType();
+            String actionURL = message.getActionURL();
+            if (actionType != null && actionURL != null) {
+                onDeepLinkTapped(actionType, actionURL);
+            }
         }
-        onDeepLinkTapped(actionType, actionURL);
         notificationMessage = null;
     }
 }

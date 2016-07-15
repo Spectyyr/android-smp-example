@@ -147,6 +147,7 @@ public class SettingsActivity extends Activity implements SessionListener {
                                 _sessionM.logAction("trigger_push");
                                 _testEventTriggerCount = 0;
                                 Toast.makeText(SettingsActivity.this, "Trigger push sent!", Toast.LENGTH_LONG).show();
+                                finish();
                             }
                         }
                     });
