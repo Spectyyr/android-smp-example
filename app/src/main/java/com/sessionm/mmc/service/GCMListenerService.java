@@ -21,50 +21,48 @@ import com.sessionm.mmc.R;
 public class GCMListenerService extends com.sessionm.api.message.notification.service.GCMListenerService {
     public static final int NOTIFICATION_ID = 1;
 
-    @Override
+    /**
+     * Uncomment this block to override sendNotification method for customized push.
+     */
+    /*@Override
     public void sendNotification(NotificationMessage notificationMessage) {
-        if (!SessionM.getInstance().getPushNotificationEnabled())
-            return;
-        
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         //By default and for now, open app
         Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(getPackageName());
-        Bundle messageBundle = new Bundle();
-        messageBundle.putString(NotificationMessage.SESSIONM_MESSAGE_DATA_KEY, notificationMessage.getJsonString());
-        LaunchIntent.putExtras(messageBundle);
+        if (SessionM.getInstance().getMessageManager().shouldUseBundleExtras(this.getApplicationContext())) {
+            Bundle messageBundle = new Bundle();
+            messageBundle.putString(NotificationMessage.SESSIONM_MESSAGE_DATA_KEY, notificationMessage.getJsonString());
+            LaunchIntent.putExtras(messageBundle);
+        }
         PendingIntent openAppIntent = PendingIntent.getActivity(this, 0, LaunchIntent, 0);
 
-        String url = notificationMessage.getActionURL();
-        //TODO: Can add a secondary action.
-        PendingIntent openBrowserIntent = openAppIntent;
-        if (url != null && !url.isEmpty()) {
-            openBrowserIntent = PendingIntent.getActivity(this, 0,
-                    new Intent(Intent.ACTION_VIEW, Uri.parse(url)), 0);
+        //By default, handle deep link.
+        if (!SessionM.getInstance().getMessageManager().shouldUseBundleExtras(this.getApplicationContext())) {
+            String url = notificationMessage.getActionURL();
+            if (url != null && !url.isEmpty()) {
+                openAppIntent = PendingIntent.getActivity(this, 0,
+                        new Intent(Intent.ACTION_VIEW, Uri.parse(url)), 0);
+            }
         }
 
-        //TODO: Can allow user to set icon from server, use app icon for now
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(getNotificationSmallIcon())
                         .setLargeIcon(largeIcon)
-                        .setAutoCancel(true)
                         .setContentTitle(notificationMessage.getTitle())
                         .setContentText(notificationMessage.getBody())
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(notificationMessage.getBody()))
                         .setContentIntent(openAppIntent);
-        //Multiple Action for future use
-        //.addAction(0, pushNotificationData.getAction(), openAppIntent);
-        //if (url != null && !url.isEmpty())
-        //    mBuilder.addAction(0, pushNotificationData.getAction1(), openBrowserIntent);
-        //mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
     private int getNotificationSmallIcon() {
         boolean whiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
         return whiteIcon ? R.mipmap.ic_push : R.mipmap.ic_launcher;
-    }
+    }*/
 }

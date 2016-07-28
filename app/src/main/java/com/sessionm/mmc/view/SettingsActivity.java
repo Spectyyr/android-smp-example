@@ -144,7 +144,7 @@ public class SettingsActivity extends Activity implements SessionListener {
                         public void onClick(View v) {
                             _testEventTriggerCount++;
                             if (_testEventTriggerCount == TEST_EVENT_TRIGGER_CAP) {
-                                _sessionM.logAction("trigger_push");
+                                _sessionM.logAction("test-receipt-failure-push");
                                 _testEventTriggerCount = 0;
                                 Toast.makeText(SettingsActivity.this, "Trigger push sent!", Toast.LENGTH_LONG).show();
                                 finish();

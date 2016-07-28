@@ -401,15 +401,15 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     };
 
     private void checkHasIncompleteReceipts() {
-        ReceiptsManager receiptsManager = SessionM.getInstance().getReceiptManager();
+        ReceiptsManager receiptsManager = SessionM.getInstance().getReceiptsManager();
         if (receiptsManager.hasIncompleteReceipts()) {
             popUpUploadIncompleteReceiptsDialog();
         } else {
-            sessionM.getReceiptManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
+            sessionM.getReceiptsManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
             if (Utility.getLocalStatusBoolean(Utility.BACKGROUND_RECEIPT_UPLOADING_ENABLED_KEY))
-                sessionM.getReceiptManager().startUploadReceiptActivityWithoutListener(this, null, null, null);
+                sessionM.getReceiptsManager().startUploadReceiptActivityWithoutListener(this, null, null, null);
             else
-                sessionM.getReceiptManager().startUploadReceiptActivity(this, null, null, null);
+                sessionM.getReceiptsManager().startUploadReceiptActivity(this, null, null, null);
             Intent startIntent = new Intent(MainActivity.this, ReceiptUploadingService.class);
             startService(startIntent);
         }
@@ -425,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 progressDialog = new ProgressDialog(MainActivity.this);
-                sessionM.getReceiptManager().uploadIncompleteReceipt(null, false);
+                sessionM.getReceiptsManager().uploadIncompleteReceipt(null, false);
                 progressDialog.setMessage(getString(R.string.uploading));
                 progressDialog.show();
             }

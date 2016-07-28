@@ -191,7 +191,7 @@ public class TransactionsFragment extends BaseScrollAndRefreshFragment {
 
         private void getReceiptsWithResult(String resultID) {
             _resultID = resultID;
-            _receiptManager = SessionM.getInstance().getReceiptManager();
+            _receiptManager = SessionM.getInstance().getReceiptsManager();
             _receiptManager.setListener(_receiptListener);
             _receiptManager.fetchReceipts();
         }

@@ -33,7 +33,7 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
     private ReceiptsFeedListAdapter _listAdapter;
     List<Receipt> _receipts;
 
-    ReceiptsManager _receiptManager = SessionM.getInstance().getReceiptManager();
+    ReceiptsManager _receiptManager = SessionM.getInstance().getReceiptsManager();
 
     public static ReceiptsFragment newInstance() {
         ReceiptsFragment f = new ReceiptsFragment();

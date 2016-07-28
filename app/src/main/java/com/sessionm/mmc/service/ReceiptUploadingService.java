@@ -33,7 +33,7 @@ public class ReceiptUploadingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        SessionM.getInstance().getReceiptManager().setListener(_receiptListener);
+        SessionM.getInstance().getReceiptsManager().setListener(_receiptListener);
         return super.onStartCommand(intent, flags, startId);
     }
 
