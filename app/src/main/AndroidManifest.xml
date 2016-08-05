@@ -74,6 +74,8 @@
             android:name="com.sessionm.ui.SessionMVideoActivity"
             android:configChanges="keyboard|orientation|screenSize"/>
 
+        <service android:name="com.sessionm.net.http.DownloadService"/>
+
         <activity
             android:name="com.sessionm.api.message.feed.ui.ActivityFeedActivity"
             android:configChanges="keyboard|orientation|screenSize"/>
@@ -95,7 +97,9 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.sessionm.net.http.DownloadService"/>
+        <receiver android:name="com.sessionm.api.message.notification.service.NotificationReceiver">
+        </receiver>
+
         <service
             android:name="com.sessionm.api.message.notification.service.GCMListenerService"
             android:exported="false">

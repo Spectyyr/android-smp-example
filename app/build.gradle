@@ -8,8 +8,8 @@ android {
         applicationId "com.sessionm.mmc"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
     }
     buildTypes {
         release {
@@ -36,7 +36,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.sessionm.sdk:sessionm-sdk:2.0.1-b5'
+    compile 'com.sessionm.sdk:sessionm-sdk:2.0.1'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta1'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
