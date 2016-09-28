@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.reward.RewardsListener;
@@ -32,9 +34,9 @@ import java.util.List;
 public class OrdersFragment extends BaseScrollAndRefreshFragment {
 
     private SwipeRefreshLayout _swipeRefreshLayout;
-    private ObservableListView _listView;
     private OrdersFeedListAdapter _listAdapter;
     private List<Order> _orders;
+    private RecyclerView _recyclerView;
 
     private RewardsManager _rewardsManager = SessionM.getInstance().getRewardsManager();
 
@@ -53,13 +55,17 @@ public class OrdersFragment extends BaseScrollAndRefreshFragment {
         _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _listView = (ObservableListView) rootView.findViewById(R.id.orders_feed_list);
-        _rewardsManager.setListener(_rewardsListener);
         _orders = new ArrayList<>(_rewardsManager.getOrders());
-        _listAdapter = new OrdersFeedListAdapter(getActivity(), _orders);
-        _listView.setAdapter(_listAdapter);
 
-        _listView.setScrollViewCallbacks(this);
+        _recyclerView = (RecyclerView) rootView.findViewById(R.id.orders_feed_list);
+        _recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        _recyclerView.setLayoutManager(llm);
+        _recyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+        _listAdapter = new OrdersFeedListAdapter(this, _orders);
+        _recyclerView.setAdapter(_listAdapter);
+
         return rootView;
     }
 
@@ -89,10 +95,6 @@ public class OrdersFragment extends BaseScrollAndRefreshFragment {
                 OrdersFragment.this._orders.clear();
             }
             OrdersFragment.this._orders.addAll(orders);
-            if (_listAdapter == null) {
-                _listAdapter = new OrdersFeedListAdapter(getActivity(), OrdersFragment.this._orders);
-                _listView.setAdapter(_listAdapter);
-            }
             _listAdapter.notifyDataSetChanged();
         }
 

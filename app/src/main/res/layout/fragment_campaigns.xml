@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.github.ksoichiro.android.observablescrollview.ObservableListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/message_feed_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -21,11 +21,11 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView
+        android:id="@+id/promotion_offline"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/promotion_offline"
+        android:gravity="center"
         android:text="You are currently Offline. Please try again later."
         android:textStyle="bold"
-        android:gravity="center"
         android:visibility="gone"/>
 </FrameLayout>

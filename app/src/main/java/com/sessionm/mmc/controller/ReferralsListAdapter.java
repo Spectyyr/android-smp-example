@@ -4,70 +4,42 @@
 
 package com.sessionm.mmc.controller;
 
-import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.sessionm.api.referral.data.Referral;
 import com.sessionm.mmc.R;
+import com.sessionm.mmc.view.ReferralsFragment;
 
 import java.util.List;
 
 //Adapter class to draw Transaction List
-public class ReferralsListAdapter extends BaseAdapter {
+public class ReferralsListAdapter extends RecyclerView.Adapter<ReferralsListAdapter.ReferralsViewHolder> {
 
-    private final Context _context;
+    private final ReferralsFragment _fragment;
     private final List<Referral> _referrals;
-    private LayoutInflater _inflater;
 
-    public ReferralsListAdapter(Context context, List<Referral> referrals) {
-        _context = context;
+    public ReferralsListAdapter(ReferralsFragment fragment, List<Referral> referrals) {
+        _fragment = fragment;
         _referrals = referrals;
     }
 
     @Override
-    public int getCount() {
-        return _referrals.size();
+    public ReferralsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View itemView = LayoutInflater.
+                from(parent.getContext()).
+                inflate(R.layout.feed_item_referral, parent, false);
+
+        return new ReferralsViewHolder(itemView);
     }
 
     @Override
-    public Object getItem(int position) {
-        return _referrals.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            if (_inflater == null)
-                _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = _inflater.inflate(R.layout.referral_row, parent, false);
-            holder = new ViewHolder();
-            holder.textView_id = (TextView) convertView.findViewById(R.id.referral_id);
-            holder.textView_status = (TextView) convertView.findViewById(R.id.referral_status);
-            holder.textView_pending_time = (TextView) convertView.findViewById(R.id.referral_pending_time);
-            holder.textView_referee = (TextView) convertView.findViewById(R.id.referral_referee);
-            holder.textView_email = (TextView) convertView.findViewById(R.id.referral_email);
-            holder.textView_number = (TextView) convertView.findViewById(R.id.referral_number);
-            holder.textView_origin = (TextView) convertView.findViewById(R.id.referral_origin);
-            holder.textView_source = (TextView) convertView.findViewById(R.id.referral_source);
-            holder.textView_client_data = (TextView) convertView.findViewById(R.id.referral_client_data);
-
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
+    public void onBindViewHolder(ReferralsViewHolder holder, int position) {
         final Referral referral = _referrals.get(position);
-        holder.textView_id.setText("Referral ID: " + referral.getID());
+        holder.idTextView.setText("Referral ID: " + referral.getID());
         holder.textView_status.setText("Status: " + referral.getStatus());
         holder.textView_pending_time.setText("Pending Time: " + referral.getPendingTime());
         holder.textView_referee.setText("Referee: " + referral.getReferee());
@@ -76,12 +48,20 @@ public class ReferralsListAdapter extends BaseAdapter {
         holder.textView_origin.setText("Origin: " + referral.getOrigin());
         holder.textView_source.setText("Source: " + referral.getSource());
         holder.textView_client_data.setText("Client Data: " + referral.getClientData());
-
-        return convertView;
     }
 
-    private static class ViewHolder {
-        TextView textView_id;
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemCount() {
+        return _referrals.size();
+    }
+
+    public static class ReferralsViewHolder extends RecyclerView.ViewHolder {
+        TextView idTextView;
         TextView textView_status;
         TextView textView_pending_time;
         TextView textView_referee;
@@ -90,5 +70,18 @@ public class ReferralsListAdapter extends BaseAdapter {
         TextView textView_origin;
         TextView textView_source;
         TextView textView_client_data;
+
+        public ReferralsViewHolder(View v) {
+            super(v);
+            idTextView = (TextView) v.findViewById(R.id.referral_id);
+            textView_status = (TextView) v.findViewById(R.id.referral_status);
+            textView_pending_time = (TextView) v.findViewById(R.id.referral_pending_time);
+            textView_referee = (TextView) v.findViewById(R.id.referral_referee);
+            textView_email = (TextView) v.findViewById(R.id.referral_email);
+            textView_number = (TextView) v.findViewById(R.id.referral_number);
+            textView_origin = (TextView) v.findViewById(R.id.referral_origin);
+            textView_source = (TextView) v.findViewById(R.id.referral_source);
+            textView_client_data = (TextView) v.findViewById(R.id.referral_client_data);
+        }
     }
 }

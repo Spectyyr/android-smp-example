@@ -39,25 +39,13 @@ public class BaseScrollAndRefreshFragment extends Fragment implements SwipeRefre
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (ab != null) {
-            if (scrollState == ScrollState.UP) {
-                if (ab.isShowing()) {
-                    ab.hide();
-                }
-            } else if (scrollState == ScrollState.DOWN) {
-                if (!ab.isShowing()) {
-                    ab.show();
-                }
-            }
-        }
     }
 
     @Override
     public void onRefresh() {
     }
 
-    protected void popUpImageDialog(final List<String> urls) {
+    public void popUpImageDialog(final List<String> urls) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
             @Override

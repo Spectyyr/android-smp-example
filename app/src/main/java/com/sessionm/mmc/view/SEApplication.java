@@ -11,7 +11,6 @@ import com.sessionm.api.SessionMActivityLifecycleCallbacks;
 import com.sessionm.mmc.R;
 import com.sessionm.mmc.util.Utility;
 import com.sessionm.mmc.view.custom.CustomLoaderView;
-import com.squareup.leakcanary.LeakCanary;
 
 public class SEApplication extends Application{
     private static final String TAG = "AppController";
@@ -24,8 +23,6 @@ public class SEApplication extends Application{
     public void onCreate() {
         super.onCreate();
         _instance = this;
-
-        LeakCanary.install(this);
 
         Utility.initialize(this);
         //Creates SessionM activity lifecycle callbacks to handle activities lifecycle

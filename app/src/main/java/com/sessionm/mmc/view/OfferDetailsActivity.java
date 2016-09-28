@@ -89,7 +89,8 @@ public class OfferDetailsActivity extends AppCompatActivity {
             if (data != null) {
                 String description = (String) data.get("long_description");
                 String shipping = (String) data.get("shipping_information");
-                subheader.loadDataWithBaseURL("", description.replace("\n", "").replace("\\n", ""), "text/html", "UTF-8", "");
+                if (description != null)
+                    subheader.loadDataWithBaseURL("", description.replace("\n", "").replace("\\n", ""), "text/html", "UTF-8", "");
                 desc.setText(shipping);
             } else {
                 desc.setText(String.format("Status: %s, Type: %s", _currentOffer.getStatus(), _currentOffer.getType()));
@@ -185,6 +186,26 @@ public class OfferDetailsActivity extends AppCompatActivity {
 
         @Override
         public void onMMCUserUpdated(MMCUser mmcUser) {
+
+        }
+
+        @Override
+        public void onMMCUserTagsFetched(Map map) {
+
+        }
+
+        @Override
+        public void onMMCUserTagsUpdated(Map map) {
+
+        }
+
+        @Override
+        public void onMMCUserMetadataFetched(Map map) {
+
+        }
+
+        @Override
+        public void onMMCUserMetadataUpdated(Map map) {
 
         }
 

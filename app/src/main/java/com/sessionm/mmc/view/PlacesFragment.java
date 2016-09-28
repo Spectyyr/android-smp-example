@@ -11,15 +11,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.place.PlacesListener;
@@ -27,7 +28,7 @@ import com.sessionm.api.place.PlacesManager;
 import com.sessionm.api.place.data.CheckinResult;
 import com.sessionm.api.place.data.Place;
 import com.sessionm.mmc.R;
-import com.sessionm.mmc.controller.PlacesListAdapter;
+import com.sessionm.mmc.controller.PlacesRecAdapter;
 import com.sessionm.mmc.util.LocationObserver;
 
 import java.util.ArrayList;
@@ -38,10 +39,10 @@ import java.util.Observer;
 public class PlacesFragment extends BaseScrollAndRefreshFragment implements Observer {
 
     private SwipeRefreshLayout _swipeRefreshLayout;
-    private ObservableListView _listView;
-    private PlacesListAdapter _listAdapter;
+    private PlacesRecAdapter _placesRecAdapter;
     List<Place> _places;
     Location _lastLocation;
+    private RecyclerView _recyclerView;
 
     PlacesManager _placesManager = SessionM.getInstance().getPlacesManager();
 
@@ -59,25 +60,18 @@ public class PlacesFragment extends BaseScrollAndRefreshFragment implements Obse
 
         _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
-
-        _listView = (ObservableListView) rootView.findViewById(R.id.places_list);
+        _placesManager.setListener(_placeListener);
         _places = new ArrayList<>(_placesManager.getPlaces());
-        _listAdapter = new PlacesListAdapter(getActivity(), _places);
-        _listView.setAdapter(_listAdapter);
 
-        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Place place = _places.get(position);
-                if (place.getCheckinStatus().equals(Place.CheckinStatus.CHECKABLE)) {
-                    _placesManager.checkIn(place);
-                } else {
-                    Toast.makeText(getActivity(), "Cannot checkin at this moment!", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        _recyclerView = (RecyclerView) rootView.findViewById(R.id.places_list);
+        _recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        _recyclerView.setLayoutManager(llm);
+        _recyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+        _placesRecAdapter = new PlacesRecAdapter(this, _places);
+        _recyclerView.setAdapter(_placesRecAdapter);
 
-        _listView.setScrollViewCallbacks(this);
         return rootView;
     }
 
@@ -96,11 +90,7 @@ public class PlacesFragment extends BaseScrollAndRefreshFragment implements Obse
                 PlacesFragment.this._places.clear();
             }
             PlacesFragment.this._places.addAll(places);
-            if (_listAdapter == null) {
-                _listAdapter = new PlacesListAdapter(getActivity(), PlacesFragment.this._places);
-                _listView.setAdapter(_listAdapter);
-            }
-            _listAdapter.notifyDataSetChanged();
+            _placesRecAdapter.notifyDataSetChanged();
         }
 
         @Override

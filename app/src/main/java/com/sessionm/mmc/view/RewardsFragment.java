@@ -4,18 +4,18 @@
 
 package com.sessionm.mmc.view;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.reward.RewardsListener;
@@ -25,7 +25,7 @@ import com.sessionm.api.reward.data.order.Order;
 import com.sessionm.api.reward.data.skill.SkillChallenge;
 import com.sessionm.api.reward.data.skill.SkillQuestion;
 import com.sessionm.mmc.R;
-import com.sessionm.mmc.controller.RewardsFeedListAdapter;
+import com.sessionm.mmc.controller.RewardsRecAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +34,9 @@ import java.util.List;
 public class RewardsFragment extends BaseScrollAndRefreshFragment {
 
     private SwipeRefreshLayout _swipeRefreshLayout;
-    private ObservableListView _listView;
-    private RewardsFeedListAdapter _listAdapter;
     private List<Offer> _offers = new ArrayList<>();
+    private RewardsRecAdapter _rewardsRecAdapter;
+    private RecyclerView _recyclerView;
 
     private RewardsManager _rewardsManager = SessionM.getInstance().getRewardsManager();
 
@@ -55,25 +55,17 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
         _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _listView = (ObservableListView) rootView.findViewById(R.id.rewards_feed_list);
+        _recyclerView = (RecyclerView) rootView.findViewById(R.id.rewards_feed_list);
         _rewardsManager.setListener(_rewardsListener);
         _offers = new ArrayList<>(_rewardsManager.getOffers());
+        _recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        _recyclerView.setLayoutManager(llm);
+        _recyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+        _rewardsRecAdapter = new RewardsRecAdapter(this, _offers);
+        _recyclerView.setAdapter(_rewardsRecAdapter);
 
-        _listAdapter = new RewardsFeedListAdapter(getActivity(), _offers);
-        _listView.setAdapter(_listAdapter);
-
-        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RewardsFeedListAdapter.Row row = (RewardsFeedListAdapter.Row) _listAdapter.getItem(position);
-                Offer offer = row._offer;
-                Intent offerDetailsIntent = new Intent(getActivity(), OfferDetailsActivity.class);
-                offerDetailsIntent.putExtra("offer_id", offer.getID());
-                startActivity(offerDetailsIntent);
-            }
-        });
-
-        _listView.setScrollViewCallbacks(this);
         return rootView;
     }
 
@@ -92,11 +84,7 @@ public class RewardsFragment extends BaseScrollAndRefreshFragment {
                 offers = new ArrayList<>();
             }
             _offers.addAll(offers);
-            if (_listAdapter == null) {
-                _listAdapter = new RewardsFeedListAdapter(getActivity(), _offers);
-                _listView.setAdapter(_listAdapter);
-            }
-            _listAdapter.notifyDataSetChanged();
+            _rewardsRecAdapter.notifyDataSetChanged();
         }
 
         @Override

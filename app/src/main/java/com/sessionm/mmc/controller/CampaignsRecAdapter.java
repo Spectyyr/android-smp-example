@@ -4,14 +4,13 @@
 
 package com.sessionm.mmc.controller;
 
-import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -26,61 +25,27 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 //Adapter class to draw the Promotions Message List and handle Feed Message events
-public class CampaignsFeedListAdapter extends BaseAdapter {
+public class CampaignsRecAdapter extends RecyclerView.Adapter<CampaignsRecAdapter.CampaignsViewHolder> {
 
     private CampaignsFragment _fragment;
-    private LayoutInflater _inflater;
     private List<FeedMessage> _messages;
 
-    public CampaignsFeedListAdapter(CampaignsFragment fragment, List<FeedMessage> messages) {
+    public CampaignsRecAdapter(CampaignsFragment fragment, List<FeedMessage> messages) {
         _fragment = fragment;
         _messages = messages;
     }
 
     @Override
-    public int getCount() {
-        return _messages.size();
+    public CampaignsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View itemView = LayoutInflater.
+                from(parent.getContext()).
+                inflate(R.layout.feed_item_campaign, parent, false);
+
+        return new CampaignsViewHolder(itemView);
     }
 
     @Override
-    public Object getItem(int location) {
-        return _messages.get(location);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            if (_inflater == null)
-                _inflater = (LayoutInflater) _fragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = _inflater.inflate(R.layout.feed_item_campaign, null);
-
-            holder = new ViewHolder();
-            holder.iconImageView = (ImageView) convertView
-                    .findViewById(R.id.promotion_icon_image);
-            holder.headerTextView = (TextView) convertView.findViewById(R.id.promotion_header_text);
-            holder.subHeaderTextView = (TextView) convertView
-                    .findViewById(R.id.promotion_subheader_text);
-            holder.periodTextView = (TextView) convertView
-                    .findViewById(R.id.promotion_period_text);
-            holder.descriptionTextView = (TextView) convertView
-                    .findViewById(R.id.promotion_detail_text);
-            holder.valueTextView = (TextView) convertView
-                    .findViewById(R.id.promotion_value_text);
-            holder.feedImageView = (ImageView) convertView
-                    .findViewById(R.id.promotion_main_image);
-            holder.videoView = (VideoView) convertView.findViewById(R.id.promotion_main_video);
-
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
+    public void onBindViewHolder(CampaignsViewHolder holder, int position) {
         final FeedMessage item = _messages.get(position);
 
         //Returns the message header
@@ -102,7 +67,11 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         }
 
         //TODO: set value, might be points
-        holder.valueTextView.setText(item.getPoints() + " pts");
+        int points = item.getPoints();
+        if (points == 0)
+            holder.valueTextView.setVisibility(View.GONE);
+        else
+            holder.valueTextView.setText(points + " pts");
 
         //Any customized value in data field
         /*JSONObject data = item.getData();
@@ -150,7 +119,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
             holder.videoView.setVisibility(View.GONE);
         }
 
-        convertView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 item.notifyTapped();
@@ -159,7 +128,16 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         });
 
         item.notifySeen();
-        return convertView;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemCount() {
+        return _messages.size();
     }
 
     //TODO Needs to handle more events
@@ -172,7 +150,7 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         }
     }
 
-    private static class ViewHolder {
+    public static class CampaignsViewHolder extends RecyclerView.ViewHolder {
         ImageView iconImageView;
         TextView headerTextView;
         TextView subHeaderTextView;
@@ -181,5 +159,17 @@ public class CampaignsFeedListAdapter extends BaseAdapter {
         TextView valueTextView;
         ImageView feedImageView;
         VideoView videoView;
+
+        public CampaignsViewHolder(View v) {
+            super(v);
+            iconImageView = (ImageView) v.findViewById(R.id.promotion_icon_image);
+            headerTextView = (TextView) v.findViewById(R.id.promotion_header_text);
+            subHeaderTextView = (TextView) v.findViewById(R.id.promotion_subheader_text);
+            periodTextView = (TextView) v.findViewById(R.id.promotion_period_text);
+            descriptionTextView = (TextView) v.findViewById(R.id.promotion_detail_text);
+            valueTextView = (TextView) v.findViewById(R.id.promotion_value_text);
+            feedImageView = (ImageView) v.findViewById(R.id.promotion_main_image);
+            videoView = (VideoView) v.findViewById(R.id.promotion_main_video);
+        }
     }
 }

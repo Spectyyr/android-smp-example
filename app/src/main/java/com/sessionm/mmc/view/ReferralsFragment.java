@@ -8,19 +8,21 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.referral.ReferralsListener;
 import com.sessionm.api.referral.ReferralsManager;
 import com.sessionm.api.referral.data.Referral;
+import com.sessionm.api.referral.data.ReferralError;
 import com.sessionm.api.referral.data.ReferralRequest;
 import com.sessionm.mmc.R;
 import com.sessionm.mmc.controller.ReferralsListAdapter;
@@ -31,10 +33,9 @@ import java.util.List;
 public class ReferralsFragment extends BaseScrollAndRefreshFragment {
     List<Referral> _referrals = new ArrayList<>();
     private SwipeRefreshLayout _swipeRefreshLayout;
-    private ObservableListView _listView;
-    private EditText referralIDEditText;
-    ReferralsListAdapter adapter;
+    private ReferralsListAdapter _referralsListAdapter;
     ReferralsManager _referralsManager;
+    private RecyclerView _recyclerView;
 
     public static ReferralsFragment newInstance() {
         ReferralsFragment f = new ReferralsFragment();
@@ -50,23 +51,19 @@ public class ReferralsFragment extends BaseScrollAndRefreshFragment {
 
         _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.referral_swipelayout);
         _swipeRefreshLayout.setOnRefreshListener(this);
-        _listView = (ObservableListView) rootView.findViewById(R.id.referrals_list);
 
-        referralIDEditText = (EditText) rootView.findViewById(R.id.referral_id_edittext);
         _referralsManager = SessionM.getInstance().getReferralsManager();
         _referrals = new ArrayList<>(_referralsManager.getReferrals());
-        adapter = new ReferralsListAdapter(getActivity(), _referrals);
-        _listView.setAdapter(adapter);
 
-        Button createBtn = (Button) rootView.findViewById(R.id.referral_create_btn);
-        createBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popUpCreateReferralDialog();
-            }
-        });
+        _recyclerView = (RecyclerView) rootView.findViewById(R.id.referrals_list);
+        _recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        _recyclerView.setLayoutManager(llm);
+        _recyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+        _referralsListAdapter = new ReferralsListAdapter(this, _referrals);
+        _recyclerView.setAdapter(_referralsListAdapter);
 
-        _listView.setScrollViewCallbacks(this);
         return rootView;
     }
 
@@ -77,7 +74,7 @@ public class ReferralsFragment extends BaseScrollAndRefreshFragment {
         }
 
         @Override
-        public void onReferralsSent(List<Referral> referrals) {
+        public void onReferralsSent(List<Referral> list, List<ReferralError> list1, SessionMError sessionMError) {
             Toast.makeText(getActivity(), "Success!", Toast.LENGTH_SHORT).show();
             _referralsManager.fetchReferrals();
         }
@@ -99,16 +96,11 @@ public class ReferralsFragment extends BaseScrollAndRefreshFragment {
     @Override
     public void onPause() {
         super.onPause();
-        _referralsManager.setListener(null);
     }
 
     @Override
     public void onRefresh() {
-        String id = referralIDEditText.getText().toString();
-        if (!id.isEmpty())
-            _referralsManager.fetchReferralWithID(id);
-        else
-            _referralsManager.fetchReferrals();
+        _referralsManager.fetchReferrals();
     }
 
     private void refreshList(List<Referral> referrals) {
@@ -119,14 +111,10 @@ public class ReferralsFragment extends BaseScrollAndRefreshFragment {
             _referrals.clear();
         }
         _referrals.addAll(referrals);
-        if (adapter == null) {
-            adapter = new ReferralsListAdapter(getActivity(), _referrals);
-            _listView.setAdapter(adapter);
-        }
-        adapter.notifyDataSetChanged();
+        _referralsListAdapter.notifyDataSetChanged();
     }
 
-    private void popUpCreateReferralDialog() {
+    public void popUpCreateReferralDialog() {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_create_referral, null);
 
@@ -163,6 +151,8 @@ public class ReferralsFragment extends BaseScrollAndRefreshFragment {
                 dialog.dismiss();
             }
         });
+
+        builder.setTitle("Refer A Friend");
 
         AlertDialog dialog = builder.create();
 

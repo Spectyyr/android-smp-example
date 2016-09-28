@@ -16,45 +16,40 @@
                   android:padding="@dimen/item_row_padding">
 
         <TextView
-            android:id="@+id/order_id"
+            android:id="@+id/place_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/id"/>
 
         <TextView
-            android:id="@+id/order_name"
+            android:id="@+id/place_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/name"/>
 
         <TextView
-            android:id="@+id/order_quantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/quantity"/>
-
-        <TextView
-            android:id="@+id/order_points"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/points"/>
-
-        <TextView
-            android:id="@+id/order_status"
+            android:id="@+id/place_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/status"/>
 
         <TextView
-            android:id="@+id/order_created_time"
+            android:id="@+id/place_points"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/upload_time"/>
+            android:text="@string/points"/>
 
         <TextView
-            android:id="@+id/order_description"
+            android:id="@+id/place_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/description"/>
+            android:text="@string/address"/>
+
+        <TextView
+            android:id="@+id/place_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/distance"/>
+
     </LinearLayout>
 </android.support.v7.widget.CardView>

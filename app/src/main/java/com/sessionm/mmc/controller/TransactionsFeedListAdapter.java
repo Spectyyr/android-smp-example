@@ -4,31 +4,49 @@
 
 package com.sessionm.mmc.controller;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.sessionm.api.SessionM;
+import com.sessionm.api.SessionMError;
+import com.sessionm.api.loyaltycard.LoyaltyCardsListener;
+import com.sessionm.api.loyaltycard.LoyaltyCardsManager;
+import com.sessionm.api.loyaltycard.data.LoyaltyCard;
+import com.sessionm.api.loyaltycard.data.LoyaltyCardTransaction;
+import com.sessionm.api.loyaltycard.data.Retailer;
+import com.sessionm.api.receipt.ReceiptsListener;
+import com.sessionm.api.receipt.ReceiptsManager;
+import com.sessionm.api.receipt.data.Receipt;
+import com.sessionm.api.receipt.data.ReceiptResult;
 import com.sessionm.api.transaction.data.Transaction;
 import com.sessionm.mmc.R;
+import com.sessionm.mmc.view.TransactionsFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 //Adapter class to draw Transaction List
-public class TransactionsFeedListAdapter extends BaseAdapter {
+public class TransactionsFeedListAdapter extends RecyclerView.Adapter<TransactionsFeedListAdapter.TransactionsViewHolder> {
 
-    private final Context _context;
     private final List<Transaction> _transactions = new ArrayList<>();
-    private LayoutInflater _inflater;
+    private TransactionsFragment _fragment;
 
-    public TransactionsFeedListAdapter(Context context) {
-        _context = context;
+    public TransactionsFeedListAdapter(TransactionsFragment fragment) {
+        _fragment = fragment;
     }
 
     public void addTransactions(List<Transaction> transactions, boolean clear) {
@@ -52,13 +70,33 @@ public class TransactionsFeedListAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getCount() {
-        return _transactions.size();
+    public TransactionsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View itemView = LayoutInflater.
+                from(parent.getContext()).
+                inflate(R.layout.feed_item_transaction, parent, false);
+
+        return new TransactionsViewHolder(itemView);
     }
 
     @Override
-    public Object getItem(int position) {
-        return _transactions.get(position);
+    public void onBindViewHolder(TransactionsViewHolder holder, int position) {
+        final Transaction transaction = _transactions.get(position);
+        holder.balanceTextView.setText("Balance: " + transaction.getBalance());
+        holder.dateTextView.setText("Date: " + transaction.getDate());
+        holder.descriptionTextView.setText("Description: " + transaction.getDescription());
+        holder.pointsTextView.setText("Points: " + transaction.getPoints());
+        holder.recordIDTextView.setText("Record ID: " + transaction.getRecordID());
+        holder.transactionTextView.setText("Transaction: " + transaction.getTransaction());
+        holder.sourceTextView.setText("Source: " + transaction.getSource());
+        holder.typeTextView.setText("Type: " + transaction.getType());
+        holder.recordModelIDTextView.setText("Ref: " + transaction.getRecordModelID());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                (new ShowDetails(_fragment.getActivity())).showDetail(transaction);
+            }
+        });
     }
 
     @Override
@@ -67,51 +105,156 @@ public class TransactionsFeedListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            if (_inflater == null)
-                _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            holder = new ViewHolder();
-            convertView = _inflater.inflate(R.layout.transaction_row, parent, false);
-            holder.textView_balance = (TextView) convertView.findViewById(R.id.transaction_balance);
-            holder.textView_date = (TextView) convertView.findViewById(R.id.transaction_date);
-            holder.textView_description = (TextView) convertView.findViewById(R.id.transaction_description);
-            holder.textView_points = (TextView) convertView.findViewById(R.id.transaction_points);
-            holder.textView_record_id = (TextView) convertView.findViewById(R.id.transaction_record_id);
-            holder.textView_transaction = (TextView) convertView.findViewById(R.id.transaction_transaction);
-            holder.textView_source = (TextView) convertView.findViewById(R.id.transaction_source);
-            holder.textView_type = (TextView) convertView.findViewById(R.id.transaction_type);
-            holder.textView_record_model_id = (TextView) convertView.findViewById(R.id.record_model_id);
-
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-        final Transaction transaction = (Transaction) _transactions.get(position);
-        holder.textView_balance.setText("Balance: " + transaction.getBalance());
-        holder.textView_date.setText("Date: " + transaction.getDate());
-        holder.textView_description.setText("Description: " + transaction.getDescription());
-        holder.textView_points.setText("Points: " + transaction.getPoints());
-        holder.textView_record_id.setText("Record ID: " + transaction.getRecordID());
-        holder.textView_transaction.setText("Transaction: " + transaction.getTransaction());
-        holder.textView_source.setText("Source: " + transaction.getSource());
-        holder.textView_type.setText("Type: " + transaction.getType());
-        holder.textView_record_model_id.setText("Ref: " + transaction.getRecordModelID());
-
-        return convertView;
+    public int getItemCount() {
+        return _transactions.size();
     }
 
-    private static class ViewHolder {
-        TextView textView_balance;
-        TextView textView_date;
-        TextView textView_description;
-        TextView textView_points;
-        TextView textView_record_id;
-        TextView textView_transaction;
-        TextView textView_source;
-        TextView textView_type;
-        TextView textView_record_model_id;
+    public static class TransactionsViewHolder extends RecyclerView.ViewHolder {
+        TextView balanceTextView;
+        TextView dateTextView;
+        TextView descriptionTextView;
+        TextView pointsTextView;
+        TextView recordIDTextView;
+        TextView transactionTextView;
+        TextView sourceTextView;
+        TextView typeTextView;
+        TextView recordModelIDTextView;
+
+
+        public TransactionsViewHolder(View v) {
+            super(v);
+            balanceTextView = (TextView) v.findViewById(R.id.transaction_balance);
+            dateTextView = (TextView) v.findViewById(R.id.transaction_date);
+            descriptionTextView = (TextView) v.findViewById(R.id.transaction_description);
+            pointsTextView = (TextView) v.findViewById(R.id.transaction_points);
+            recordIDTextView = (TextView) v.findViewById(R.id.transaction_record_id);
+            transactionTextView = (TextView) v.findViewById(R.id.transaction_transaction);
+            sourceTextView = (TextView) v.findViewById(R.id.transaction_source);
+            typeTextView = (TextView) v.findViewById(R.id.transaction_type);
+            recordModelIDTextView = (TextView) v.findViewById(R.id.record_model_id);
+        }
+    }
+
+    private static class ShowDetails {
+        private Activity _activity;
+        private ListView _lv;
+        private ArrayAdapter<String> _la;
+        private LoyaltyCardsManager _lclManager;
+        private String _transactionID;
+        private String _resultID;
+        private ReceiptsManager _receiptManager;
+
+        public ShowDetails(Activity activity) {
+            this._activity = activity;
+        }
+
+        void showDetail(Transaction transaction) {
+            if (transaction.getType() == Transaction.TransactionPointsType.RECEIPT) {
+                showDialog();
+                getReceiptsWithResult(transaction.getRecordModelID());
+            } else if (transaction.getType() == Transaction.TransactionPointsType.LOYALTY_CARD) {
+                getLCLTransactionsWithID(transaction.getRecordModelID());
+                showDialog();
+            }
+        }
+
+        private void showDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
+            builder.setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Log.d("TAG", "button dismiss");
+                }
+            });
+            AlertDialog dialog = builder.create();
+            LayoutInflater inflater = _activity.getLayoutInflater();
+            View dialogLayout = inflater.inflate(R.layout.transaction_linked, null);
+
+            _lv = (ListView) dialogLayout.findViewById(R.id.transaction_details);
+            _la = new ArrayAdapter<>(_activity, android.R.layout.simple_list_item_1, new LinkedList<String>());
+            _lv.setAdapter(_la);
+            _lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d("TAG", "Item Clicked");
+                }
+            });
+
+            dialog.setView(dialogLayout);
+            dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
+            dialog.show();
+        }
+
+        private void getLCLTransactionsWithID(String transactionID) {
+            _transactionID = transactionID;
+            _lclManager = SessionM.getInstance().getLoyaltyCardsManager();
+            _lclManager.setListener(_lclListener);
+            _lclManager.fetchCardTransactions(1000, 1);
+        }
+
+        private void getReceiptsWithResult(String resultID) {
+            _resultID = resultID;
+            _receiptManager = SessionM.getInstance().getReceiptsManager();
+            _receiptManager.setListener(_receiptListener);
+            _receiptManager.fetchReceipts();
+        }
+
+        private ReceiptsListener _receiptListener = new ReceiptsListener() {
+            @Override public void onReceiptUploaded(Receipt receipt) { }
+            @Override public void onProgress(Receipt receipt) { }
+
+            @Override public void onReceiptsFetched(List<Receipt> receipts) {
+                Log.d("TAG", "Rs: " + receipts.size());
+                List<String>result = new LinkedList<>();
+                for (Receipt lct : receipts) {
+                    for (ReceiptResult rr : lct.getResults()) {
+                        if (rr.getID().equals(_resultID)) {
+                            result.add(String.format("ReceiptID: %s, Status: %s", lct.getID(), lct.getStatus()));
+                            result.add(String.format("Result ID: %s", rr.getID()));
+                            result.add(String.format("Description: %s", rr.getDescription()));
+                            result.add(String.format("Name: %s", rr.getName()));
+                            result.add(String.format("Price: %.2f", rr.getPrice()));
+                            result.add(String.format("Quantity: %d", rr.getQuantity()));
+                            _la.clear();
+                            _la.addAll(result);
+                            break;
+                        }
+                    }
+                }
+            }
+            @Override public void onFailure(SessionMError sessionMError) { }
+        };
+
+        private LoyaltyCardsListener _lclListener = new LoyaltyCardsListener() {
+            @Override public void onRetailersFetched(List<Retailer> list) { }
+            @Override public void onLoyaltyCardLinked(String s) { }
+            @Override public void onLoyaltyCardUnlinked() { }
+            @Override public void onLoyaltyCardsFetched(List<LoyaltyCard> list) { }
+
+            @Override
+            public void onLoyaltyCardTransactionsFetched(List<LoyaltyCardTransaction> transactions) {
+                Log.d("TAG", "Ts: " + transactions.size());
+                List<String>result = new LinkedList<>();
+                for (LoyaltyCardTransaction lct : transactions) {
+                    if (lct.getID().equals(_transactionID)) {
+                        result.add(String.format("Description: %s", lct.getDescription()));
+                        result.add(String.format("Name: %s", lct.getName()));
+                        result.add(String.format("Price: %.2f", lct.getPrice()));
+                        result.add(String.format("Quantity: %d", lct.getQuantity()));
+                        result.add(String.format("Points: %d", lct.getPoints()));
+                        result.add(String.format("Date: %s", lct.getDate()));
+                        _la.clear();
+                        _la.addAll(result);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(SessionMError sessionMError) {
+
+            }
+        };
     }
 }

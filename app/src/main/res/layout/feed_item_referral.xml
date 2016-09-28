@@ -16,45 +16,59 @@
                   android:padding="@dimen/item_row_padding">
 
         <TextView
-            android:id="@+id/order_id"
+            android:id="@+id/referral_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/id"/>
+            android:text="@string/referral_id"/>
 
         <TextView
-            android:id="@+id/order_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/name"/>
-
-        <TextView
-            android:id="@+id/order_quantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/quantity"/>
-
-        <TextView
-            android:id="@+id/order_points"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/points"/>
-
-        <TextView
-            android:id="@+id/order_status"
+            android:id="@+id/referral_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/status"/>
 
         <TextView
-            android:id="@+id/order_created_time"
+            android:id="@+id/referral_pending_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/upload_time"/>
+            android:text="@string/pending_at"/>
 
         <TextView
-            android:id="@+id/order_description"
+            android:id="@+id/referral_referee"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/description"/>
+            android:text="@string/referee"/>
+
+        <TextView
+            android:id="@+id/referral_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email"/>
+
+        <TextView
+            android:id="@+id/referral_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/phone_number"/>
+
+
+        <TextView
+            android:id="@+id/referral_origin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/origin"/>
+
+        <TextView
+            android:id="@+id/referral_source"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source"/>
+
+        <TextView
+            android:id="@+id/referral_client_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/client_data"/>
+
     </LinearLayout>
 </android.support.v7.widget.CardView>

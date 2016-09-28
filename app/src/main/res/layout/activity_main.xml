@@ -3,25 +3,27 @@
     android:id="@+id/main_parent_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <com.astuetz.PagerSlidingTabStrip
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:textColor="#cacaca"
-        android:textColorPrimary="@color/white"
-        app:pstsShouldExpand="false"/>
-
-    <android.support.v4.view.ViewPager
+    <com.github.florent37.materialviewpager.MaterialViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tabs"/>
+        app:viewpager_animatedHeaderImage="true"
+        app:viewpager_color="@color/colorPrimary"
+        app:viewpager_disableToolbar="false"
+        app:viewpager_displayToolbarWhenSwipe="true"
+        app:viewpager_enableToolbarElevation="true"
+        app:viewpager_headerAlpha="1.0"
+        app:viewpager_headerHeight="180dp"
+        app:viewpager_hideLogoWithFade="true"
+        app:viewpager_hideToolbarAndTitle="true"
+        app:viewpager_logo="@layout/header"
+        app:viewpager_logoMarginTop="75dp"
+        app:viewpager_parallaxHeaderFactor="1.5"
+        app:viewpager_transparentToolbar="true"
+        />
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/multiple_actions"
@@ -33,8 +35,8 @@
         android:layout_marginBottom="@dimen/fab_actions_spacing"
         android:layout_marginEnd="@dimen/fab_actions_spacing"
         android:layout_marginRight="@dimen/fab_actions_spacing"
-        fab:fab_addButtonColorNormal="@color/colorPrimaryDark"
-        fab:fab_addButtonColorPressed="@color/colorPrimary">
+        app:fab_addButtonColorNormal="@color/colorPrimaryDark"
+        app:fab_addButtonColorPressed="@color/colorPrimary">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/action_upload_receipt"
@@ -53,6 +55,15 @@
             app:fab_colorPressed="@color/colorPrimary"
             app:fab_icon="@drawable/card_icon"
             app:fab_title="Link Card"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/action_refer_a_friend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/colorPrimaryDark"
+            app:fab_colorPressed="@color/colorPrimary"
+            app:fab_icon="@drawable/refer_a_friend_icon"
+            app:fab_title="Refer A Friend"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

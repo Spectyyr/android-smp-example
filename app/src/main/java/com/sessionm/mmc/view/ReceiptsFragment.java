@@ -8,12 +8,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
@@ -21,6 +24,7 @@ import com.sessionm.api.receipt.ReceiptsListener;
 import com.sessionm.api.receipt.ReceiptsManager;
 import com.sessionm.api.receipt.data.Receipt;
 import com.sessionm.mmc.R;
+import com.sessionm.mmc.controller.PlacesRecAdapter;
 import com.sessionm.mmc.controller.ReceiptsFeedListAdapter;
 
 import java.util.ArrayList;
@@ -29,9 +33,9 @@ import java.util.List;
 public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
 
     private SwipeRefreshLayout _swipeRefreshLayout;
-    private ObservableListView _listView;
     private ReceiptsFeedListAdapter _listAdapter;
     List<Receipt> _receipts;
+    private RecyclerView _recyclerView;
 
     ReceiptsManager _receiptManager = SessionM.getInstance().getReceiptsManager();
 
@@ -50,23 +54,17 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
         _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _listView = (ObservableListView) rootView.findViewById(R.id.receipts_feed_list);
         _receipts = new ArrayList<>(_receiptManager.getReceipts());
-        _listAdapter = new ReceiptsFeedListAdapter(getActivity(), _receipts);
-        _listView.setAdapter(_listAdapter);
 
-        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Receipt receipt = _receipts.get(position);
-                if (receipt.getImageCount() > 0 && receipt.getImageURLs().size() > 0) {
-                    List<String> urls = receipt.getImageURLs();
-                    popUpImageDialog(urls);
-                }
-            }
-        });
+        _recyclerView = (RecyclerView) rootView.findViewById(R.id.receipts_feed_list);
+        _recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        _recyclerView.setLayoutManager(llm);
+        _recyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+        _listAdapter = new ReceiptsFeedListAdapter(this, _receipts);
+        _recyclerView.setAdapter(_listAdapter);
 
-        _listView.setScrollViewCallbacks(this);
         return rootView;
     }
 
@@ -90,10 +88,6 @@ public class ReceiptsFragment extends BaseScrollAndRefreshFragment {
                 ReceiptsFragment.this._receipts.clear();
             }
             ReceiptsFragment.this._receipts.addAll(receipts);
-            if (_listAdapter == null) {
-                _listAdapter = new ReceiptsFeedListAdapter(getActivity(), ReceiptsFragment.this._receipts);
-                _listView.setAdapter(_listAdapter);
-            }
             _listAdapter.notifyDataSetChanged();
         }
 
