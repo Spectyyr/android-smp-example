@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/activity_main"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sessionm.mmc_campaigns.MainActivity">
+
+    <fragment android:name="com.sessionm.mmc_campaigns.CampaignsFragment"
+              android:id="@+id/campaigns_fragment"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:layout="@layout/fragment_campaigns"/>
+</RelativeLayout>
