@@ -28,7 +28,7 @@
         <!-- enabling this will cause the sdk to start automatically in onResume -->
         <meta-data
             android:name="com.sessionm.appid"
-            android:value="aba6ba56b63680cad063e987df52a71e620dbc77"/>
+            android:value="c4d9427e894e3b0ddf67bd08280b11e051f66c82"/>
 
         <activity
             android:name="com.sessionm.ui.SessionMActivity"
@@ -41,7 +41,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data android:scheme="sessionma781330c8dbdadda3fe68308ee037c8724a38cd2"/>
+                <data android:scheme="sessionmc4d9427e894e3b0ddf67bd08280b11e051f66c82"/>
             </intent-filter>
         </activity>
     </application>

@@ -34,7 +34,6 @@ import com.sessionm.api.reward.data.order.Order;
 import com.sessionm.api.reward.data.order.OrderRequest;
 import com.sessionm.api.reward.data.skill.SkillChallenge;
 import com.sessionm.api.reward.data.skill.SkillQuestion;
-import com.sessionm.mmc_rewards.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
