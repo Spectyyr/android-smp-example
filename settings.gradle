@@ -1,1 +1,1 @@
-include ':app', ':MMC Campaign'
+include ':app', ':MMC_Campaign'
