@@ -44,6 +44,15 @@
                 <data android:scheme="sessionm266bb7bef355cc2d182b4de6e4bcf1647f187464"/>
             </intent-filter>
         </activity>
+
+        <service android:name="com.sessionm.net.http.DownloadService"/>
+
+        <receiver android:name="com.sessionm.api.ConnectionReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE">
+                </action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
