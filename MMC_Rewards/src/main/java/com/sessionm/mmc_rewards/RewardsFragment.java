@@ -38,13 +38,6 @@ public class RewardsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     private RewardsManager _rewardsManager = SessionM.getInstance().getRewardsManager();
 
-    public static RewardsFragment newInstance() {
-        RewardsFragment f = new RewardsFragment();
-        Bundle b = new Bundle();
-        f.setArguments(b);
-        return f;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_rewards, container, false);
