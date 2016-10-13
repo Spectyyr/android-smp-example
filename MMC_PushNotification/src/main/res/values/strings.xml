@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MMC Push Notification Example</string>
+    <string name="app_name">MMC Push Notification</string>
     <string name="gcm_sender_id">295348610668</string>
     <string name="click_here_to_log_in_user">Click Here To Login User</string>
 </resources>

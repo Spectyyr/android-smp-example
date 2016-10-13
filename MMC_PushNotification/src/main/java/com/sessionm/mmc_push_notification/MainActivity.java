@@ -14,7 +14,7 @@ import com.sessionm.api.message.notification.data.NotificationMessage;
 
 public class MainActivity extends AppCompatActivity implements SessionListener {
 
-    private static final String SAMPLE_USER_TOKEN = "v2--uptXiU8SpBL-lAMK2Rvk0-qwFe01i9JV4nq__RWmsA=-B3Csmpxi8IQmmv59LexE6L7hoN3tscIlbA3Yjoab8Xu9pFCAHgJ-y4OXuPA_Vc-n8w==";
+    private static final String SAMPLE_USER_TOKEN = "v2--uptXiU8SpBL-lAMK2Rvk0-qwFe0-1i9JV4nq__RWmsA=--B3Csmpxi8IQmmv59LexE6L7hoN3tscIlbA3Yjoab8Xu9pFCAHgJ-y4OXuPA_Vc-n8w==";
 
     private TextView userBalanceTextView;
 

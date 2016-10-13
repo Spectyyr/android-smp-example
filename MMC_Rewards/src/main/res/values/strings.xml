@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MMC Rewards Example</string>
+    <string name="app_name">MMC Rewards</string>
     <string name="place_order">Place Order</string>
     <string name="sms_validation">SMS Validation</string>
     <string name="please_enter_you_phone_number">Please enter your phone number</string>

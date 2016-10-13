@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MMC Transactions Example</string>
+    <string name="app_name">MMC Transactions</string>
     <string name="click_here_to_log_in_user">Click Here To Login User</string>
     <string name="balance">Balance:</string>
     <string name="date">Date:</string>
