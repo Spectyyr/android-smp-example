@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">MMC Identity</string>
+    <string name="authenticate_with_token">Authenticate With Token</string>
+    <string name="auth_token_log_in_with_sample_user">Auto token log in with sample user</string>
+    <string name="or">-- or --</string>
+    <string name="not_now">Not now</string>
+    <string name="sms_validation">SMS Validation</string>
+    <string name="please_enter_you_phone_number">Please enter your phone number</string>
+    <string name="error_invalid_password">Invalid Password</string>
+    <string name="error_field_required">Required</string>
+    <string name="error_invalid_email">Invalid Email</string>
+    <string name="logging_in">Logging in…</string>
+    <string name="log_in_instruction">Please log in</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Log In</string>
+    <string name="click_here_to_log_in_user">Click Here To Login User</string>
+</resources>

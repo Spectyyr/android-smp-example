@@ -2,7 +2,7 @@
  * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
-package com.sessionm.mmc.view;
+package com.sessionm.mmc_identity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -27,7 +27,6 @@ import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.User;
 import com.sessionm.api.message.notification.data.NotificationMessage;
-import com.sessionm.mmc.R;
 
 public class LoginActivity extends AppCompatActivity implements SessionListener {
 
@@ -39,8 +38,8 @@ public class LoginActivity extends AppCompatActivity implements SessionListener 
     private static final String DEBUG_PASSWORD = "";
     private static final boolean DEBUG_MODE = false;
 
-    private static final String DEBUG_TOKEN = "v2--uptXiU8SpBL-lAMK2Rvk0-qwFe0-1i9JV4nq__RWmsA=--B3Csmpxi8IQmmv59LexE6L7hoN3tscIlbA3Yjoab8Xu9pFCAHgJ-y4OXuPA_Vc-n8w==";
-    private static final String SAMPLE_TOKEN = "4mYlkJkb17QYkA1OJn9eCySw9sI+nUZJLJSxQnNME63bbmNeq75sEEWmEhVEEOEos7YTp5gvvB5ovxdUCmowaQ==";
+    private static final String DEBUG_TOKEN = "";
+    private static final String SAMPLE_TOKEN = "v2--uptXiU8SpBL-lAMK2Rvk0-qwFe0-1i9JV4nq__RWmsA=--B3Csmpxi8IQmmv59LexE6L7hoN3tscIlbA3Yjoab8Xu9pFCAHgJ-y4OXuPA_Vc-n8w==";
 
     private SessionM sessionM = SessionM.getInstance();
 
