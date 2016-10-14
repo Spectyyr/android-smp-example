@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.sessionm.mmc_referrals"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <application
+        android:name="com.sessionm.mmc_referrals.SEApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name="com.sessionm.mmc_referrals.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- enabling this will cause the sdk to start automatically in onResume -->
+        <meta-data
+            android:name="com.sessionm.appid"
+            android:value="266bb7bef355cc2d182b4de6e4bcf1647f187464"/>
+
+        <activity
+            android:name="com.sessionm.ui.SessionMActivity"
+            android:configChanges="keyboard|orientation|screenSize"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="sessionm266bb7bef355cc2d182b4de6e4bcf1647f187464"/>
+            </intent-filter>
+        </activity>
+
+        <service android:name="com.sessionm.net.http.DownloadService"/>
+
+        <receiver android:name="com.sessionm.api.ConnectionReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE">
+                </action>
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

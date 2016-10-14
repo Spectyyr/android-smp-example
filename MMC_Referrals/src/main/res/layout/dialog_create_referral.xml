@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="10dp"
+              android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/dialog_referral_referee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/referee"/>
+
+    <EditText
+        android:id="@+id/dialog_referral_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/email"/>
+
+    <EditText
+        android:id="@+id/dialog_referral_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/phone_number"/>
+
+    <EditText
+        android:id="@+id/dialog_referral_origin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/origin"/>
+
+    <EditText
+        android:id="@+id/dialog_referral_source"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/source"/>
+
+    <EditText
+        android:id="@+id/dialog_referral_client_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/client_data"/>
+</LinearLayout>

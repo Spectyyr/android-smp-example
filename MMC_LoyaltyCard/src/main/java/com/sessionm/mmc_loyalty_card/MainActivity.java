@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
             userBalanceTextView.setText(user.getPointBalance() + "pts");
         else
             userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-        sessionM.getReceiptsManager().fetchReceipts();
+        sessionM.getLoyaltyCardsManager().fetchLinkedCards();
     }
 
     @Override
