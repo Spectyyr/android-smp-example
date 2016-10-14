@@ -6,4 +6,11 @@
     <string name="skill_challenge">Skill Challenge</string>
     <string name="skill_challenge_description">Please answer the following question</string>
     <string name="click_here_to_log_in_user">Click Here To Log In User</string>
+    <string name="id">ID</string>
+    <string name="name">Name</string>
+    <string name="quantity">Quantity</string>
+    <string name="points">Points</string>
+    <string name="status">Status</string>
+    <string name="upload_time">Upload Time</string>
+    <string name="description">Description</string>
 </resources>

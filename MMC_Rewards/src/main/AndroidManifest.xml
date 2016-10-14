@@ -11,20 +11,19 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
-        android:name="com.sessionm.mmc_rewards.SEApplication"
+        android:name=".SEApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.sessionm.mmc_rewards.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity android:name=".OfferDetailsActivity"/>
 
         <!-- enabling this will cause the sdk to start automatically in onResume -->
@@ -55,6 +54,9 @@
                 </action>
             </intent-filter>
         </receiver>
+
+        <activity android:name=".OrdersActivity">
+        </activity>
     </application>
 
 </manifest>
