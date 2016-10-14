@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MMC Receipt</string>
+    <string name="click_here_to_log_in_user">Click Here To Log In User</string>
+    <string name="name">Name</string>
+    <string name="status">Status</string>
+    <string name="invalid_code">Invalid Code</string>
+    <string name="invalid_reason">Invalid Reason</string>
+    <string name="create_time">Created Time</string>
+    <string name="update_time">Updated Time</string>
+    <string name="image_count">Image Count</string>
+    <string name="date">Date</string>
+    <string name="store">Store</string>
+    <string name="results">Results</string>
+    <string name="incomplete_receipt">Incomplete Receipts</string>
+    <string name="incomplete_receipt_description">You have incomplete receipts, do you want to upload them now?</string>
+</resources>

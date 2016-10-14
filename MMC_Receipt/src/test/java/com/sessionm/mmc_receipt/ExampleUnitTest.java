@@ -1,4 +1,4 @@
-package com.sessionm.mmc_push_notification;
+package com.sessionm.mmc_campaigns;
 
 import org.junit.Test;
 

@@ -12,7 +12,7 @@
         layout="@layout/custom_action_bar"/>
 
     <fragment
-        android:id="@+id/campaigns_fragment"
+        android:id="@+id/transactions_fragment"
         android:name="com.sessionm.mmc_transactions.TransactionsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
