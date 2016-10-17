@@ -51,7 +51,8 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
             @Override
             public void onClick(View view) {
                 if (!sessionM.getUser().isRegistered())
-                    sessionM.authenticateWithToken("auth_token", SAMPLE_USER_TOKEN);
+                    //sessionM.authenticateWithToken("auth_token", SAMPLE_USER_TOKEN);
+                    sessionM.logInUserWithEmail("mmcsampleuser@sessionm.com", "sessionm1");
                 else
                     sessionM.logOutUser();
             }
@@ -106,11 +107,15 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         if (receiptsManager.hasIncompleteReceipts()) {
             popUpUploadIncompleteReceiptsDialog();
         } else {
-            sessionM.getReceiptsManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
-            sessionM.getReceiptsManager().startUploadReceiptActivity(this, null, null, null);
-            Intent startIntent = new Intent(MainActivity.this, ReceiptUploadingService.class);
-            startService(startIntent);
+            startUploadReceipt();
         }
+    }
+
+    private void startUploadReceipt() {
+        sessionM.getReceiptsManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
+        sessionM.getReceiptsManager().startUploadReceiptActivity(this, "14821", null, null);
+        Intent startIntent = new Intent(MainActivity.this, ReceiptUploadingService.class);
+        startService(startIntent);
     }
 
     protected void popUpUploadIncompleteReceiptsDialog() {
@@ -131,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(getApplicationContext(), "Incomplete receipt uploading canceled!", Toast.LENGTH_SHORT).show();
+                startUploadReceipt();
             }
         });
 
