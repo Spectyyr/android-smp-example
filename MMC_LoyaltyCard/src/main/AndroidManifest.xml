@@ -28,7 +28,7 @@
         <!-- enabling this will cause the sdk to start automatically in onResume -->
         <meta-data
             android:name="com.sessionm.appid"
-            android:value="266bb7bef355cc2d182b4de6e4bcf1647f187464"/>
+            android:value="c4d9427e894e3b0ddf67bd08280b11e051f66c82"/>
 
         <activity android:name="com.sessionm.mmc_loyalty_card.LoyaltyCardActivity"/>
 
@@ -43,7 +43,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data android:scheme="sessionm266bb7bef355cc2d182b4de6e4bcf1647f187464"/>
+                <data android:scheme="sessionmc4d9427e894e3b0ddf67bd08280b11e051f66c82"/>
             </intent-filter>
         </activity>
 

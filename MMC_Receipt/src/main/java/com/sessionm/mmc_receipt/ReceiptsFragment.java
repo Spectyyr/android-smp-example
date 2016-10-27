@@ -41,13 +41,6 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     ReceiptsManager _receiptManager = SessionM.getInstance().getReceiptsManager();
 
-    public static ReceiptsFragment newInstance() {
-        ReceiptsFragment f = new ReceiptsFragment();
-        Bundle b = new Bundle();
-        f.setArguments(b);
-        return f;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_receipts, container, false);

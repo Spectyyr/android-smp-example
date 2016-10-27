@@ -3,7 +3,7 @@
     <string name="receipts">Receipts</string>
     <string name="offers">Offers</string>
     <!--Please set your SessionM app api key-->
-    <string name="app_key"></string>
+    <string name="app_key">c4d9427e894e3b0ddf67bd08280b11e051f66c82</string>
     <!--Please set your GCM sender id-->
     <string name="gcm_sender_id"></string>
     <string name="learn_more">Learn More</string>

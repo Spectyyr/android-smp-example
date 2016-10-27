@@ -22,6 +22,7 @@ public class SEApplication extends Application{
         registerActivityLifecycleCallbacks(_mCallbacks);
         final SessionM sessionM = SessionM.getInstance();
         sessionM.setApplicationContext(this);
+        sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api.tour-sessionm.com");
         //sessionM.getExtension().setSessionAutoStartEnabled(false);
         //Sets the Google Cloud Messaging Sender ID, to register the app to be able to receive push notifications
         sessionM.getMessageManager().setGCMSenderID(getString(R.string.gcm_sender_id));
