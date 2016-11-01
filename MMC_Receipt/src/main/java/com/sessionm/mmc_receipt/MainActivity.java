@@ -23,7 +23,7 @@ import com.sessionm.api.receipt.ReceiptsManager;
 
 public class MainActivity extends AppCompatActivity implements SessionListener {
 
-    private static final String SAMPLE_USER_TOKEN = "v2--uptXiU8SpBL-lAMK2Rvk0-qwFe0-1i9JV4nq__RWmsA=--B3Csmpxi8IQmmv59LexE6L7hoN3tscIlbA3Yjoab8Xu9pFCAHgJ-y4OXuPA_Vc-n8w==";
+    private static final String SAMPLE_USER_TOKEN = "v2--Sd2T8UBqlCGQovVPnsUs4eqwFe0-1i9JV4nq__RWmsA=--dWM8r8RggUJCToOaiiT6NXmiOipkovvD9HueM_jZECStExtGFkZzVmCUhkdDJe5NQw==";
 
     private TextView userBalanceTextView;
     private FloatingActionButton newUploadButton;
@@ -51,8 +51,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
             @Override
             public void onClick(View view) {
                 if (!sessionM.getUser().isRegistered())
-                    //sessionM.authenticateWithToken("auth_token", SAMPLE_USER_TOKEN);
-                    sessionM.logInUserWithEmail("mmcsampleuser@sessionm.com", "sessionm1");
+                    sessionM.authenticateWithToken("auth_token", SAMPLE_USER_TOKEN);
                 else
                     sessionM.logOutUser();
             }
