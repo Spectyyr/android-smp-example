@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
@@ -62,9 +63,16 @@ public class LoyaltyFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     LoyaltyCardsListener _loyaltyListener = new LoyaltyCardsListener() {
-        @Override public void onRetailersFetched(List<Retailer> retailers) { }
-        @Override public void onLoyaltyCardLinked(String cardNumber) { }
-        @Override public void onLoyaltyCardUnlinked() {
+        @Override
+        public void onRetailersFetched(List<Retailer> retailers) {
+        }
+
+        @Override
+        public void onLoyaltyCardLinked(String cardNumber) {
+        }
+
+        @Override
+        public void onLoyaltyCardUnlinked() {
             fetchLinkedCards();
         }
 
@@ -73,20 +81,15 @@ public class LoyaltyFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         }
 
-        @Override public void onLoyaltyCardsFetched(List<LoyaltyCard>cards) {
-            _swipeRefreshLayout.setRefreshing(false);
-            _cards.clear();
-            if (cards == null) {
-                cards = new ArrayList<>();
-            }
-            _cards.addAll(cards);
-            _listAdapter.notifyDataSetChanged();
+        @Override
+        public void onLoyaltyCardsFetched(List<LoyaltyCard> cards) {
+            refreshList(cards);
         }
 
         @Override
         public void onFailure(SessionMError sessionMError) {
-            _swipeRefreshLayout.setRefreshing(false);
-            fetchLinkedCards();
+            Toast.makeText(getActivity(), sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+            refreshList(_loyaltyManager.getLoyaltyCards());
         }
     };
 
@@ -109,5 +112,15 @@ public class LoyaltyFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public void onRefresh() {
         fetchLinkedCards();
+    }
+
+    private void refreshList(List<LoyaltyCard> cards) {
+        _swipeRefreshLayout.setRefreshing(false);
+        _cards.clear();
+        if (cards == null) {
+            cards = new ArrayList<>();
+        }
+        _cards.addAll(cards);
+        _listAdapter.notifyDataSetChanged();
     }
 }
