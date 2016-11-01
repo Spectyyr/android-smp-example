@@ -4,15 +4,18 @@
 
 package com.sessionm.mmc.view;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -45,6 +48,7 @@ import com.sessionm.api.receipt.ReceiptsManager;
 import com.sessionm.mmc.R;
 import com.sessionm.mmc.service.ReceiptUploadingService;
 import com.sessionm.mmc.util.LocationObserver;
+import com.sessionm.mmc.util.PermissionUtils;
 import com.sessionm.mmc.util.Utility;
 
 import java.util.Map;
@@ -62,6 +66,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements SessionListener, ViewPager.OnPageChangeListener,
         CampaignsFragment.OnDeepLinkTappedListener {
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private MaterialViewPager materialViewPager;
     private Toolbar toolbar;
     private ViewPager pager;
@@ -170,18 +175,20 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         });
 
         // Create an instance of location observer.
-        locationObserver = LocationObserver.getInstance(this);
+        enableMyLocation();
     }
 
     @Override
     protected void onStart() {
-        locationObserver.connect();
+        if (locationObserver != null)
+            locationObserver.connect();
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        locationObserver.disconnect();
+        if (locationObserver != null)
+            locationObserver.disconnect();
         super.onStop();
     }
 
@@ -511,5 +518,17 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             }
         }
         notificationMessage = null;
+    }
+
+    private void enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        } else {
+            locationObserver = LocationObserver.getInstance(this);
+            locationObserver.connect();
+        }
     }
 }

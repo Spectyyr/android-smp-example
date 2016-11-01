@@ -291,6 +291,7 @@ public class MMCUserActivity extends AppCompatActivity {
                 mmcUserRequest.setLongitude(updateNonEmptyFieldDouble(longitudeView));
                 mmcUserRequest.setIPAddress(updateNonEmptyField(ipAddressView));
                 mmcUserRequest.setLocale(Locale.getDefault());
+                /* Also supports additional user profile filed with customized key, such as children
                 Map<String, Map[]> childrenMap = new HashMap<>();
                 Map<String, String> child1 = new HashMap<>();
                 child1.put("gender", "m");
@@ -299,8 +300,9 @@ public class MMCUserActivity extends AppCompatActivity {
                 child2.put("gender", "f");
                 child2.put("dob", "2016-04-01");
                 Map[] children = {child1, child2};
-                childrenMap.put("child", children);
+                childrenMap.put("children", children);
                 mmcUserRequest.addUserProfile(childrenMap);
+                */
                 sessionM.getIdentityManager().updateMMCUser(mmcUserRequest);
             }
         });
