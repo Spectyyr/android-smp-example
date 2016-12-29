@@ -86,11 +86,6 @@ public class SettingsActivity extends Activity implements SessionListener {
 
     }
 
-    @Override
-    public void onNotificationMessage(SessionM sessionM, NotificationMessage message) {
-
-    }
-
     public class SettingsListArrayAdapter extends ArrayAdapter<String> {
         private final Context context;
         private final String[] values;

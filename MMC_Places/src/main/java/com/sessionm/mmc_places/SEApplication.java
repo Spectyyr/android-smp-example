@@ -21,6 +21,6 @@ public class SEApplication extends Application{
         registerActivityLifecycleCallbacks(_mCallbacks);
         final SessionM sessionM = SessionM.getInstance();
         sessionM.setApplicationContext(this);
-        sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api.tour-sessionm.com");
+        //sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api.tour-sessionm.com");
     }
 }

@@ -2,17 +2,22 @@ package com.sessionm.mmc_places;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -21,12 +26,15 @@ import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.User;
-import com.sessionm.api.message.notification.data.NotificationMessage;
+import com.sessionm.api.geofence.GeofenceListener;
+import com.sessionm.api.geofence.GeofenceManager;
+import com.sessionm.api.geofence.data.GeofenceEvent;
 import com.sessionm.api.place.PlacesListener;
 import com.sessionm.api.place.PlacesManager;
 import com.sessionm.api.place.data.CheckinResult;
 import com.sessionm.api.place.data.Place;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +44,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final String SAMPLE_USER_TOKEN = "v2--Sd2T8UBqlCGQovVPnsUs4eqwFe0-1i9JV4nq__RWmsA=--dWM8r8RggUJCToOaiiT6NXmiOipkovvD9HueM_jZECStExtGFkZzVmCUhkdDJe5NQw==";
     private TextView userBalanceTextView;
+    private ToggleButton showMarkerToggle;
+    private ToggleButton showCircleToggle;
     private GoogleMap mMap;
     private SessionM sessionM = SessionM.getInstance();
     private PlacesManager placesManager;
     Map<String, Place> placesMap = new HashMap<>();
+
+    List<Marker> markers = new ArrayList<>();
+    List<Circle> circles = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         placesManager = sessionM.getPlacesManager();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -65,19 +78,82 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     sessionM.logOutUser();
             }
         });
+
+        final ToggleButton geofenceToggleButton = (ToggleButton) findViewById(R.id.geofence_toggle);
+        geofenceToggleButton.setChecked(GeofenceManager.isStarted(getApplicationContext()));
+        geofenceToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    GeofenceManager.setDebugMode(getApplicationContext(), true);
+                    GeofenceManager.startGeofenceService(getApplicationContext(), new GeofenceListener() {
+                        @Override
+                        public void onGeofenceEventsUpdated(List<GeofenceEvent> list) {
+                            mMap.clear();
+                            circles.clear();
+                            for (GeofenceEvent geofenceEvent : list) {
+                                LatLng latLng = new LatLng(geofenceEvent.getLatitude(), geofenceEvent.getLongitude());
+                                Circle circle = mMap.addCircle(new CircleOptions()
+                                        .center(latLng)
+                                        .radius(geofenceEvent.getRadius())
+                                        .fillColor(Color.RED));
+                                circles.add(circle);
+                            }
+                        }
+
+                        @Override
+                        public void onGeofenceServiceStarted() {
+
+                        }
+
+                        @Override
+                        public void onGeofenceServiceStopped() {
+                            geofenceToggleButton.setChecked(false);
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
+                } else
+                    GeofenceManager.stopGeofenceService(getApplicationContext());
+            }
+        });
+
+
+        showMarkerToggle = (ToggleButton) findViewById(R.id.show_marker_toggle);
+        showMarkerToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                for (Marker marker : markers)
+                    marker.setVisible(isChecked);
+            }
+        });
+
+        showCircleToggle = (ToggleButton) findViewById(R.id.show_circle_toggle);
+        showCircleToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                for (Circle circle : circles)
+                    circle.setVisible(isChecked);
+            }
+        });
     }
 
     PlacesListener _placesListener = new PlacesListener() {
         @Override
         public void onPlacesFetched(List<Place> list) {
             mMap.clear();
+            markers.clear();
             placesMap.clear();
             for (Place place : list) {
                 LatLng latLng = new LatLng(place.getLat(), place.getLng());
-                mMap.addMarker(new MarkerOptions()
+                Marker marker = mMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .title(place.getName())
                         .snippet(place.getID()));
+                markers.add(marker);
                 placesMap.put(place.getID(), place);
             }
         }
@@ -157,11 +233,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onUnclaimedAchievement(SessionM sessionM, AchievementData achievementData) {
-
-    }
-
-    @Override
-    public void onNotificationMessage(SessionM sessionM, NotificationMessage notificationMessage) {
 
     }
 }
