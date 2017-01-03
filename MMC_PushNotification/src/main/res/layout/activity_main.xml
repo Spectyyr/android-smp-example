@@ -21,4 +21,19 @@
         android:onClick="TriggerOpenAdPush"
         android:layout_below="@id/custom_action_bar"
         android:text="Open Ad Push"/>
+
+    <ToggleButton
+        android:id="@+id/use_bundle_extras_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Use Bundle Extras: "
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/use_bundle_extras_toggle"/>
 </RelativeLayout>

@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         });
 
         useBundleExtrasButton = (ToggleButton) findViewById(R.id.use_bundle_extras_toggle);
-        useBundleExtrasButton.setChecked(sessionM.getMessageManager().isPushNotificationEnabled());
+        useBundleExtrasButton.setChecked(sessionM.getMessageManager().isUseBundleExtrasEnabled());
         useBundleExtrasButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
