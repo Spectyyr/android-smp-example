@@ -2,7 +2,7 @@
  * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
-package com.sessionm.mmc_places;
+package com.sessionm.mmc_geofence;
 
 import android.app.Application;
 
