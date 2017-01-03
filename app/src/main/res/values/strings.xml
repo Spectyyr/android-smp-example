@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SessionM MMC</string>
+    <string name="app_name">SessionM Platform</string>
     <string name="receipts">Receipts</string>
     <string name="offers">Offers</string>
     <!--Please set your SessionM app api key-->
@@ -40,7 +40,7 @@
         <item>SDK Version: </item>
         <item>App Version: </item>
         <item>Log Out</item>
-        <item>Exit SessionM MMC App</item>
+        <item>Exit SessionM Platform App</item>
     </array>
     <string name="title_activity_offer_detail">OfferDetailActivity</string>
     <string name="title_activity_promotion_details">PromotionDetails</string>

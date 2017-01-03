@@ -2,7 +2,7 @@
 .idea
 .gradle
 build
-android-mmc-example.iml
+android-smp-example.iml
 local.properties
 gradle/
 app/app.iml

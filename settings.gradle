@@ -1,3 +1,3 @@
-include ':app', ':MMC_Campaigns', ':MMC_Rewards', ':MMC_Transactions',
-        ':MMC_PushNotification', ':MMC_Places', ':MMC_Identity', ':MMC_Receipt',
-        ':MMC_LoyaltyCard', ':MMC_Referrals', ':MMC_FCM', ':MMC_Geofence'
+include ':app', ':SMP_Campaigns', ':SMP_Rewards', ':SMP_Transactions',
+        ':SMP_PushNotification', ':SMP_Places', ':SMP_Identity', ':SMP_Receipt',
+        ':SMP_LoyaltyCard', ':SMP_Referrals', ':SMP_FCM', ':SMP_Geofence'

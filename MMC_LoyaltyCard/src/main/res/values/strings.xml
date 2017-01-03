@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">MMC Loyalty Card</string>
-    <string name="click_here_to_log_in_user">Click Here To Log In User</string>
-    <string name="card_number">Card Number</string>
-    <string name="select_retailer">Select Retailer</string>
-    <string name="link">Link</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-</resources>

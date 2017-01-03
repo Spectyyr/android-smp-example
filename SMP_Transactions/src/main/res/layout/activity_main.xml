@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/activity_main"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sessionm.smp_transactions.MainActivity">
+
+    <include
+        android:id="@+id/custom_action_bar"
+        layout="@layout/custom_action_bar"/>
+
+    <fragment
+        android:id="@+id/transactions_fragment"
+        android:name="com.sessionm.smp_transactions.TransactionsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/custom_action_bar"
+        tools:layout="@layout/fragment_transactions"/>
+</RelativeLayout>

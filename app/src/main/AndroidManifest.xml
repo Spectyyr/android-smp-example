@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.sessionm.mmc"
+<manifest package="com.sessionm.smp"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -13,10 +13,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <permission
-        android:name="com.sessionm.mmc.permission.C2D_MESSAGE"
+        android:name="com.sessionm.smp.permission.C2D_MESSAGE"
         android:protectionLevel="signature"/>
 
-    <uses-permission android:name="com.sessionm.mmc.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="com.sessionm.smp.permission.C2D_MESSAGE"/>
 
     <!-- This app has permission to register and receive data message. -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
@@ -28,7 +28,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.sessionm.mmc.view.LoginActivity"
+            android:name="com.sessionm.smp.view.LoginActivity"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -36,16 +36,16 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.sessionm.mmc.view.OfferDetailsActivity">
+        <activity android:name="com.sessionm.smp.view.OfferDetailsActivity">
         </activity>
 
-        <activity android:name="com.sessionm.mmc.view.SettingsActivity">
+        <activity android:name="com.sessionm.smp.view.SettingsActivity">
         </activity>
 
-        <activity android:name="com.sessionm.mmc.view.MainActivity">
+        <activity android:name="com.sessionm.smp.view.MainActivity">
         </activity>
 
-        <activity android:name="com.sessionm.mmc.view.MMCUserActivity">
+        <activity android:name="com.sessionm.smp.view.MMCUserActivity">
         </activity>
 
         <service android:name=".service.ReceiptUploadingService"/>
@@ -96,7 +96,7 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
 
-                <category android:name="com.sessionm.mmc"/>
+                <category android:name="com.sessionm.smp"/>
             </intent-filter>
         </receiver>
 

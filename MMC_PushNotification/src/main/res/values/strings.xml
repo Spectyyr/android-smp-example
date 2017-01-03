@@ -1,5 +1,0 @@
-<resources>
-    <string name="app_name">MMC Push Notification</string>
-    <string name="gcm_sender_id">417207468870</string>
-    <string name="click_here_to_log_in_user">Click Here To Login User</string>
-</resources>
