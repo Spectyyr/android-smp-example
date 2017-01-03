@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
             public void onClick(View view) {
                 if (!sessionM.getUser().isRegistered())
                     sessionM.authenticateWithToken("sessionm", SAMPLE_USER_TOKEN);
-                    //sessionM.logInUserWithEmail("mmcsampleuser@sessionm.com", "sessionm1");
                 else
                     sessionM.logOutUser();
             }

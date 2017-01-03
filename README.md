@@ -1,7 +1,7 @@
-SessionM Mobile Marketing Cloud SDK Example
+SessionM Platform SDK Example Apps
 ===================
 
-Example project showing how to use the SessionM Mobile Marketing Cloud SDK for Android.
+Example project showing how to use the SessionM Platform SDK for Android.
 
 To start a session, please add your SessionM App API key in res/values/Strings.xml in "app_key" field.
 
