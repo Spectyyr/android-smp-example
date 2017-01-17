@@ -1,23 +1,19 @@
 package com.sessionm.smp_geofence;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
 import com.sessionm.api.AchievementData;
 import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
@@ -26,32 +22,32 @@ import com.sessionm.api.geofence.GeofenceListener;
 import com.sessionm.api.geofence.GeofenceManager;
 import com.sessionm.api.geofence.data.GeofenceEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, SessionListener {
+import rx.Subscription;
+import rx.functions.Action1;
+
+public class MainActivity extends AppCompatActivity implements SessionListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final String SAMPLE_USER_TOKEN = "v2--Sd2T8UBqlCGQovVPnsUs4eqwFe0-1i9JV4nq__RWmsA=--dWM8r8RggUJCToOaiiT6NXmiOipkovvD9HueM_jZECStExtGFkZzVmCUhkdDJe5NQw==";
     private TextView userBalanceTextView;
-    private ToggleButton showCircleToggle;
-    private GoogleMap mMap;
     private SessionM sessionM = SessionM.getInstance();
 
-    List<Circle> circles = new ArrayList<>();
+    ViewPager viewPager;
+
+    private Subscription subscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
         Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
+
+        viewPager = (ViewPager) findViewById(R.id.main_pager);
+        viewPager.setAdapter(new SMPagerAdapter(getSupportFragmentManager()));
 
         userBalanceTextView = (TextView) findViewById(R.id.user_balance_textview);
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +61,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         final ToggleButton geofenceToggleButton = (ToggleButton) findViewById(R.id.geofence_toggle);
-        geofenceToggleButton.setChecked(GeofenceManager.isStarted(getApplicationContext()));
+        boolean geofenceServiceIsStarted = GeofenceManager.isStarted(getApplicationContext());
+        geofenceToggleButton.setChecked(geofenceServiceIsStarted);
+
         geofenceToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -74,17 +72,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     GeofenceManager.startGeofenceService(getApplicationContext(), new GeofenceListener() {
                         @Override
                         public void onGeofenceEventsUpdated(List<GeofenceEvent> list) {
-                            mMap.clear();
-                            circles.clear();
-                            for (GeofenceEvent geofenceEvent : list) {
-                                LatLng latLng = new LatLng(geofenceEvent.getLatitude(), geofenceEvent.getLongitude());
-                                Circle circle = mMap.addCircle(new CircleOptions()
-                                        .center(latLng)
-                                        .radius(geofenceEvent.getRadius())
-                                        .fillColor(Color.RED));
-                                circles.add(circle);
-                            }
-                            showCircleToggle.setChecked(true);
+                            RxBus.getInstance().setString("Geofence events updated!");
+                            RxBus.getInstance().setGeofenceList(list);
                         }
 
                         @Override
@@ -94,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         @Override
                         public void onGeofenceServiceStopped() {
+                            RxBus.getInstance().setGeofenceList(null);
                             geofenceToggleButton.setChecked(false);
                         }
 
@@ -104,42 +94,55 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     });
                 } else {
                     GeofenceManager.stopGeofenceService(getApplicationContext());
-                    mMap.clear();
-                    circles.clear();
                 }
             }
         });
 
-        showCircleToggle = (ToggleButton) findViewById(R.id.show_circle_toggle);
-        showCircleToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        if (geofenceServiceIsStarted) {
+            RxBus.getInstance().setGeofenceList(GeofenceManager.getGeofenceEventsList(getApplicationContext()));
+        }
+
+
+        subscription = RxBus.getInstance().getStringObservable().subscribe(new Action1<String>() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                for (Circle circle : circles)
-                    circle.setVisible(isChecked);
+            public void call(String s) {
+                Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
             }
         });
     }
+
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        enableMyLocation();
+    protected void onDestroy() {
+        super.onStop();
+        subscription.unsubscribe();
     }
 
-    private void enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, true);
-        } else if (mMap != null) {
-            // Access to the location has been granted to the app.
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+    private class SMPagerAdapter extends FragmentPagerAdapter {
+
+        public SMPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return MapFragment.newInstance("mapFragment");
+                case 1:
+                    return LogsFragment.newInstance("logsFragment");
+                default:
+                    return LogsFragment.newInstance("logsFragment");
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
         }
     }
 
@@ -164,5 +167,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onUnclaimedAchievement(SessionM sessionM, AchievementData achievementData) {
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
+        }
     }
 }

@@ -35,7 +35,7 @@
         <!-- enabling this will cause the sdk to start automatically in onResume -->
         <meta-data
             android:name="com.sessionm.appid"
-            android:value="c4d9427e894e3b0ddf67bd08280b11e051f66c82"/>
+            android:value="abd86968d39cc96ff90ffc3164d5b9030d3d2bfd"/>
 
         <activity
             android:name="com.sessionm.ui.SessionMActivity"
@@ -62,7 +62,8 @@
         </receiver>
 
         <!-- Add geofence service inside application block -->
-        <service android:name="com.sessionm.api.geofence.service.GeofenceIntentService" />
+        <!--<service android:name="com.sessionm.api.geofence.service.GeofenceIntentService"/>-->
+        <service android:name=".GeofenceService"/>
 
         <receiver android:name="com.sessionm.api.BootReceiver">
             <intent-filter>
