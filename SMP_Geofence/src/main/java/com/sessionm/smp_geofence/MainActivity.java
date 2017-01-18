@@ -63,6 +63,9 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
 
         final ToggleButton geofenceToggleButton = (ToggleButton) findViewById(R.id.geofence_toggle);
         boolean geofenceServiceIsStarted = GeofenceManager.isStarted(getApplicationContext());
+        //TODO: always start geofence again to initiate GoogleApiClient
+        if (geofenceServiceIsStarted)
+            GeofenceManager.startGeofenceService(getApplicationContext(), null);
         geofenceToggleButton.setChecked(geofenceServiceIsStarted);
 
         geofenceToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
