@@ -1,13 +1,15 @@
 package com.sessionm.smp_geofence;
 
+import java.util.Date;
+
 public class GeofenceLog {
+    private long timeStamp;
     private String name;
-    private String timeStamp;
     private String message;
 
-    public GeofenceLog(String name, String timeStamp, String message) {
+    public GeofenceLog(String name, String message) {
+        this.timeStamp = System.currentTimeMillis();
         this.name = name;
-        this.timeStamp = timeStamp;
         this.message = message;
     }
 
@@ -15,23 +17,16 @@ public class GeofenceLog {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public String getTimeStamp() {
-        return timeStamp;
+        return Long.toString(timeStamp);
     }
 
-    public void setTimeStamp(String timeStamp) {
-        this.timeStamp = timeStamp;
+    public String getDisplayTime() {
+        Date date = new Date(timeStamp);
+        return date.toString();
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

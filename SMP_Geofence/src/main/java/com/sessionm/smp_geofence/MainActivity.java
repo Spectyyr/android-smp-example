@@ -21,6 +21,7 @@ import com.sessionm.api.User;
 import com.sessionm.api.geofence.GeofenceListener;
 import com.sessionm.api.geofence.GeofenceManager;
 import com.sessionm.api.geofence.data.GeofenceEvent;
+import com.sessionm.api.geofence.data.TriggeredEvent;
 
 import java.util.List;
 
@@ -72,8 +73,16 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
                     GeofenceManager.startGeofenceService(getApplicationContext(), new GeofenceListener() {
                         @Override
                         public void onGeofenceEventsUpdated(List<GeofenceEvent> list) {
-                            RxBus.getInstance().setString("Geofence events updated!");
+                            RxBus.getInstance().setString("Geofence events list updated!");
                             RxBus.getInstance().setGeofenceList(list);
+                            RxBus.getInstance().setLog(new GeofenceLog("Geofence events list updated.", ""));
+                        }
+
+                        @Override
+                        public void onGeofenceEventTriggered(TriggeredEvent triggeredEvent) {
+                            RxBus.getInstance().setLog(new GeofenceLog("Triggered: " + triggeredEvent.getGeofenceEvent().getTriggerType().toString()
+                                    , "Distance: " + triggeredEvent.getGeofenceEvent().getLocation().distanceTo(triggeredEvent.getTriggeredLocation()) + "\n"
+                                    + "ID: " + triggeredEvent.getGeofenceEvent().getID()));
                         }
 
                         @Override

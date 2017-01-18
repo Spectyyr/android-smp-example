@@ -1,6 +1,7 @@
 package com.sessionm.smp_geofence;
 
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +12,11 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Scheduler;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class LogsFragment extends Fragment {
 
@@ -25,16 +29,6 @@ public class LogsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_logs, container, false);
 
         final List<GeofenceLog> items = new ArrayList<>();
-        items.add(new GeofenceLog("one", "111", "test test"));
-        items.add(new GeofenceLog("one", "222", "test test"));
-        items.add(new GeofenceLog("one", "333", "test test"));
-        items.add(new GeofenceLog("one", "333", "test test"));
-        items.add(new GeofenceLog("one", "333", "test test"));
-        items.add(new GeofenceLog("one", "333", "test test"));
-        items.add(new GeofenceLog("one", "333", "test test"));
-        items.add(new GeofenceLog("one", "333", "test test"));
-        items.add(new GeofenceLog("one", "333", "test test"));
-        items.add(new GeofenceLog("one", "333", "test test"));
 
         _recyclerView = (RecyclerView) v.findViewById(R.id.logs_recylerview);
         _recyclerView.setHasFixedSize(true);
@@ -44,7 +38,10 @@ public class LogsFragment extends Fragment {
         _recyclerAdapter = new LogsRecAdapter(this, items);
         _recyclerView.setAdapter(_recyclerAdapter);
 
-        subscription = RxBus.getInstance().getLogObservable().subscribe(new Action1<GeofenceLog>() {
+        subscription = RxBus.getInstance().getLogObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<GeofenceLog>() {
             @Override
             public void call(GeofenceLog log) {
                 items.add(0, log);

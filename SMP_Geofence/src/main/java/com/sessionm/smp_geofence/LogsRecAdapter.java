@@ -36,8 +36,8 @@ public class LogsRecAdapter extends RecyclerView.Adapter<LogsRecAdapter.LogsView
     public void onBindViewHolder(LogsViewHolder holder, int position) {
         final GeofenceLog geofenceLog = _logs.get(position);
 
+        holder.timestamp.setText(geofenceLog.getDisplayTime());
         holder.name.setText(geofenceLog.getName());
-        holder.timestamp.setText(geofenceLog.getTimeStamp());
         holder.message.setText(geofenceLog.getMessage());
     }
 
@@ -52,14 +52,14 @@ public class LogsRecAdapter extends RecyclerView.Adapter<LogsRecAdapter.LogsView
     }
 
     public static class LogsViewHolder extends RecyclerView.ViewHolder {
-        TextView name;
         TextView timestamp;
+        TextView name;
         TextView message;
 
         public LogsViewHolder(View v) {
             super(v);
-            name = (TextView) v.findViewById(R.id.name);
             timestamp = (TextView) v.findViewById(R.id.timestamp);
+            name = (TextView) v.findViewById(R.id.name);
             message = (TextView) v.findViewById(R.id.message);
         }
     }
