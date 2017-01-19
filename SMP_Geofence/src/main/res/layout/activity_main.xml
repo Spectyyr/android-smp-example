@@ -33,4 +33,25 @@
         android:text="Geofence"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"/>
+
+    <ToggleButton
+        android:id="@+id/tabs_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tabs_toggle"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Logs"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"/>
 </RelativeLayout>

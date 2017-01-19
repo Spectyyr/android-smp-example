@@ -122,6 +122,24 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
                 Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
             }
         });
+
+        final ToggleButton tabsToggleButton = (ToggleButton) findViewById(R.id.tabs_toggle);
+        int currentPage = viewPager.getCurrentItem();
+        if (currentPage == 0) {
+            tabsToggleButton.setChecked(false);
+        } else if (currentPage == 1) {
+            tabsToggleButton.setChecked(true);
+        }
+        tabsToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    viewPager.setCurrentItem(1);
+                } else {
+                    viewPager.setCurrentItem(0);
+                }
+            }
+        });
     }
 
     @Override
