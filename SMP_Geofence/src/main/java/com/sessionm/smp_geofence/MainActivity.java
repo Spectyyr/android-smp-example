@@ -83,8 +83,9 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
 
                         @Override
                         public void onGeofenceEventTriggered(TriggeredEvent triggeredEvent) {
-                            RxBus.getInstance().setLog(new GeofenceLog("Triggered: " + triggeredEvent.getGeofenceEvent().getTriggerType().toString()
+                            RxBus.getInstance().setLog(new GeofenceLog("Name: " + triggeredEvent.getGeofenceEvent().getType()
                                     , "Distance: " + triggeredEvent.getGeofenceEvent().getLocation().distanceTo(triggeredEvent.getTriggeredLocation()) + "\n"
+                                    + "Triggered: " + triggeredEvent.getGeofenceEvent().getTriggerType().toString() + "\n"
                                     + "ID: " + triggeredEvent.getGeofenceEvent().getID()));
                         }
 

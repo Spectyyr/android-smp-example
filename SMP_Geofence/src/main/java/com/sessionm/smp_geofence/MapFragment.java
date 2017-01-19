@@ -21,7 +21,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.sessionm.api.geofence.data.GeofenceEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import rx.Subscription;
 import rx.functions.Action1;
@@ -32,6 +35,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private MapView mapView;
 
+    Map<String, Integer> colorCodeMap = new HashMap<>();
     List<Circle> circles = new ArrayList<>();
     private Subscription subscription;
 
@@ -53,10 +57,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     return;
                 for (GeofenceEvent geofenceEvent : geofenceEvents) {
                     LatLng latLng = new LatLng(geofenceEvent.getLatitude(), geofenceEvent.getLongitude());
+                    String eventName = geofenceEvent.getType();
+                    int color;
+                    if (colorCodeMap.containsKey(eventName))
+                        color = colorCodeMap.get(eventName);
+                    else {
+                        Random rnd = new Random();
+                        color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+                        colorCodeMap.put(eventName, color);
+                    }
                     Circle circle = mMap.addCircle(new CircleOptions()
                             .center(latLng)
                             .radius(geofenceEvent.getRadius())
-                            .fillColor(Color.RED));
+                            .fillColor(color));
                     circles.add(circle);
                 }
             }
