@@ -21,7 +21,7 @@ import com.sessionm.api.User;
 import com.sessionm.api.geofence.GeofenceListener;
 import com.sessionm.api.geofence.GeofenceManager;
 import com.sessionm.api.geofence.data.GeofenceEvent;
-import com.sessionm.api.geofence.data.TriggeredEvent;
+//import com.sessionm.api.geofence.data.TriggeredEvent;
 
 import java.util.List;
 
@@ -81,13 +81,13 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
                             RxBus.getInstance().setLog(new GeofenceLog("Geofence events list updated.", ""));
                         }
 
-                        @Override
-                        public void onGeofenceEventTriggered(TriggeredEvent triggeredEvent) {
-                            RxBus.getInstance().setLog(new GeofenceLog("Name: " + triggeredEvent.getGeofenceEvent().getType()
-                                    , "Distance: " + triggeredEvent.getGeofenceEvent().getLocation().distanceTo(triggeredEvent.getTriggeredLocation()) + "\n"
-                                    + "Triggered: " + triggeredEvent.getGeofenceEvent().getTriggerType().toString() + "\n"
-                                    + "ID: " + triggeredEvent.getGeofenceEvent().getID()));
-                        }
+//                        @Override
+//                        public void onGeofenceEventTriggered(TriggeredEvent triggeredEvent) {
+//                            RxBus.getInstance().setLog(new GeofenceLog("Name: " + triggeredEvent.getGeofenceEvent().getType()
+//                                    , "Distance: " + triggeredEvent.getGeofenceEvent().getLocation().distanceTo(triggeredEvent.getTriggeredLocation()) + "\n"
+//                                    + "Triggered: " + triggeredEvent.getGeofenceEvent().getTriggerType().toString() + "\n"
+//                                    + "ID: " + triggeredEvent.getGeofenceEvent().getID()));
+//                        }
 
                         @Override
                         public void onGeofenceServiceStarted() {
