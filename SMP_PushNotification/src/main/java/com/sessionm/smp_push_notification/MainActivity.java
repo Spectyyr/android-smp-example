@@ -1,6 +1,8 @@
 package com.sessionm.smp_push_notification;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -34,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
 
         sessionM = SessionM.getInstance();
 
-
         Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
 
@@ -63,6 +64,12 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
             Bundle extras = getIntent().getExtras();
             pushMessage = sessionM.getMessageManager().getPendingNotification(extras);
             setUpPushMessaging();
+        } else {
+            Intent intent = getIntent();
+            if (intent.getAction().equals(Intent.ACTION_VIEW)) {
+                String url = intent.getData().toString();
+                handleDeepLinkString(url);
+            }
         }
     }
 
@@ -90,7 +97,11 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
     }
 
     public void TriggerOpenAdPush(View view) {
-        SessionM.getInstance().logAction("push_notification_open_ad");
+        sessionM.logAction("push_notification_open_ad");
+    }
+
+    public void TriggerDeepLinkPush(View view) {
+        sessionM.logAction("push_notification_deep_link");
     }
 
     //Only needed when use bundle extras enabled.
@@ -117,6 +128,15 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
 
             }
         });
+    }
+
+    private void handleDeepLinkString(String url) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Deep Link").setMessage(url);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     //Only needed when use bundle extras enabled.
