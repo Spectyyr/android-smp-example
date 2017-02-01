@@ -64,11 +64,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     }
 
     @Override
-    public void onNotificationMessage(SessionM sessionM, NotificationMessage notificationMessage) {
-
-    }
-
-    @Override
     public void onDeepLinkTapped(Message.MessageActionType actionType, String actionURL) {
 
     }
