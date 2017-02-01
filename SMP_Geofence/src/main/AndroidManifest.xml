@@ -36,7 +36,7 @@
         <!-- enabling this will cause the sdk to start automatically in onResume -->
         <meta-data
             android:name="com.sessionm.appid"
-            android:value="abd86968d39cc96ff90ffc3164d5b9030d3d2bfd"/>
+            android:value="c4d9427e894e3b0ddf67bd08280b11e051f66c82"/>
 
         <activity
             android:name="com.sessionm.ui.SessionMActivity"
@@ -70,5 +70,37 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+
+
+        <!-- Push Notification. Add this block to accept follow up push notification triggered by geofence events.-->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+
+                <category android:name="com.sessionm.smp_push_notification"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.sessionm.api.message.notification.service.NotificationReceiver">
+        </receiver>
+
+        <service
+            android:name="com.sessionm.api.message.notification.service.GCMListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.sessionm.api.message.notification.service.GCMInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
     </application>
 </manifest>
