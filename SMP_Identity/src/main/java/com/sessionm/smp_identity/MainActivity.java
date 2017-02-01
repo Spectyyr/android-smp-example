@@ -511,9 +511,4 @@ public class MainActivity extends AppCompatActivity implements SessionListener{
     public void onUnclaimedAchievement(SessionM sessionM, AchievementData achievementData) {
 
     }
-
-    @Override
-    public void onNotificationMessage(SessionM sessionM, NotificationMessage notificationMessage) {
-
-    }
 }

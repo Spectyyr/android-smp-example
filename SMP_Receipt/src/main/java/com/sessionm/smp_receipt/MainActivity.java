@@ -83,11 +83,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
     }
 
     @Override
-    public void onNotificationMessage(SessionM sessionM, NotificationMessage notificationMessage) {
-
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == SessionM.RECEIPT_UPLOAD_RESULT_CODE) {
             if (resultCode == RESULT_OK)
