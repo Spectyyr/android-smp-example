@@ -22,6 +22,7 @@ public class SEApplication extends Application{
         registerActivityLifecycleCallbacks(_mCallbacks);
         final SessionM sessionM = SessionM.getInstance();
         sessionM.setApplicationContext(this);
+        sessionM.setAppKey("c4d9427e894e3b0ddf67bd08280b11e051f66c82");
         sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api.tour-sessionm.com");
 
         //Enable push notification. Add this block to accept follow up push notification triggered by geofence events.

@@ -17,11 +17,12 @@ import android.widget.ToggleButton;
 import com.sessionm.api.AchievementData;
 import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
+import com.sessionm.api.SessionMError;
 import com.sessionm.api.User;
 import com.sessionm.api.geofence.GeofenceListener;
 import com.sessionm.api.geofence.GeofenceManager;
 import com.sessionm.api.geofence.data.GeofenceEvent;
-//import com.sessionm.api.geofence.data.TriggeredEvent;
+import com.sessionm.api.geofence.data.TriggeredEvent;
 
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
     private SessionM sessionM = SessionM.getInstance();
 
     ViewPager viewPager;
+
+    ToggleButton geofenceToggleButton;
 
     private Subscription subscription;
 
@@ -61,58 +64,30 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
             }
         });
 
-        final ToggleButton geofenceToggleButton = (ToggleButton) findViewById(R.id.geofence_toggle);
-        boolean geofenceServiceIsStarted = GeofenceManager.isStarted(getApplicationContext());
-        //TODO: always start geofence again to initiate GoogleApiClient
+        geofenceToggleButton = (ToggleButton) findViewById(R.id.geofence_toggle);
+        final GeofenceManager geofenceManager = GeofenceManager.getInstance(this);
+        boolean geofenceServiceIsStarted = geofenceManager.isStarted();
+        //TODO: always start geofence again
         if (geofenceServiceIsStarted)
-            GeofenceManager.startGeofenceService(getApplicationContext(), null);
+            geofenceManager.startGeofenceService(geofenceListener);
         geofenceToggleButton.setChecked(geofenceServiceIsStarted);
 
         geofenceToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    GeofenceManager.setDebugMode(getApplicationContext(), true);
-                    GeofenceManager.startGeofenceService(getApplicationContext(), new GeofenceListener() {
-                        @Override
-                        public void onGeofenceEventsUpdated(List<GeofenceEvent> list) {
-                            RxBus.getInstance().setString("Geofence events list updated!");
-                            RxBus.getInstance().setGeofenceList(list);
-                            RxBus.getInstance().setLog(new GeofenceLog("Geofence events list updated.", ""));
-                        }
-
-//                        @Override
-//                        public void onGeofenceEventTriggered(TriggeredEvent triggeredEvent) {
-//                            RxBus.getInstance().setLog(new GeofenceLog("Name: " + triggeredEvent.getGeofenceEvent().getType()
-//                                    , "Distance: " + triggeredEvent.getGeofenceEvent().getLocation().distanceTo(triggeredEvent.getTriggeredLocation()) + "\n"
-//                                    + "Triggered: " + triggeredEvent.getGeofenceEvent().getTriggerType().toString() + "\n"
-//                                    + "ID: " + triggeredEvent.getGeofenceEvent().getID()));
-//                        }
-
-                        @Override
-                        public void onGeofenceServiceStarted() {
-
-                        }
-
-                        @Override
-                        public void onGeofenceServiceStopped() {
-                            RxBus.getInstance().setGeofenceList(null);
-                            geofenceToggleButton.setChecked(false);
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
+                    geofenceManager.setDebugMode(true);
+                    geofenceManager.setFastestLocationUpdateInterval(15 * 1000);
+                    geofenceManager.setLocationUpdateInterval(60 * 1000);
+                    geofenceManager.startGeofenceService(geofenceListener);
                 } else {
-                    GeofenceManager.stopGeofenceService(getApplicationContext());
+                    geofenceManager.stopGeofenceService();
                 }
             }
         });
 
         if (geofenceServiceIsStarted) {
-            RxBus.getInstance().setGeofenceList(GeofenceManager.getGeofenceEventsList(getApplicationContext()));
+            RxBus.getInstance().setGeofenceList(geofenceManager.getGeofenceEventsList());
         }
 
 
@@ -142,9 +117,43 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         });
     }
 
+    GeofenceListener geofenceListener = new GeofenceListener() {
+        @Override
+        public void onGeofenceEventsUpdated(List<GeofenceEvent> list) {
+            RxBus.getInstance().setString("Geofence events list updated!");
+            RxBus.getInstance().setGeofenceList(list);
+            RxBus.getInstance().setLog(new GeofenceLog("Geofence events list updated.", ""));
+        }
+
+        @Override
+        public void onGeofenceEventTriggered(TriggeredEvent triggeredEvent) {
+            RxBus.getInstance().setLog(new GeofenceLog("Name: " + triggeredEvent.getGeofenceEvent().getEventName()
+                    , "Distance: " + triggeredEvent.getGeofenceEvent().getLocation().distanceTo(triggeredEvent.getTriggeredLocation()) + "\n"
+                    + "Triggered: " + triggeredEvent.getGeofenceEvent().getTriggerType().toString() + "\n"
+                    + "ID: " + triggeredEvent.getGeofenceEvent().getID()));
+        }
+
+        @Override
+        public void onGeofenceServiceStarted() {
+
+        }
+
+        @Override
+        public void onGeofenceServiceStopped() {
+            RxBus.getInstance().setGeofenceList(null);
+            geofenceToggleButton.setChecked(false);
+        }
+
+        @Override
+        public void onError(SessionMError error) {
+
+        }
+    };
+
     @Override
     protected void onStart() {
         super.onStart();
+        GeofenceManager.getInstance(this).setGeofenceListener(geofenceListener);
     }
 
     @Override
@@ -179,7 +188,8 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
 
     @Override
     public void onSessionStateChanged(SessionM sessionM, SessionM.State state) {
-
+        if (state.equals(SessionM.State.STARTED_ONLINE))
+            sessionM.authenticateWithToken("auth_token", SAMPLE_USER_TOKEN);
     }
 
     @Override

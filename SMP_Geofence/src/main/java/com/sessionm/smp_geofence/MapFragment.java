@@ -57,7 +57,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     return;
                 for (GeofenceEvent geofenceEvent : geofenceEvents) {
                     LatLng latLng = new LatLng(geofenceEvent.getLatitude(), geofenceEvent.getLongitude());
-                    String eventName = geofenceEvent.getType();
+                    String eventName = geofenceEvent.getEventName();
                     int color;
                     if (colorCodeMap.containsKey(eventName))
                         color = colorCodeMap.get(eventName);
