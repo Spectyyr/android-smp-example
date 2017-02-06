@@ -65,6 +65,11 @@
         <!-- Add geofence service inside application block -->
         <service android:name="com.sessionm.api.geofence.service.GeofenceIntentService"/>
 
+        <service
+            android:name="com.sessionm.api.geofence.service.GeofenceLocationService"
+            android:exported="true">
+        </service>
+
         <receiver android:name="com.sessionm.api.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
