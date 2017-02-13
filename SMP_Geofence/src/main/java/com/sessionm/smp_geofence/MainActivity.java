@@ -76,8 +76,23 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    // Sets debug mode. If this is enabled, a local push notification will be sent to push notification center when geofence event is triggered.
                     geofenceManager.setDebugMode(true);
+                    /* Explicitly set the fastest interval for location updates, in milliseconds. Default is 30s.
+                     * This controls the fastest rate at which your application will receive location updates, which might be faster than setInterval(long) in some situations
+                     * (for example, if other applications are triggering location updates).
+                     * This allows your application to passively acquire locations at a rate faster than it actively acquires locations, saving power.
+                     * Unlike setInterval(long), this parameter is exact. Your application will never receive updates faster than this value.
+                     * If you don't call this method, a fastest interval will be selected for you. It will be a value faster than your active interval (setInterval(long)).
+                     * An interval of 0 is allowed, but not recommended, since location updates may be extremely fast on future implementations.
+                     * If setFastestInterval(long) is set slower than setInterval(long), then your effective fastest interval is setInterval(long).
+                     */
                     geofenceManager.setFastestLocationUpdateInterval(15 * 1000);
+                    /* Set the desired interval for active location updates, in milliseconds. Default is 180s.
+                    * The location client will actively try to obtain location updates for your application at this interval, so it has a direct influence on the amount of power used by your application.
+                    * Choose your interval wisely. This interval is inexact. You may not receive updates at all (if no location sources are available),
+                    * or you may receive them slower than requested. You may also receive them faster than requested (if other applications are requesting location at a faster interval).
+                    * Applications with only the coarse location permission may have their interval silently throttled. */
                     geofenceManager.setLocationUpdateInterval(60 * 1000);
                     geofenceManager.startGeofenceService(geofenceListener);
                 } else {
