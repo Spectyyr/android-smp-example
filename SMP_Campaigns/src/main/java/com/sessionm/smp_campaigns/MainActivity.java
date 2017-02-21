@@ -11,7 +11,6 @@ import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.User;
 import com.sessionm.api.message.data.Message;
-import com.sessionm.api.message.notification.data.NotificationMessage;
 
 public class MainActivity extends AppCompatActivity implements SessionListener, CampaignsFragment.OnDeepLinkTappedListener  {
 
