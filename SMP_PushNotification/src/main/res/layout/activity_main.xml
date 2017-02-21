@@ -16,7 +16,7 @@
         layout="@layout/custom_action_bar"/>
 
     <Button
-        android:id="@+id/open_id_push_button"
+        android:id="@+id/open_ad_push_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/custom_action_bar"
@@ -27,9 +27,17 @@
         android:id="@+id/deep_link_push_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/open_id_push_button"
+        android:layout_below="@id/open_ad_push_button"
         android:onClick="TriggerDeepLinkPush"
         android:text="Deep Link Push"/>
+
+    <Button
+        android:id="@+id/external_link_push_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/deep_link_push_button"
+        android:onClick="TriggerExternalLinkPush"
+        android:text="External Link Push"/>
 
     <ToggleButton
         android:id="@+id/use_bundle_extras_toggle"

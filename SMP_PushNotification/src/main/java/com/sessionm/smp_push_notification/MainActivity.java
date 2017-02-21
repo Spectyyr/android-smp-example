@@ -104,6 +104,10 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         sessionM.logAction("push_notification_deep_link");
     }
 
+    public void TriggerExternalLinkPush(View view) {
+        sessionM.logAction("push_notification_external_link");
+    }
+
     //Only needed when use bundle extras enabled.
     @Override
     protected void onResume() {

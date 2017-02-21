@@ -93,6 +93,14 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         SessionM.getInstance().logAction("push_notification_open_ad");
     }
 
+    public void TriggerDeepLinkPush(View view) {
+        sessionM.logAction("push_notification_deep_link");
+    }
+
+    public void TriggerExternalLinkPush(View view) {
+        sessionM.logAction("push_notification_external_link");
+    }
+
     //Only needed when use bundle extras enabled.
     @Override
     protected void onResume() {
