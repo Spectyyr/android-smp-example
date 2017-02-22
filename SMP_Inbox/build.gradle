@@ -19,6 +19,11 @@ android {
     }
 }
 
+repositories {
+    //Optional: Generate random English word for new Inbox message
+    maven { url "https://jitpack.io" }
+}
+
 dependencies {
     compile 'com.yanzhenjie:recyclerview-swipe:1.0.2'
     compile 'com.android.support:design:25.1.0'
@@ -28,4 +33,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.sessionm.sdk:sessionm-sdk:2.1.5'
+
+    //Optional: Generate random English word for new Inbox message
+    compile 'com.github.maximeroussy:invitrode:1.0.10'
 }

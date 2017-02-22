@@ -3,6 +3,8 @@ package com.sessionm.smp_inbox;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sessionm.api.AchievementData;
 import com.sessionm.api.SessionListener;
@@ -18,6 +21,7 @@ import com.sessionm.api.SessionMError;
 import com.sessionm.api.User;
 import com.sessionm.api.inbox.InboxListener;
 import com.sessionm.api.inbox.data.InboxMessage;
+import com.sessionm.api.inbox.data.NewInboxMessage;
 import com.yanzhenjie.recyclerview.swipe.Closeable;
 import com.yanzhenjie.recyclerview.swipe.OnSwipeMenuItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenu;
@@ -27,8 +31,12 @@ import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements SessionListener {
+import main.java.com.maximeroussy.invitrode.RandomWord;
+import main.java.com.maximeroussy.invitrode.WordLengthException;
+
+public class MainActivity extends AppCompatActivity implements SessionListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String SAMPLE_USER_TOKEN = "v2--Sd2T8UBqlCGQovVPnsUs4eqwFe0-1i9JV4nq__RWmsA=--dWM8r8RggUJCToOaiiT6NXmiOipkovvD9HueM_jZECStExtGFkZzVmCUhkdDJe5NQw==";
 
@@ -37,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
     private List<InboxMessage> messages;
     private SwipeMenuRecyclerView mSwipeMenuRecyclerView;
     private TextView userBalanceTextView;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         });
         mContext = this;
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
         messages = new ArrayList<>();
         mSwipeMenuRecyclerView = (SwipeMenuRecyclerView) findViewById(R.id.recycler_view);
         mSwipeMenuRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -71,6 +83,32 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         mMenuAdapter = new MenuAdapter(messages);
         mMenuAdapter.setOnItemClickListener(onItemClickListener);
         mSwipeMenuRecyclerView.setAdapter(mMenuAdapter);
+
+        FloatingActionButton createNewMessageButton = (FloatingActionButton) findViewById(R.id.create_new_message_button);
+        createNewMessageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Optional: Random words for a new Inbox message
+                String subject = "Sample Subject";
+                String body = "Sample Body";
+                Random random = new Random();
+                int length = random.nextInt(6) + 3;
+                try {
+                    subject = RandomWord.getNewWord(length);
+                    body = RandomWord.getNewWord(length) + " "
+                            + RandomWord.getNewWord(length) + " "
+                            + RandomWord.getNewWord(length) + " "
+                            + RandomWord.getNewWord(length) + " "
+                            + RandomWord.getNewWord(length) + " "
+                            + RandomWord.getNewWord(length);
+                } catch (WordLengthException e) {
+                    e.printStackTrace();
+                }
+
+                NewInboxMessage newInboxMessage = new NewInboxMessage(subject, body.toLowerCase());
+                SessionM.getInstance().getInboxManager().createInboxMessage(newInboxMessage);
+            }
+        });
     }
 
     @Override
@@ -151,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
             }
             messages.addAll(list);
             mMenuAdapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
         }
 
         @Override
@@ -160,16 +199,20 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
 
         @Override
         public void onInboxMessageCreated(InboxMessage inboxMessage) {
+            Toast.makeText(MainActivity.this, "New message created! \n ID: " + inboxMessage.getID(), Toast.LENGTH_LONG).show();
         }
 
         @Override
         public void onFailure(SessionMError sessionMError) {
+            swipeRefreshLayout.setRefreshing(false);
             Log.d("InboxDemo", sessionMError.getMessage());
         }
     };
 
     @Override
     public void onSessionStateChanged(SessionM sessionM, SessionM.State state) {
+        if (state == SessionM.State.STARTED_ONLINE)
+            sessionM.authenticateWithToken("auth_token", SAMPLE_USER_TOKEN);
     }
 
     @Override
@@ -189,5 +232,10 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
     @Override
     public void onUnclaimedAchievement(SessionM sessionM, AchievementData achievementData) {
 
+    }
+
+    @Override
+    public void onRefresh() {
+        SessionM.getInstance().getInboxManager().fetchInboxMessages();
     }
 }
