@@ -15,6 +15,8 @@
  */
 package com.sessionm.smp_inbox;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,20 +60,12 @@ public class MenuAdapter extends SwipeMenuAdapter<MenuAdapter.DefaultViewHolder>
     @Override
     public void onBindViewHolder(MenuAdapter.DefaultViewHolder holder, int position) {
         InboxMessage inboxMessage = messages.get(position);
-        String title = inboxMessage.getSubject();
-        String timestamp = inboxMessage.getCreatedTime();
-        String body = inboxMessage.getBody();
-        if (inboxMessage.getState().equals(InboxMessage.STATE_TYPES.NEW)) {
-            title += " NEW!!! ";
-        }
-        holder.setTitle(title);
-        holder.setTimeStamp(timestamp);
-        holder.setBody(body);
+        holder.setMessage(inboxMessage);
         holder.setOnItemClickListener(mOnItemClickListener);
     }
 
     static class DefaultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView titleTextView;
+        TextView subjectTextView;
         TextView timestampTextView;
         TextView bodyTextView;
         OnItemClickListener mOnItemClickListener;
@@ -79,7 +73,7 @@ public class MenuAdapter extends SwipeMenuAdapter<MenuAdapter.DefaultViewHolder>
         DefaultViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            titleTextView = (TextView) itemView.findViewById(R.id.title_textview);
+            subjectTextView = (TextView) itemView.findViewById(R.id.subject_textview);
             timestampTextView = (TextView) itemView.findViewById(R.id.timestamp_textview);
             bodyTextView = (TextView) itemView.findViewById(R.id.body_textview);
         }
@@ -88,16 +82,19 @@ public class MenuAdapter extends SwipeMenuAdapter<MenuAdapter.DefaultViewHolder>
             this.mOnItemClickListener = onItemClickListener;
         }
 
-        public void setTitle(String title) {
-            this.titleTextView.setText(title);
-        }
-
-        public void setTimeStamp(String timeStamp) {
-            this.timestampTextView.setText(timeStamp);
-        }
-
-        public void setBody(String body) {
-            this.bodyTextView.setText(body);
+        public void setMessage(InboxMessage message) {
+            this.subjectTextView.setText(message.getSubject());
+            this.timestampTextView.setText(message.getCreatedTime());
+            this.bodyTextView.setText(message.getBody());
+            if (message.getState().equals(InboxMessage.STATE_TYPES.NEW)) {
+                subjectTextView.setTextColor(Color.BLACK);
+                timestampTextView.setTextColor(Color.BLACK);
+                bodyTextView.setTextColor(Color.BLACK);
+            } else {
+                subjectTextView.setTextColor(Color.GRAY);
+                timestampTextView.setTextColor(Color.GRAY);
+                bodyTextView.setTextColor(Color.GRAY);
+            }
         }
 
         @Override
