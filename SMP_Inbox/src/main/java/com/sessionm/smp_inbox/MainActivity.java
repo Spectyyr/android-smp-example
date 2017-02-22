@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
                 swipeRightMenu.addMenuItem(deleteItem);
 
                 SwipeMenuItem closeItem = new SwipeMenuItem(mContext)
-                        .setBackgroundDrawable(R.drawable.selector_purple)
+                        .setBackgroundDrawable(R.drawable.selector_blue)
                         .setText("Mark As Read")
                         .setTextColor(Color.WHITE)
                         .setWidth(width)
