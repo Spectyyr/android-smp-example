@@ -140,10 +140,9 @@ public class CampaignsRecAdapter extends RecyclerView.Adapter<CampaignsRecAdapte
 
     //TODO Needs to handle more events
     private void showDetails(FeedMessage data) {
+        SessionM.getInstance().getCampaignsManager().executeMessageAction(data.getMessageID());
         Message.MessageActionType actionType = data.getActionType();
-        if (actionType.equals(Message.MessageActionType.FULL_SCREEN)) {
-            SessionM.getInstance().presentActivity(SessionM.ActivityType.PORTAL, data.getActionURL());
-        } else {
+        if (!actionType.equals(Message.MessageActionType.FULL_SCREEN)) {
             _fragment.onItemTapped(actionType, data.getActionURL());
         }
     }

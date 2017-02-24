@@ -1,5 +1,7 @@
 package com.sessionm.smp_campaigns;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
 
     @Override
     public void onDeepLinkTapped(Message.MessageActionType actionType, String actionURL) {
-
+        Uri uri = Uri.parse(actionURL);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 }
