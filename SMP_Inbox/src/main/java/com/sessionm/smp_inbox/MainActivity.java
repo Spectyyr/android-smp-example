@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
             {
                 SwipeMenuItem deleteItem = new SwipeMenuItem(mContext)
                         .setBackgroundDrawable(R.drawable.selector_red)
-                        .setImage(R.mipmap.ic_action_delete)
+//                        .setImage(R.mipmap.ic_action_delete)
                         .setText("Delete")
                         .setTextColor(Color.WHITE)
                         .setWidth(width)

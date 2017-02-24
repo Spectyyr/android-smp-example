@@ -1,10 +1,14 @@
 package com.sessionm.smp_receipt;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
 
     private static final String SAMPLE_USER_TOKEN = "v2--Sd2T8UBqlCGQovVPnsUs4eqwFe0-1i9JV4nq__RWmsA=--dWM8r8RggUJCToOaiiT6NXmiOipkovvD9HueM_jZECStExtGFkZzVmCUhkdDJe5NQw==";
 
+    private static final int WRITE_EXTERNAL_PERMISSION_REQUEST_CODE = 1;
     private TextView userBalanceTextView;
     private FloatingActionButton newUploadButton;
 
@@ -42,7 +47,14 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         newUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkHasIncompleteReceipts();
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // Permission to access the location is missing.
+                    PermissionUtils.requestPermission(MainActivity.this, WRITE_EXTERNAL_PERMISSION_REQUEST_CODE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE, true);
+                } else {
+                    checkHasIncompleteReceipts();
+                }
             }
         });
 
@@ -138,5 +150,21 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         dialog.setView(dialogLayout);
         dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode != WRITE_EXTERNAL_PERMISSION_REQUEST_CODE) {
+            return;
+        }
+
+        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Enable the my location layer if the permission has been granted.
+            checkHasIncompleteReceipts();
+        } else {
+            // Display the missing permission error dialog when the fragments resume.
+        }
     }
 }
