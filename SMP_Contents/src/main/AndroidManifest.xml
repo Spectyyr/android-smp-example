@@ -57,10 +57,7 @@
         <activity android:name=".ContentActivity">
         </activity>
         <activity
-            android:name=".VideoActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_video"
-            android:theme="@style/FullscreenTheme">
+            android:name=".VideoActivity" >
         </activity>
     </application>
 

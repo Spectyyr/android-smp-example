@@ -5,8 +5,6 @@
 package com.sessionm.smp_contents;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -15,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.sessionm.api.content.data.Content;
 import com.squareup.picasso.Picasso;
@@ -52,8 +49,8 @@ public class ContentsRecAdapter extends RecyclerView.Adapter<ContentsRecAdapter.
         //Returns the message sub header
         holder.subHeaderTextView.setText(item.getCreatedTime());
 
-        //Returns the message period
-        holder.periodTextView.setText(item.getUpdatedTime() + " - " + item.getExpiresTime());
+        //Returns the message period.
+        //holder.periodTextView.setText(item.getUpdatedTime() + " - " + item.getExpiresTime());
 
         //There is no need to draw the description if it was not set
         if (!TextUtils.isEmpty(item.getDescription())) {
@@ -70,41 +67,14 @@ public class ContentsRecAdapter extends RecyclerView.Adapter<ContentsRecAdapter.
         else
             holder.valueTextView.setText(weight + "");
 
-        //Any customized value in data field
-        /*JSONObject data = item.getData();
-        if (data != null) {
-            String value = data.optString("value");
-            valueTextView.setText(value);
-        }*/
-
         //There is no need to draw the image if there is not image URL
         String imageURL = item.getImageURL();
         if (imageURL != null && !imageURL.equals("null")) {
-            if (imageURL.endsWith("mp4")) {
-                final Uri videoUri = Uri.parse(imageURL);
-                holder.feedImageView.setVisibility(View.GONE);
-                holder.videoView.setVisibility(View.VISIBLE);
-                holder.videoView.setVideoURI(videoUri);
-                holder.videoView.start();
-                holder.videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                    }
-                });
-                holder.videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                    }
-                });
-            } else {
-                //Returns the Message image URL, String
-                Picasso.with(_fragment.getActivity()).load(item.getImageURL()).into(holder.feedImageView);
-                holder.feedImageView.setVisibility(View.VISIBLE);
-                holder.videoView.setVisibility(View.GONE);
-            }
+            //Returns the Message image URL, String
+            Picasso.with(_fragment.getActivity()).load(item.getImageURL()).into(holder.feedImageView);
+            holder.feedImageView.setVisibility(View.VISIBLE);
         } else {
             holder.feedImageView.setVisibility(View.GONE);
-            holder.videoView.setVisibility(View.GONE);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -136,17 +106,15 @@ public class ContentsRecAdapter extends RecyclerView.Adapter<ContentsRecAdapter.
         TextView descriptionTextView;
         TextView valueTextView;
         ImageView feedImageView;
-        VideoView videoView;
 
         public CampaignsViewHolder(View v) {
             super(v);
-            headerTextView = (TextView) v.findViewById(R.id.promotion_header_text);
-            subHeaderTextView = (TextView) v.findViewById(R.id.promotion_subheader_text);
-            periodTextView = (TextView) v.findViewById(R.id.promotion_period_text);
-            descriptionTextView = (TextView) v.findViewById(R.id.promotion_detail_text);
-            valueTextView = (TextView) v.findViewById(R.id.promotion_value_text);
-            feedImageView = (ImageView) v.findViewById(R.id.promotion_main_image);
-            videoView = (VideoView) v.findViewById(R.id.promotion_main_video);
+            headerTextView = (TextView) v.findViewById(R.id.content_header_text);
+            subHeaderTextView = (TextView) v.findViewById(R.id.content_subheader_text);
+            periodTextView = (TextView) v.findViewById(R.id.content_period_text);
+            descriptionTextView = (TextView) v.findViewById(R.id.content_detail_text);
+            valueTextView = (TextView) v.findViewById(R.id.content_value_text);
+            feedImageView = (ImageView) v.findViewById(R.id.content_main_image);
         }
     }
 }
