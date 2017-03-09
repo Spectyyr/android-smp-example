@@ -1,7 +1,6 @@
 package com.sessionm.smp_receipt;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,7 +21,6 @@ import com.sessionm.api.AchievementData;
 import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.User;
-import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.api.receipt.ReceiptsManager;
 
 public class MainActivity extends AppCompatActivity implements SessionListener {
@@ -133,10 +131,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
                 sessionM.getReceiptsManager().uploadIncompleteReceipt(null, false);
-                progressDialog.setMessage(getString(R.string.uploading));
-                progressDialog.show();
             }
         }).setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
