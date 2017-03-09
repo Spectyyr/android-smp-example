@@ -29,7 +29,7 @@ By default it uses the anonymous user. You can click on “Click Here To Login U
 
 A message tile can be clicked to showcase its associated action (e.g. presenting an ad or opening a web page in native browser).
 
-There are three different actions to trigger different types of push notification message: Open ad, deep link and external link. Click on any of the buttons triggers a push notification with the specific type. Once you received a push notification in device’s notification center, clicks on it gives you different actions:
+There are three different actions to trigger different types of feed message: Open ad, deep link and external link. Click on any of the tiles gives you different actions:
 
 - Open Ad: Opens a pre-set Ad in the app’s portal.
 - Deep Link: Opens a dialog with a sample deep link schema
