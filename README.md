@@ -1,6 +1,8 @@
 SessionM Platform SDK Example Apps
 ===================
 
+Overview
+------
 Included in this repo are example modules that show how to use the SessionM Platform SDK for Android. Follow the steps below to setup and build a project:
 
 - Clone this repo.
@@ -19,8 +21,8 @@ LICENSE: MIT
 
 For more help see https://mmc.sessionm.com/docs/mmc-sdk/
 
-##Campaigns
-
+Campaigns
+------
 This app showcases how to use SessionM SDK to fetch promotional campaign messages for presentation in an activity feed.
 
 API docs: https://mmc.sessionm.com/docs/mmc-sdk/#campaigns
@@ -45,8 +47,8 @@ There are three different actions to trigger different types of feed message: Op
 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/campaigns_external_link.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
-##Contents
-
+Contents
+------
 This app showcases how to use SessionM SDK to fetch promotional content data for presentation in a content feed.
 
 A content tile can be clicked to see metadata and start video playback (if applicable).
@@ -61,8 +63,8 @@ Content details and play video
 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/contents_play.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
-##Geofence
-
+Geofence
+------
 This app showcases how to use SessionM SDK to track the user's location and monitor regions that the user enters and exits.
 
 API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#geofencing
@@ -86,8 +88,8 @@ Geofence Exit Dunkin
 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/geofence_exit_dunkin.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
-##Inbox
-
+Inbox
+------
 This app showcases how to use SessionM SDK to create UI for a user inbox.
 
 API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#inbox
@@ -104,8 +106,8 @@ You could also click on the floating button to create a random new inbox message
 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/inbox_create_new.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
-##Loyalty Cards
-
+Loyalty Cards
+------
 This app showcases how to use SessionM SDK to link and unlink loyalty cards to a user's account.
 
 API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#loyalty-card-linking
@@ -116,8 +118,8 @@ By default it uses the sample user. You can click on “*pts” textview to logo
 
 Click on the floating button to link a new card. You can see a list of retailers, you could search them by name, enter your card number and link the card. Then go back to the linked card list you could see the latest linked card. Click on the cell you could unlink the card.
 
-##Places
-
+Places
+------
 This app showcases how to use SessionM SDK to allow users to earn points and promotional opportunities by checking in to sponsored venues.
 
 API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#places
@@ -136,8 +138,8 @@ After refresh install the app, you’ll need to follow these steps:
 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and all linked loyalty cards are gone. You could then click on “Click Here To Login User” to login sample user again.
 
-##Push Notification
-
+Push Notification
+------
 This app showcases how to use SessionM SDK to present a popup message when the user receives a push notification.
 
 API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#push-notifications
@@ -164,8 +166,8 @@ There are three different actions to trigger different types of push notificatio
 
 There is also an option on how to handle push notification click actions. For more details, please refer to: https://mmc.sessionm.com/docs/mmc-sdk/#integration
 
-##Receipts
-
+Receipts
+------
 This app showcases how to use SessionM SDK to allow users to upload receipt images.
 
 API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#receipt
@@ -182,8 +184,8 @@ You could click on the floating button to upload a new receipt. Follow the steps
 - You could either “Add more” images, which allows multiple images to be uploaded in one request, or “User Photo” to start uploading.
 - You’ll see a status page shows if the image is uploaded successfully. If success, you could see the uploaded receipt showing in the receipts list. Otherwise, the next time you try to upload a new receipt, the app prompts if you want to resume the more recent failed receipt. 
 
-##Referrals
-
+Referrals
+------
 This app showcases how to use SessionM SDK to allow users to send an email to refer other potential users to sign up for an account.
 
 API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#referrals
@@ -195,8 +197,8 @@ The main view shows a list of referrals that have already been sent by the user.
 You could click on the floating button to create a new referral. “Create Random” button provides a convenient way to create two random referrals based on timestamp. 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and all referrals are gone. You could then click on “Click Here To Login User” to login sample user again.
 
-##Rewards
-
+Rewards
+------
 This app showcases how to use SessionM SDK to allow users to spend loyalty points to purchase rewards.
 
 API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#rewards
@@ -207,8 +209,8 @@ The “Orders” button show a list of current user’s history orders.
 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and orders are gone. You could then click on “Click Here To Login User” to login sample user again.
 
-##Transactions
-
+Transactions
+------
 This app showcases how to use SessionM SDK to view a user's loyalty points transaction history.
 
 API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#transactions11
