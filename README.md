@@ -34,10 +34,15 @@ A message tile can be clicked to showcase its associated action (e.g. presenting
 There are three different actions to trigger different types of feed message: Open ad, deep link and external link. Click on any of the tiles gives you different actions:
 
 - Open Ad: Opens a pre-set Ad in the app’s portal.
+
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/campaigns_open_ad.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
+
 - Deep Link: Opens a dialog with a sample deep link schema
+
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/campaigns_deep_link.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
+
 - External Link: Opens native browser with sample URL
+
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/campaigns_external_link.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
 ##Contents
@@ -47,6 +52,14 @@ This app showcases how to use SessionM SDK to fetch promotional content data for
 A content tile can be clicked to see metadata and start video playback (if applicable).
 
 By default it uses the anonymous user. You can click on “Click Here To Login User” to login the default sample user to see the customized contents.
+
+Contents list
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/contents_list.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
+
+Content details and play video
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/contents_play.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
 ##Geofence
 
@@ -65,6 +78,14 @@ After refresh install the app, you’ll need to follow these steps:
 
 By default it uses the anonymous user. You can click on “Click Here To Login User” to login the default sample user.
 
+Geofence Enter Starbucks
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/geofence_enter_starbucks.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
+
+Geofence Exit Dunkin
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/geofence_exit_dunkin.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
+
 ##Inbox
 
 This app showcases how to use SessionM SDK to create UI for a user inbox.
@@ -73,14 +94,15 @@ API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#inbox
 
 The main view shows a list of messages in the user's inbox, with subjects, creation dates and inbox message body for each message. New message is with blank text color and Read message is with gray text color.
 
-You could left slide on each cell to update message state to “Delete”, “Read” or “Unread”. 
+You could left slide on each cell to update message state to “Delete”, “Read” or “Unread”, pull down the list to refresh the inbox messages list.
 
-You could pull down the list to refresh the inbox messages list.
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/inbox_update_state.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and all related inbox message are gone. You could then click on “Click Here To Login User” to login sample user again.
 
 You could also click on the floating button to create a random new inbox message and added to current user’s inbox. You’ll need to pull down to refresh the inbox messages list to see the new message.
 
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/inbox_create_new.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
 ##Loyalty Cards
 
@@ -105,7 +127,12 @@ After refresh install the app, you’ll need to follow these steps:
 - Grant the location permission request
 - Click on my location button to zoom to device’s current location. 
 - You would see a bunch of venues nearby that are available to check in. 
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/places_fetch_venues.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
+
 - Click on any of the droppers, you could see venue name and venue ID in the Infobox, click on the infobox, you should be able to make a check in attempt. If the venue is checkable, you’d check in to this venue successfully, otherwise you’ll see a toast describing the error message.
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/places_checkin.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and all linked loyalty cards are gone. You could then click on “Click Here To Login User” to login sample user again.
 
@@ -124,8 +151,16 @@ By default it uses the sample user. You can click on “*pts” textview to logo
 There are three different actions to trigger different types of push notification message: Open ad, deep link and external link. Click on any of the buttons triggers a push notification with the specific type. Once you received a push notification in device’s notification center, clicks on it gives you different actions:
 
 - Open Ad: Opens a pre-set Ad in the app’s portal.
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/gcm_open_ad.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
+
 - Deep Link: Opens a dialog with a sample deep link schema
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/gcm_deep_link.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
+
 - External Link: Opens native browser with sample URL
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/gcm_external_link.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
 There is also an option on how to handle push notification click actions. For more details, please refer to: https://mmc.sessionm.com/docs/mmc-sdk/#integration
 
@@ -155,6 +190,8 @@ API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#referrals
 
 The main view shows a list of referrals that have already been sent by the user. 
 
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/referrals_create_random.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
+
 You could click on the floating button to create a new referral. “Create Random” button provides a convenient way to create two random referrals based on timestamp. 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and all referrals are gone. You could then click on “Click Here To Login User” to login sample user again.
 
@@ -177,5 +214,7 @@ This app showcases how to use SessionM SDK to view a user's loyalty points trans
 API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#transactions11
 
 The main view shows a list of loyalty points transactions made by the user, and the resulting points balance after each transaction.
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/transactions_list.gif" alt="CampaignsSwitchUser Anima" width="324" height="576" />
 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and all transactions are gone. You could then click on “Click Here To Login User” to login sample user again.
