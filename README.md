@@ -96,6 +96,8 @@ Content details and play video
 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/contents_play.gif" alt="ContentsPlay Anima" width="324" height="576" />
 
+[Back to top](#ToC)
+
 <a name="Geofence"/>
 
 ## Geofence
@@ -123,6 +125,8 @@ Geofence Exit Dunkin
 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/geofence_exit_dunkin.gif" alt="GeofenceExit Anima" width="324" height="576" />
 
+[Back to top](#ToC)
+
 <a name="Inbox"/>
 
 ## Inbox
@@ -143,6 +147,8 @@ You could also click on the floating button to create a random new inbox message
 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/inbox_create_new.gif" alt="InboxCreate Anima" width="324" height="576" />
 
+[Back to top](#ToC)
+
 <a name="Loyalty_Cards"/>
 
 ## Loyalty Cards
@@ -162,6 +168,8 @@ Click on the floating button to link a new card. You can see a list of retailers
 Click on the cell you could unlink the card.
 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/loyalty_cards_unlink.gif" alt="LoyaltyCardsUnlink Anima" width="324" height="576" />
+
+[Back to top](#ToC)
 
 <a name="Places"/>
 
@@ -184,6 +192,8 @@ After refresh install the app, you’ll need to follow these steps:
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/places_checkin.gif" alt="PlacesCheckin Anima" width="324" height="576" />
 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and all linked loyalty cards are gone. You could then click on “Click Here To Login User” to login sample user again.
+
+[Back to top](#ToC)
 
 <a name="Push_Notification"/>
 
@@ -215,6 +225,8 @@ There are three different actions to trigger different types of push notificatio
 
 There is also an option on how to handle push notification click actions. For more details, please refer to: https://mmc.sessionm.com/docs/mmc-sdk/#integration
 
+[Back to top](#ToC)
+
 <a name="Receipts"/>
 
 ## Receipts
@@ -241,6 +253,8 @@ Different status receipts
 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/receipts_status.gif" alt="ReceiptsStatus Anima" width="324" height="576" />
 
+[Back to top](#ToC)
+
 <a name="Referrals"/>
 
 ## Referrals
@@ -255,6 +269,8 @@ The main view shows a list of referrals that have already been sent by the user.
 
 You could click on the floating button to create a new referral. “Create Random” button provides a convenient way to create two random referrals based on timestamp. 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and all referrals are gone. You could then click on “Click Here To Login User” to login sample user again.
+
+[Back to top](#ToC)
 
 <a name="Rewards"/>
 
@@ -274,6 +290,8 @@ The “Orders” button show a list of current user’s history orders.
 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and orders are gone. You could then click on “Click Here To Login User” to login sample user again.
 
+[Back to top](#ToC)
+
 <a name="Transactions"/>
 
 ## Transactions
@@ -287,3 +305,5 @@ The main view shows a list of loyalty points transactions made by the user, and 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/transactions_list.gif" alt="TransactionsList Anima" width="324" height="576" />
 
 By default it uses the sample user. You can click on “*pts” textview to logout the default sample user and all transactions are gone. You could then click on “Click Here To Login User” to login sample user again.
+
+[Back to top](#ToC)
