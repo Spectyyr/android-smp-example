@@ -21,8 +21,13 @@ LICENSE: MIT
 
 For more help see https://mmc.sessionm.com/docs/mmc-sdk/
 
-Campaigns
-------
+## Table of Contents  
+[Campaigns](#Campaigns)  
+
+<a name="Campaigns"/>
+
+## Campaigns
+
 This app showcases how to use SessionM SDK to fetch promotional campaign messages for presentation in an activity feed.
 
 API docs: https://mmc.sessionm.com/docs/mmc-sdk/#campaigns
