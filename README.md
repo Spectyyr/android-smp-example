@@ -21,6 +21,8 @@ LICENSE: MIT
 
 For more help see https://mmc.sessionm.com/docs/mmc-sdk/
 
+<a name="ToC"/>
+
 ## Table of Contents  
 
 [Campaigns](#Campaigns)
@@ -73,6 +75,8 @@ There are three different actions to trigger different types of feed message: Op
 - External Link: Opens native browser with sample URL
 
 <img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/campaigns_external_link.gif" alt="CampaignsExternalLink Anima" width="324" height="576" />
+
+[Back to top](#ToC)
 
 <a name="Contents"/>
 
