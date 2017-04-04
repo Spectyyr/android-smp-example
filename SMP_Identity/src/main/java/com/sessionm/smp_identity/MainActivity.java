@@ -302,16 +302,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener{
                 mmcUserRequest.setLongitude(updateNonEmptyFieldDouble(longitudeView));
                 mmcUserRequest.setIPAddress(updateNonEmptyField(ipAddressView));
                 mmcUserRequest.setLocale(Locale.getDefault());
-                Map<String, Map[]> childrenMap = new HashMap<>();
-                Map<String, String> child1 = new HashMap<>();
-                child1.put("gender", "m");
-                child1.put("dob", "2016-04-01");
-                Map<String, String> child2 = new HashMap<>();
-                child2.put("gender", "f");
-                child2.put("dob", "2016-04-01");
-                Map[] children = {child1, child2};
-                childrenMap.put("child", children);
-                mmcUserRequest.addUserProfile(childrenMap);
                 sessionM.getIdentityManager().updateMMCUser(mmcUserRequest);
             }
         });
