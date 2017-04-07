@@ -1,5 +1,7 @@
 package com.sessionm.smp_campaigns;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +13,6 @@ import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.User;
 import com.sessionm.api.message.data.Message;
-import com.sessionm.api.message.notification.data.NotificationMessage;
 
 public class MainActivity extends AppCompatActivity implements SessionListener, CampaignsFragment.OnDeepLinkTappedListener  {
 
@@ -64,12 +65,10 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     }
 
     @Override
-    public void onNotificationMessage(SessionM sessionM, NotificationMessage notificationMessage) {
-
-    }
-
-    @Override
     public void onDeepLinkTapped(Message.MessageActionType actionType, String actionURL) {
-
+        Uri uri = Uri.parse(actionURL);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.putExtra("url", actionURL);
+        startActivity(intent);
     }
 }

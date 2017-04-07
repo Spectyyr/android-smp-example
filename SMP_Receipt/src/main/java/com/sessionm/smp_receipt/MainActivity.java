@@ -1,10 +1,13 @@
 package com.sessionm.smp_receipt;
 
-import android.app.ProgressDialog;
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,13 +21,13 @@ import com.sessionm.api.AchievementData;
 import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.User;
-import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.api.receipt.ReceiptsManager;
 
 public class MainActivity extends AppCompatActivity implements SessionListener {
 
     private static final String SAMPLE_USER_TOKEN = "v2--Sd2T8UBqlCGQovVPnsUs4eqwFe0-1i9JV4nq__RWmsA=--dWM8r8RggUJCToOaiiT6NXmiOipkovvD9HueM_jZECStExtGFkZzVmCUhkdDJe5NQw==";
 
+    private static final int WRITE_EXTERNAL_PERMISSION_REQUEST_CODE = 1;
     private TextView userBalanceTextView;
     private FloatingActionButton newUploadButton;
 
@@ -42,7 +45,14 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         newUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkHasIncompleteReceipts();
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // Permission to access the location is missing.
+                    PermissionUtils.requestPermission(MainActivity.this, WRITE_EXTERNAL_PERMISSION_REQUEST_CODE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE, true);
+                } else {
+                    checkHasIncompleteReceipts();
+                }
             }
         });
 
@@ -79,11 +89,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
 
     @Override
     public void onUnclaimedAchievement(SessionM sessionM, AchievementData achievementData) {
-
-    }
-
-    @Override
-    public void onNotificationMessage(SessionM sessionM, NotificationMessage notificationMessage) {
 
     }
 
@@ -126,10 +131,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
                 sessionM.getReceiptsManager().uploadIncompleteReceipt(null, false);
-                progressDialog.setMessage(getString(R.string.uploading));
-                progressDialog.show();
             }
         }).setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
@@ -143,5 +145,21 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         dialog.setView(dialogLayout);
         dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode != WRITE_EXTERNAL_PERMISSION_REQUEST_CODE) {
+            return;
+        }
+
+        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Enable the my location layer if the permission has been granted.
+            checkHasIncompleteReceipts();
+        } else {
+            // Display the missing permission error dialog when the fragments resume.
+        }
     }
 }

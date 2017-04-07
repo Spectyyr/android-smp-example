@@ -24,7 +24,8 @@
 
         <activity
             android:name="com.sessionm.smp_geofence.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -62,12 +63,49 @@
         </receiver>
 
         <!-- Add geofence service inside application block -->
-        <service android:name="com.sessionm.api.geofence.service.GeofenceIntentService" />
+        <service android:name="com.sessionm.api.geofence.service.GeofenceIntentService"/>
+
+        <service
+            android:name="com.sessionm.api.geofence.service.GeofenceLocationService"
+            android:exported="true">
+        </service>
 
         <receiver android:name="com.sessionm.api.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+
+
+        <!-- Push Notification. Add this block to accept follow up push notification triggered by geofence events.-->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+
+                <category android:name="com.sessionm.smp_push_notification"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.sessionm.api.message.notification.service.NotificationReceiver">
+        </receiver>
+
+        <service
+            android:name="com.sessionm.api.message.notification.service.GCMListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.sessionm.api.message.notification.service.GCMInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
     </application>
 </manifest>

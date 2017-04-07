@@ -11,9 +11,8 @@
         android:id="@+id/custom_action_bar"
         layout="@layout/custom_action_bar"/>
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/main_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/custom_action_bar"/>
@@ -35,24 +34,24 @@
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"/>
 
-    <LinearLayout
+    <ToggleButton
+        android:id="@+id/tabs_toggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_margin="5dp"
-        android:orientation="vertical">
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Geofence Circle"/>
-
-        <ToggleButton
-            android:id="@+id/show_circle_toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tabs_toggle"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Logs"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"/>
 </RelativeLayout>

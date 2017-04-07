@@ -85,11 +85,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
 
     }
 
-    @Override
-    public void onNotificationMessage(SessionM sessionM, NotificationMessage notificationMessage) {
-
-    }
-
     public void popUpCreateReferralDialog() {
         LayoutInflater inflater = getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_create_referral, null);

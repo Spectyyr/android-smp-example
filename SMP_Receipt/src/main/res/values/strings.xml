@@ -13,4 +13,8 @@
     <string name="results">Results</string>
     <string name="incomplete_receipt">Incomplete Receipts</string>
     <string name="incomplete_receipt_description">You have incomplete receipts, do you want to upload them now?</string>
+
+    <string name="permission_rationale_write_external">Access to the write file is required to demonstrate this feature.</string>
+    <string name="write_external_permission_denied">This sample requires write file permission to enable the upload receipt feature. Please try again and grant access to write file.\nIf the permission has been permanently denied, it can be enabled from the System Settings.</string>
+    <string name="permission_required_toast">Write file permission is required for this demo.</string>
 </resources>

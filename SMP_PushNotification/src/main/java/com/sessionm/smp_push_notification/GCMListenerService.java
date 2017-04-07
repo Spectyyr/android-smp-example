@@ -46,6 +46,6 @@ public class GCMListenerService extends com.sessionm.api.message.notification.se
 
     private int getNotificationSmallIcon() {
         boolean whiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
-        return whiteIcon ? R.mipmap.ic_launcher : R.mipmap.ic_launcher;
+        return whiteIcon ? R.mipmap.ic_push : R.mipmap.ic_launcher;
     }
 }
