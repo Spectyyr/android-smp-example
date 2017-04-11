@@ -115,11 +115,18 @@ public class UserDetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         sessionM.getIdentityManager().getUserProfileManager().setListener(_userProfileListener);
         sessionM.getIdentityManager().getUserTagsManager().setListener(_userTagsListener);
         sessionM.getIdentityManager().getUserTagsManager().fetchUserTags();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        sessionM.getIdentityManager().getUserProfileManager().setListener(null);
+        sessionM.getIdentityManager().getUserTagsManager().setListener(null);
     }
 
     UserProfileListener _userProfileListener = new UserProfileListener() {
@@ -131,7 +138,6 @@ public class UserDetailsActivity extends AppCompatActivity {
 
         @Override
         public void onFailure(SessionMError sessionMError) {
-
             Toast.makeText(UserDetailsActivity.this, "Failed! " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };

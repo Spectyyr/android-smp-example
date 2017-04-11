@@ -16,24 +16,24 @@ import android.widget.TextView;
  * Simple list-based Activity to redirect to one of the other Activities. This Activity does not
  * contain any useful code related to SMP Authentication. You may want to start with
  * one of the following Files:
+ *     {@link EmailPasswordActivity}
  *     {@link GoogleSignInActivity}
  *     {@link FacebookLoginActivity}
- *     {@link EmailPasswordActivity}
  *     {@link CustomAuthActivity}
  */
 public class ChooserActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final Class[] CLASSES = new Class[]{
+            EmailPasswordActivity.class,
             GoogleSignInActivity.class,
             FacebookLoginActivity.class,
-            EmailPasswordActivity.class,
             CustomAuthActivity.class
     };
 
     private static final int[] DESCRIPTION_IDS = new int[] {
+            R.string.desc_emailpassword,
             R.string.desc_google_sign_in,
             R.string.desc_facebook_login,
-            R.string.desc_emailpassword,
             R.string.desc_custom_auth,
     };
 
