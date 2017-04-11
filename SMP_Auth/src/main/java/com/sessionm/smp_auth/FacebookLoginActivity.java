@@ -13,10 +13,10 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.data.AuthCredential;
 import com.sessionm.api.identity.data.SMPUser;
 
 /**
@@ -73,20 +73,12 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             }
         });
 
-        identityManager = IdentityManager.getInstance();
+        identityManager = SessionM.getInstance().getIdentityManager();
 
         identityListener = new IdentityListener() {
             @Override
-            public void onUserStateUpdated(SMPUser smpUser) {
-                hideProgressDialog();
-                if (smpUser != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                updateUI(smpUser);
+            public void onAuthStateUpdated(IdentityManager.AuthState authState) {
+
             }
 
             @Override
@@ -100,7 +92,6 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onStart() {
         super.onStart();
-        identityManager.setIdentityListener(identityListener);
     }
 
     @Override
@@ -119,9 +110,6 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
         // [START_EXCLUDE silent]
         showProgressDialog();
         // [END_EXCLUDE]
-
-        AuthCredential credential = new AuthCredential(AuthCredential.Provider.FACEBOOK, loginResult.getAccessToken().getToken());
-        identityManager.authenticateWithCredential(credential);
     }
 
     private void signOut() {

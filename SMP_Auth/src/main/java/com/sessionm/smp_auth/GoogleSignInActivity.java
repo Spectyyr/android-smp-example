@@ -16,10 +16,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.data.AuthCredential;
 import com.sessionm.api.identity.data.SMPUser;
 
 /**
@@ -62,20 +62,12 @@ public class GoogleSignInActivity extends BaseActivity implements
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        identityManager = IdentityManager.getInstance();
+        identityManager = SessionM.getInstance().getIdentityManager();
 
         identityListener = new IdentityListener() {
             @Override
-            public void onUserStateUpdated(SMPUser smpUser) {
-                hideProgressDialog();
-                if (smpUser != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                updateUI(smpUser);
+            public void onAuthStateUpdated(IdentityManager.AuthState authState) {
+
             }
 
             @Override
@@ -116,9 +108,6 @@ public class GoogleSignInActivity extends BaseActivity implements
     private void authWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "authWithGoogle:" + acct.getId());
         showProgressDialog();
-
-        AuthCredential credential = new AuthCredential(AuthCredential.Provider.GOOGLE, acct.getIdToken());
-        identityManager.authenticateWithCredential(credential);
     }
 
     private void signIn() {

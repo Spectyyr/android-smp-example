@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
@@ -45,21 +46,12 @@ public class CustomAuthActivity extends AppCompatActivity implements View.OnClic
             }
         };
 
-        identityManager = IdentityManager.getInstance();
+        identityManager = SessionM.getInstance().getIdentityManager();
 
         identityListener = new IdentityListener() {
             @Override
-            public void onUserStateUpdated(SMPUser smpUser) {
-                if (smpUser != null) {
-                    // User is signed in
-                    Toast.makeText(CustomAuthActivity.this, "Logged in.", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onUserStateUpdated: user " + smpUser.getID());
-                } else {
-                    Toast.makeText(CustomAuthActivity.this, "Logged out.", Toast.LENGTH_SHORT).show();
-                    // User is signed out
-                    Log.d(TAG, "onUserStateUpdated:signed_out");
-                }
-                updateUI(smpUser);
+            public void onAuthStateUpdated(IdentityManager.AuthState authState) {
+
             }
 
             @Override
@@ -72,7 +64,6 @@ public class CustomAuthActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onStart() {
         super.onStart();
-        identityManager.setIdentityListener(identityListener);
         registerReceiver(mTokenReceiver, TokenBroadcastReceiver.getFilter());
     }
 
@@ -83,7 +74,6 @@ public class CustomAuthActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void startSignIn() {
-        identityManager.authenticateWithCustomToken(mCustomToken, "custom_provider");
     }
 
     private void updateUI(SMPUser user) {

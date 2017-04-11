@@ -1,5 +1,6 @@
 package com.sessionm.smp_auth;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -8,10 +9,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.api.identity.data.SMPUserCreate;
+import com.sessionm.api.identity.profile.UserProfileListener;
+import com.sessionm.api.identity.profile.UserProfileManager;
 
 public class EmailPasswordActivity extends BaseActivity implements
         View.OnClickListener {
@@ -25,6 +30,8 @@ public class EmailPasswordActivity extends BaseActivity implements
 
     private IdentityManager identityManager;
     private IdentityListener identityListener;
+    private UserProfileManager userProfileManager;
+    private UserProfileListener userProfileListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,12 +49,32 @@ public class EmailPasswordActivity extends BaseActivity implements
         findViewById(R.id.email_create_account_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
 
-        identityManager = IdentityManager.getInstance();
+        mDetailTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(EmailPasswordActivity.this, UserDetailsActivity.class));
+            }
+        });
+
+        identityManager = SessionM.getInstance().getIdentityManager();
+        userProfileManager = identityManager.getUserProfileManager();
 
         identityListener = new IdentityListener() {
             @Override
-            public void onUserStateUpdated(SMPUser smpUser) {
+            public void onAuthStateUpdated(IdentityManager.AuthState authState) {
                 hideProgressDialog();
+            }
+
+            @Override
+            public void onFailure(SessionMError sessionMError) {
+                hideProgressDialog();
+                Toast.makeText(EmailPasswordActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        userProfileListener = new UserProfileListener() {
+            @Override
+            public void onUserUpdated(SMPUser smpUser) {
                 if (smpUser != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
@@ -60,36 +87,39 @@ public class EmailPasswordActivity extends BaseActivity implements
 
             @Override
             public void onFailure(SessionMError sessionMError) {
-                hideProgressDialog();
                 Toast.makeText(EmailPasswordActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
     }
 
-    // [START on_start_add_listener]
     @Override
     public void onStart() {
         super.onStart();
-        identityManager.setIdentityListener(identityListener);
+        identityManager.setListener(identityListener);
+        userProfileManager.setListener(userProfileListener);
     }
-    // [END on_start_add_listener]
 
     @Override
     public void onStop() {
         super.onStop();
+        identityManager.setListener(null);
+        userProfileManager.setListener(null);
     }
 
     private void createAccount(String email, String password) {
         Log.d(TAG, "createAccount:" + email);
-        if (!validateForm()) {
-            return;
-        }
+//        if (!validateForm()) {
+//            return;
+//        }
 
         showProgressDialog();
 
-        if(!identityManager.signUpUserWithData(identityManager.getUserProfileManager().standardProfileRequestBuilder(email, password).build())) {
+//        SMPUserCreate.Builder builder = new SMPUserCreate.Builder(email, password).lastName("LastName");
+        SMPUserCreate.Builder builder = new SMPUserCreate.Builder(System.currentTimeMillis() + "@sessionm.com", "aaaaaaaa1").lastName("LastName");
+        SessionMError error = identityManager.createUser(builder.build());
+        if (error != null) {
             hideProgressDialog();
-            Toast.makeText(EmailPasswordActivity.this, "Invalid data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EmailPasswordActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -101,9 +131,10 @@ public class EmailPasswordActivity extends BaseActivity implements
 
         showProgressDialog();
 
-        if (!identityManager.logInUserWithEmail(email, password)) {
+        SessionMError error = identityManager.authenticateUser(email, password);
+        if (error != null) {
             hideProgressDialog();
-            Toast.makeText(EmailPasswordActivity.this, "Invalid data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EmailPasswordActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
