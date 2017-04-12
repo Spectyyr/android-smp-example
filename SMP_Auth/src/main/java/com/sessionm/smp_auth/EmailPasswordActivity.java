@@ -99,13 +99,6 @@ public class EmailPasswordActivity extends BaseActivity implements
         userProfileManager.setListener(userProfileListener);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        identityManager.setListener(null);
-        userProfileManager.setListener(null);
-    }
-
     private void createAccount(String email, String password) {
         Log.d(TAG, "createAccount:" + email);
 //        if (!validateForm()) {

@@ -122,13 +122,6 @@ public class UserDetailsActivity extends AppCompatActivity {
         sessionM.getIdentityManager().getUserTagsManager().fetchUserTags();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        sessionM.getIdentityManager().getUserProfileManager().setListener(null);
-        sessionM.getIdentityManager().getUserTagsManager().setListener(null);
-    }
-
     UserProfileListener _userProfileListener = new UserProfileListener() {
         @Override
         public void onUserUpdated(SMPUser smpUser) {
