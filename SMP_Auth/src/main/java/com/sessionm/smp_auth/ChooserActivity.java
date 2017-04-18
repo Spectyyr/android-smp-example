@@ -16,6 +16,7 @@ import android.widget.TextView;
  * Simple list-based Activity to redirect to one of the other Activities. This Activity does not
  * contain any useful code related to SMP Authentication. You may want to start with
  * one of the following Files:
+ *     {@link WebAuthActivity}
  *     {@link EmailPasswordActivity}
  *     {@link GoogleSignInActivity}
  *     {@link FacebookLoginActivity}
@@ -24,6 +25,7 @@ import android.widget.TextView;
 public class ChooserActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final Class[] CLASSES = new Class[]{
+            WebAuthActivity.class,
             EmailPasswordActivity.class,
             GoogleSignInActivity.class,
             FacebookLoginActivity.class,
@@ -31,6 +33,7 @@ public class ChooserActivity extends AppCompatActivity implements AdapterView.On
     };
 
     private static final int[] DESCRIPTION_IDS = new int[] {
+            R.string.desc_webauth,
             R.string.desc_emailpassword,
             R.string.desc_google_sign_in,
             R.string.desc_facebook_login,

@@ -118,17 +118,18 @@ public class EmailPasswordActivity extends BaseActivity implements
 
     private void signIn(String email, String password) {
         Log.d(TAG, "signIn:" + email);
-        if (!validateForm()) {
-            return;
-        }
+//        if (!validateForm()) {
+//            return;
+//        }
 
         showProgressDialog();
 
-        SessionMError error = identityManager.authenticateUser(email, password);
-        if (error != null) {
-            hideProgressDialog();
-            Toast.makeText(EmailPasswordActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        SessionM.getInstance().authenticateWithToken("sessionm_oauth", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA0LTE4IDIwOjAwOjAwICswMDAwIiwiZXhwIjoiMjAxNy0wNS0wMiAyMDowMDowMCArMDAwMCJ9.BdbPttl1PjE2j4tQawI9O0T3wa-qg9BoO6q423b-Kb05GG42_JLPU_B-hBtIuI27DjaHI8TDxPgTAudpNPgoT75PflMP5VWWcuGheWi51bD-ljdQJ57OqeG8kTHMFCsS-NrRmdswJW2-MUrVAujopUfUf8FAKRJ4ytjzoZ9aHH4S6eDjc2eGpsD9xbPVAWXFr4teIhXlYIzzX25KESSFpfUAgAH5a6UG3XVdFA2HyU-ddFlBL66TNbP8XIcBY4-SEX29XdKB8mOIYRjGNikJsGq0Z55BNXZOTAIOU0fp3LF_Id9I_3lmWF0Z_CUSMBl__BJVG1sXsiBQbehNr4Uw1Q");
+//        SessionMError error = identityManager.authenticateUser(email, password);
+//        if (error != null) {
+//            hideProgressDialog();
+//            Toast.makeText(EmailPasswordActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+//        }
     }
 
     private void signOut() {
