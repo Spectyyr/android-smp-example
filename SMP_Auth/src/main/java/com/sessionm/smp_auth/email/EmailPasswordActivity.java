@@ -1,4 +1,4 @@
-package com.sessionm.smp_auth;
+package com.sessionm.smp_auth.email;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,9 @@ import com.sessionm.api.identity.UserListener;
 import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
 import com.sessionm.api.identity.data.SMPUserCreate;
+import com.sessionm.smp_auth.BaseActivity;
+import com.sessionm.smp_auth.R;
+import com.sessionm.smp_auth.UserDetailsActivity;
 
 import java.util.Set;
 

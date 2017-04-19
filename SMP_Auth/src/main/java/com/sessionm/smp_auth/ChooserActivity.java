@@ -12,6 +12,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.sessionm.smp_auth.custom.CustomAuthActivity;
+import com.sessionm.smp_auth.email.EmailPasswordActivity;
+import com.sessionm.smp_auth.facebook.FacebookLoginActivity;
+import com.sessionm.smp_auth.google.GoogleSignInActivity;
+import com.sessionm.smp_auth.webauth.WebAuthActivity;
+
 /**
  * Simple list-based Activity to redirect to one of the other Activities. This Activity does not
  * contain any useful code related to SMP Authentication. You may want to start with

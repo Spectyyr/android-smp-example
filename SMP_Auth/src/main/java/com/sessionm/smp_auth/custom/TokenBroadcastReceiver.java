@@ -1,4 +1,4 @@
-package com.sessionm.smp_auth;
+package com.sessionm.smp_auth.custom;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -21,7 +21,6 @@ public class SEApplication extends Application{
         sessionM.setApplicationContext(this);
 //        sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api.tour-sessionm.com");
 //        sessionM.setAppKey("e2f1d6d709e44f5404a2091852617e60f473de85");
-//        sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api-qa6.q-sessionm.com");
         sessionM.setAppKey("04e54a2689ec2d96e2cd5394f377671f80166165");
         sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api-demo.stg-sessionm.com");
         FacebookSdk.sdkInitialize(getApplicationContext());

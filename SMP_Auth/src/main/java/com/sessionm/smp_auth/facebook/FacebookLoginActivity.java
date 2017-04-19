@@ -1,4 +1,4 @@
-package com.sessionm.smp_auth;
+package com.sessionm.smp_auth.facebook;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +17,8 @@ import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.smp_auth.BaseActivity;
+import com.sessionm.smp_auth.R;
 
 /**
  * Demonstrate SMP Authentication using a Facebook ID Token.

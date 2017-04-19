@@ -1,16 +1,13 @@
-package com.sessionm.smp_auth;
+package com.sessionm.smp_auth.custom;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityListener;
-import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.smp_auth.R;
 
 /**
  * Run following command to trigger custom authentication login action:
@@ -22,9 +19,6 @@ import com.sessionm.api.identity.data.SMPUser;
 public class CustomAuthActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "CustomAuthActivity";
-
-    private IdentityManager identityManager;
-    private IdentityListener identityListener;
 
     private String mCustomToken;
     private TokenBroadcastReceiver mTokenReceiver;
@@ -42,20 +36,6 @@ public class CustomAuthActivity extends AppCompatActivity implements View.OnClic
             public void onNewToken(String token) {
                 Log.d(TAG, "onNewToken:" + token);
                 setCustomToken(token);
-            }
-        };
-
-        identityManager = IdentityManager.getInstance();
-
-        identityListener = new IdentityListener() {
-            @Override
-            public void onAuthStateUpdated(IdentityManager.AuthState authState) {
-
-            }
-
-            @Override
-            public void onFailure(SessionMError sessionMError) {
-                Toast.makeText(CustomAuthActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
     }

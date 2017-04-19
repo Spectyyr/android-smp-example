@@ -28,16 +28,16 @@
             android:value="c4d9427e894e3b0ddf67bd08280b11e051f66c82"/>
 
         <activity
-            android:name=".CustomAuthActivity"
+            android:name=".custom.CustomAuthActivity"
             android:label="@string/label_custom_auth"/>
         <activity
-            android:name=".GoogleSignInActivity"
+            android:name=".google.GoogleSignInActivity"
             android:label="@string/label_google_sign_in"/>
         <activity
-            android:name=".FacebookLoginActivity"
+            android:name=".facebook.FacebookLoginActivity"
             android:label="@string/label_facebook_login"/>
         <activity
-            android:name=".EmailPasswordActivity"
+            android:name=".email.EmailPasswordActivity"
             android:label="@string/label_emailpassword"
             android:windowSoftInputMode="stateAlwaysHidden"/>
 
@@ -46,13 +46,13 @@
             android:label="@string/user_details"/>
 
         <activity
-            android:name=".WebAuthActivity"
+            android:name=".webauth.WebAuthActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden">
         </activity>
 
         <activity
-            android:name=".TokenActivity"
+            android:name=".webauth.TokenActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden">
         </activity>
