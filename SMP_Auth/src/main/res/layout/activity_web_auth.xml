@@ -31,13 +31,6 @@
                 app:srcCompat="@mipmap/ic_launcher"
                 android:contentDescription="@string/openid_logo_content_description"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/intro_header"
-                style="@style/Base.TextAppearance.AppCompat.Title" />
-
             <!--
             displayed while the discovery document is loaded, and dynamic client registration is
             being negotiated
