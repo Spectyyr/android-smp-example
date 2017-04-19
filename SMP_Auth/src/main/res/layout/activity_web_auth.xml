@@ -24,6 +24,7 @@
             android:orientation="vertical" >
 
             <ImageView
+                android:id="@+id/webauth_imageview"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
                 android:layout_gravity="center"

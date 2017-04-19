@@ -17,10 +17,12 @@ package com.sessionm.smp_auth;
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.support.annotation.AnyThread;
 import android.support.annotation.ColorRes;
 import android.support.annotation.MainThread;
@@ -66,12 +68,12 @@ import java.util.concurrent.atomic.AtomicReference;
  * Demonstrates the usage of the AppAuth to authorize a user with an OAuth2 / OpenID Connect
  * provider. Based on the configuration provided in `res/raw/auth_config.json`, the code
  * contained here will:
- *
+ * <p>
  * - Retrieve an OpenID Connect discovery document for the provider, or use a local static
- *   configuration.
+ * configuration.
  * - Utilize dynamic client registration, if no static client id is specified.
  * - Initiate the authorization request using the built-in heuristics or a user-selected browser.
- *
+ * <p>
  * _NOTE_: From a clean checkout of this project, the authorization service is not configured.
  * Edit `res/values/auth_config.xml` to provide the required configuration properties. See the
  * README.md in the app/ directory for configuration instructions, and the adjacent IDP-specific
@@ -116,8 +118,9 @@ public final class WebAuthActivity extends AppCompatActivity {
         findViewById(R.id.retry).setOnClickListener((View view) ->
                 mExecutor.submit(this::initializeAppAuth));
         findViewById(R.id.start_auth).setOnClickListener((View view) -> startAuth());
+        findViewById(R.id.webauth_imageview).setOnClickListener((View view) -> clearCookie());
 
-        ((EditText)findViewById(R.id.login_hint_value)).addTextChangedListener(
+        ((EditText) findViewById(R.id.login_hint_value)).addTextChangedListener(
                 new LoginHintChangeHandler());
 
         if (!mConfiguration.isValid()) {
@@ -162,6 +165,14 @@ public final class WebAuthActivity extends AppCompatActivity {
         if (mAuthService != null) {
             mAuthService.dispose();
         }
+    }
+
+    private void clearCookie() {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", "com.android.chrome", null);
+        intent.setData(uri);
+        startActivity(intent);
     }
 
     @MainThread
@@ -363,7 +374,7 @@ public final class WebAuthActivity extends AppCompatActivity {
         findViewById(R.id.auth_container).setVisibility(View.GONE);
         findViewById(R.id.error_container).setVisibility(View.GONE);
 
-        ((TextView)findViewById(R.id.loading_description)).setText(loadingMessage);
+        ((TextView) findViewById(R.id.loading_description)).setText(loadingMessage);
     }
 
     @MainThread
@@ -372,7 +383,7 @@ public final class WebAuthActivity extends AppCompatActivity {
         findViewById(R.id.loading_container).setVisibility(View.GONE);
         findViewById(R.id.auth_container).setVisibility(View.GONE);
 
-        ((TextView)findViewById(R.id.error_description)).setText(error);
+        ((TextView) findViewById(R.id.error_description)).setText(error);
         findViewById(R.id.retry).setVisibility(recoverable ? View.VISIBLE : View.GONE);
     }
 
@@ -406,7 +417,7 @@ public final class WebAuthActivity extends AppCompatActivity {
             authEndpointStr = "Static auth endpoint: \n";
         }
         authEndpointStr += config.authorizationEndpoint;
-        ((TextView)findViewById(R.id.auth_endpoint)).setText(authEndpointStr);
+        ((TextView) findViewById(R.id.auth_endpoint)).setText(authEndpointStr);
 
         String clientIdStr;
         if (state.getLastRegistrationResponse() != null) {
@@ -415,7 +426,7 @@ public final class WebAuthActivity extends AppCompatActivity {
             clientIdStr = "Static client ID: \n";
         }
         clientIdStr += mClientId;
-        ((TextView)findViewById(R.id.client_id)).setText(clientIdStr);
+        ((TextView) findViewById(R.id.client_id)).setText(clientIdStr);
     }
 
     private void warmUpBrowser() {
@@ -448,7 +459,7 @@ public final class WebAuthActivity extends AppCompatActivity {
     }
 
     private String getLoginHint() {
-        return ((EditText)findViewById(R.id.login_hint_value))
+        return ((EditText) findViewById(R.id.login_hint_value))
                 .getText()
                 .toString()
                 .trim();
@@ -482,7 +493,8 @@ public final class WebAuthActivity extends AppCompatActivity {
         }
 
         @Override
-        public void beforeTextChanged(CharSequence cs, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence cs, int start, int count, int after) {
+        }
 
         @Override
         public void onTextChanged(CharSequence cs, int start, int before, int count) {
@@ -492,7 +504,8 @@ public final class WebAuthActivity extends AppCompatActivity {
         }
 
         @Override
-        public void afterTextChanged(Editable ed) {}
+        public void afterTextChanged(Editable ed) {
+        }
     }
 
     private final class RecreateAuthRequestTask implements Runnable {

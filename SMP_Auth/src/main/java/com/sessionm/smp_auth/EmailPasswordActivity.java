@@ -9,14 +9,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
+import com.sessionm.api.identity.UserListener;
+import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
 import com.sessionm.api.identity.data.SMPUserCreate;
-import com.sessionm.api.identity.profile.UserProfileListener;
-import com.sessionm.api.identity.profile.UserProfileManager;
+
+import java.util.Set;
 
 public class EmailPasswordActivity extends BaseActivity implements
         View.OnClickListener {
@@ -30,8 +31,8 @@ public class EmailPasswordActivity extends BaseActivity implements
 
     private IdentityManager identityManager;
     private IdentityListener identityListener;
-    private UserProfileManager userProfileManager;
-    private UserProfileListener userProfileListener;
+    private UserManager userManager;
+    private UserListener userListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,15 +50,15 @@ public class EmailPasswordActivity extends BaseActivity implements
         findViewById(R.id.email_create_account_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
 
-        mDetailTextView.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.logged_in_view_profile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(EmailPasswordActivity.this, UserDetailsActivity.class));
             }
         });
 
-        identityManager = SessionM.getInstance().getIdentityManager();
-        userProfileManager = identityManager.getUserProfileManager();
+        identityManager = IdentityManager.getInstance();
+        userManager = UserManager.getInstance();
 
         identityListener = new IdentityListener() {
             @Override
@@ -72,9 +73,9 @@ public class EmailPasswordActivity extends BaseActivity implements
             }
         };
 
-        userProfileListener = new UserProfileListener() {
+        userListener = new UserListener() {
             @Override
-            public void onUserUpdated(SMPUser smpUser) {
+            public void onUserUpdated(SMPUser smpUser, Set<String> set) {
                 if (smpUser != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
@@ -96,19 +97,18 @@ public class EmailPasswordActivity extends BaseActivity implements
     public void onStart() {
         super.onStart();
         identityManager.setListener(identityListener);
-        userProfileManager.setListener(userProfileListener);
+        userManager.setListener(userListener);
     }
 
     private void createAccount(String email, String password) {
         Log.d(TAG, "createAccount:" + email);
-//        if (!validateForm()) {
-//            return;
-//        }
+        if (!validateForm()) {
+            return;
+        }
 
         showProgressDialog();
 
-//        SMPUserCreate.Builder builder = new SMPUserCreate.Builder(email, password).lastName("LastName");
-        SMPUserCreate.Builder builder = new SMPUserCreate.Builder(System.currentTimeMillis() + "@sessionm.com", "aaaaaaaa1").lastName("LastName");
+        SMPUserCreate.Builder builder = new SMPUserCreate.Builder(email, password).lastName("LastName");
         SessionMError error = identityManager.createUser(builder.build());
         if (error != null) {
             hideProgressDialog();
@@ -118,18 +118,17 @@ public class EmailPasswordActivity extends BaseActivity implements
 
     private void signIn(String email, String password) {
         Log.d(TAG, "signIn:" + email);
-//        if (!validateForm()) {
-//            return;
-//        }
+        if (!validateForm()) {
+            return;
+        }
 
         showProgressDialog();
 
-        SessionM.getInstance().authenticateWithToken("sessionm_oauth", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA0LTE4IDIwOjAwOjAwICswMDAwIiwiZXhwIjoiMjAxNy0wNS0wMiAyMDowMDowMCArMDAwMCJ9.BdbPttl1PjE2j4tQawI9O0T3wa-qg9BoO6q423b-Kb05GG42_JLPU_B-hBtIuI27DjaHI8TDxPgTAudpNPgoT75PflMP5VWWcuGheWi51bD-ljdQJ57OqeG8kTHMFCsS-NrRmdswJW2-MUrVAujopUfUf8FAKRJ4ytjzoZ9aHH4S6eDjc2eGpsD9xbPVAWXFr4teIhXlYIzzX25KESSFpfUAgAH5a6UG3XVdFA2HyU-ddFlBL66TNbP8XIcBY4-SEX29XdKB8mOIYRjGNikJsGq0Z55BNXZOTAIOU0fp3LF_Id9I_3lmWF0Z_CUSMBl__BJVG1sXsiBQbehNr4Uw1Q");
-//        SessionMError error = identityManager.authenticateUser(email, password);
-//        if (error != null) {
-//            hideProgressDialog();
-//            Toast.makeText(EmailPasswordActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-//        }
+        SessionMError error = identityManager.authenticateUser(email, password);
+        if (error != null) {
+            hideProgressDialog();
+            Toast.makeText(EmailPasswordActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void signOut() {
@@ -168,6 +167,7 @@ public class EmailPasswordActivity extends BaseActivity implements
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
             findViewById(R.id.email_password_fields).setVisibility(View.GONE);
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.logged_in_view_profile).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.logged_out);
             mDetailTextView.setText(null);
@@ -175,6 +175,7 @@ public class EmailPasswordActivity extends BaseActivity implements
             findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
             findViewById(R.id.email_password_fields).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+            findViewById(R.id.logged_in_view_profile).setVisibility(View.GONE);
         }
     }
 

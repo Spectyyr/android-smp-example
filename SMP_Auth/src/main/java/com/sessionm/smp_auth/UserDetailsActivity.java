@@ -14,21 +14,21 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
+import com.sessionm.api.identity.UserListener;
+import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
 import com.sessionm.api.identity.data.SMPUserUpdate;
-import com.sessionm.api.identity.profile.UserProfileListener;
 import com.sessionm.api.identity.tag.UserTagsListener;
+import com.sessionm.api.identity.tag.UserTagsManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class UserDetailsActivity extends AppCompatActivity {
-
-    SessionM sessionM = SessionM.getInstance();
 
     TextView id;
     TextView externalID;
@@ -111,21 +111,25 @@ public class UserDetailsActivity extends AppCompatActivity {
             }
         });
 
-        refreshUI(sessionM.getIdentityManager().getCurrentUser());
+        refreshUI(UserManager.getInstance().getCurrentUser());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        sessionM.getIdentityManager().getUserProfileManager().setListener(_userProfileListener);
-        sessionM.getIdentityManager().getUserTagsManager().setListener(_userTagsListener);
-        sessionM.getIdentityManager().getUserTagsManager().fetchUserTags();
+        UserManager.getInstance().setListener(_userProfileListener);
+        UserTagsManager.getInstance().setListener(_userTagsListener);
+        UserTagsManager.getInstance().fetchUserTags();
     }
 
-    UserProfileListener _userProfileListener = new UserProfileListener() {
+    UserListener _userProfileListener = new UserListener() {
         @Override
-        public void onUserUpdated(SMPUser smpUser) {
-            Toast.makeText(UserDetailsActivity.this, "Success!", Toast.LENGTH_SHORT).show();
+        public void onUserUpdated(SMPUser smpUser, Set<String> deltas) {
+            String deltaString = "";
+            for (String delta : deltas) {
+                deltaString += delta + " ";
+            }
+            Toast.makeText(UserDetailsActivity.this, "Success! Deltas: " + deltaString, Toast.LENGTH_SHORT).show();
             refreshUI(smpUser);
         }
 
@@ -228,22 +232,22 @@ public class UserDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 SMPUserUpdate.Builder smpUserRequest = new SMPUserUpdate.Builder()
-                .externalID(updateNonEmptyField(externalIDView))
-                .email(updateNonEmptyField(emailView))
-                .gender(updateNonEmptyField(genderView))
-                .firstName(updateNonEmptyField(firstNameView))
-                .lastName(updateNonEmptyField(lastNameView))
-                .dateOfBirth(updateNonEmptyField(dobView))
-                .zipCode(updateNonEmptyField(zipView))
-                .DMA(updateNonEmptyField(dmaView))
-                .state(updateNonEmptyField(stateView))
-                .country(updateNonEmptyField(countryView))
-                .latitude(updateNonEmptyFieldDouble(latitudeView))
-                .longitude(updateNonEmptyFieldDouble(longitudeView))
-                .ipAddress(updateNonEmptyField(ipAddressView))
-                .locale(Locale.getDefault());
+                        .externalID(updateNonEmptyField(externalIDView))
+                        .email(updateNonEmptyField(emailView))
+                        .gender(updateNonEmptyField(genderView))
+                        .firstName(updateNonEmptyField(firstNameView))
+                        .lastName(updateNonEmptyField(lastNameView))
+                        .dateOfBirth(updateNonEmptyField(dobView))
+                        .zipCode(updateNonEmptyField(zipView))
+                        .DMA(updateNonEmptyField(dmaView))
+                        .state(updateNonEmptyField(stateView))
+                        .country(updateNonEmptyField(countryView))
+                        .latitude(updateNonEmptyFieldDouble(latitudeView))
+                        .longitude(updateNonEmptyFieldDouble(longitudeView))
+                        .ipAddress(updateNonEmptyField(ipAddressView))
+                        .locale(Locale.getDefault());
 
-                sessionM.getIdentityManager().getUserProfileManager().updateUser(smpUserRequest.build());
+                UserManager.getInstance().updateUser(smpUserRequest.build());
             }
         });
 
@@ -295,9 +299,9 @@ public class UserDetailsActivity extends AppCompatActivity {
                 }
                 if (!ttlEditView.getText().toString().isEmpty()) {
                     long ttl = Long.parseLong(ttlEditView.getText().toString());
-                    sessionM.getIdentityManager().getUserTagsManager().updateUserTags(tags, ttl);
+                    UserTagsManager.getInstance().updateUserTags(tags, ttl);
                 } else
-                    sessionM.getIdentityManager().getUserTagsManager().updateUserTags(tags);
+                    UserTagsManager.getInstance().updateUserTags(tags);
             }
         });
 

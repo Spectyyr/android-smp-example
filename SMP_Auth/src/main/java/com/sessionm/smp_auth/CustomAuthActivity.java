@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
@@ -46,7 +45,7 @@ public class CustomAuthActivity extends AppCompatActivity implements View.OnClic
             }
         };
 
-        identityManager = SessionM.getInstance().getIdentityManager();
+        identityManager = IdentityManager.getInstance();
 
         identityListener = new IdentityListener() {
             @Override

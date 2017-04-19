@@ -13,7 +13,6 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
@@ -73,7 +72,7 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             }
         });
 
-        identityManager = SessionM.getInstance().getIdentityManager();
+        identityManager = IdentityManager.getInstance();
 
         identityListener = new IdentityListener() {
             @Override

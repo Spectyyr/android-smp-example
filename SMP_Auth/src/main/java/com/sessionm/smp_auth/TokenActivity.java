@@ -15,7 +15,6 @@
 package com.sessionm.smp_auth;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
@@ -24,16 +23,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.sessionm.api.SessionMError;
+import com.sessionm.api.identity.IdentityListener;
+import com.sessionm.api.identity.IdentityManager;
+import com.sessionm.api.identity.UserListener;
+import com.sessionm.api.identity.UserManager;
+import com.sessionm.api.identity.data.SMPUser;
 
 import net.openid.appauth.AppAuthConfiguration;
 import net.openid.appauth.AuthState;
 import net.openid.appauth.AuthorizationException;
 import net.openid.appauth.AuthorizationResponse;
 import net.openid.appauth.AuthorizationService;
-import net.openid.appauth.AuthorizationServiceDiscovery;
 import net.openid.appauth.ClientAuthentication;
 import net.openid.appauth.TokenRequest;
 import net.openid.appauth.TokenResponse;
@@ -42,16 +46,10 @@ import org.joda.time.format.DateTimeFormat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.Charset;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
-
-import okio.Okio;
 
 /**
  * Displays the authorized state of the user. This activity is provided with the outcome of the
@@ -110,6 +108,9 @@ public class TokenActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        IdentityManager.getInstance().setListener(identityListener);
+        UserManager.getInstance().setListener(userListener);
+
         if (mExecutor.isShutdown()) {
             mExecutor = Executors.newSingleThreadExecutor();
         }
@@ -150,6 +151,38 @@ public class TokenActivity extends AppCompatActivity {
         }
     }
 
+    UserListener userListener = new UserListener() {
+        @Override
+        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
+            findViewById(R.id.loading_container).setVisibility(View.GONE);
+            if (smpUser != null)
+                startActivity(new Intent(TokenActivity.this, UserDetailsActivity.class));
+        }
+
+        @Override
+        public void onFailure(SessionMError sessionMError) {
+            findViewById(R.id.loading_container).setVisibility(View.GONE);
+            Toast.makeText(TokenActivity.this, "Failed! " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    IdentityListener identityListener = new IdentityListener() {
+        @Override
+        public void onAuthStateUpdated(IdentityManager.AuthState authState) {
+            if (authState.equals(IdentityManager.AuthState.Authenticated)) {
+                Toast.makeText(TokenActivity.this, "Authenticated! " + authState.toString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(TokenActivity.this, "Failed! " + authState.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onFailure(SessionMError sessionMError) {
+            findViewById(R.id.loading_container).setVisibility(View.GONE);
+            Toast.makeText(TokenActivity.this, "Failed! " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -163,7 +196,7 @@ public class TokenActivity extends AppCompatActivity {
         findViewById(R.id.authorized).setVisibility(View.GONE);
         findViewById(R.id.loading_container).setVisibility(View.GONE);
 
-        ((TextView)findViewById(R.id.explanation)).setText(explanation);
+        ((TextView) findViewById(R.id.explanation)).setText(explanation);
         findViewById(R.id.reauth).setOnClickListener((View view) -> signOut());
     }
 
@@ -173,7 +206,7 @@ public class TokenActivity extends AppCompatActivity {
         findViewById(R.id.authorized).setVisibility(View.GONE);
         findViewById(R.id.not_authorized).setVisibility(View.GONE);
 
-        ((TextView)findViewById(R.id.loading_description)).setText(message);
+        ((TextView) findViewById(R.id.loading_description)).setText(message);
     }
 
     @MainThread
@@ -218,16 +251,16 @@ public class TokenActivity extends AppCompatActivity {
 
         Button viewProfileButton = (Button) findViewById(R.id.view_profile);
 
-        AuthorizationServiceDiscovery discoveryDoc =
-                state.getAuthorizationServiceConfiguration().discoveryDoc;
-        if (discoveryDoc == null || discoveryDoc.getUserinfoEndpoint() == null) {
-            viewProfileButton.setVisibility(View.GONE);
-        } else {
-            viewProfileButton.setVisibility(View.VISIBLE);
-            viewProfileButton.setOnClickListener((View view) -> fetchUserInfo());
-        }
+//        AuthorizationServiceDiscovery discoveryDoc =
+//                state.getAuthorizationServiceConfiguration().discoveryDoc;
+//        if (discoveryDoc == null || discoveryDoc.getUserinfoEndpoint() == null) {
+//            viewProfileButton.setVisibility(View.GONE);
+//        } else {
+        viewProfileButton.setVisibility(View.VISIBLE);
+        viewProfileButton.setOnClickListener((View view) -> fetchUserInfo());
+//        }
 
-        ((Button)findViewById(R.id.sign_out)).setOnClickListener((View view) -> signOut());
+        ((Button) findViewById(R.id.sign_out)).setOnClickListener((View view) -> signOut());
 
         View userInfoCard = findViewById(R.id.userinfo_card);
         JSONObject userInfo = mUserInfoJson.get();
@@ -281,7 +314,7 @@ public class TokenActivity extends AppCompatActivity {
             clientAuthentication = mStateManager.getCurrent().getClientAuthentication();
         } catch (ClientAuthentication.UnsupportedAuthenticationMethod ex) {
             Log.d(TAG, "Token request cannot be made, client authentication for the token "
-                            + "endpoint could not be constructed (%s)", ex);
+                    + "endpoint could not be constructed (%s)", ex);
             displayNotAuthorized("Client authentication method is unsupported");
             return;
         }
@@ -325,58 +358,11 @@ public class TokenActivity extends AppCompatActivity {
      */
     @MainThread
     private void fetchUserInfo() {
-        displayLoading("Fetching user info");
-        mStateManager.getCurrent().performActionWithFreshTokens(mAuthService, this::fetchUserInfo);
-    }
-
-    @MainThread
-    private void fetchUserInfo(String accessToken, String idToken, AuthorizationException ex) {
-        if (ex != null) {
-            Log.e(TAG, "Token refresh failed when fetching user info");
-            mUserInfoJson.set(null);
-            runOnUiThread(this::displayAuthorized);
-            return;
-        }
-
-        AuthorizationServiceDiscovery discovery =
-                mStateManager.getCurrent()
-                        .getAuthorizationServiceConfiguration()
-                        .discoveryDoc;
-
-        URL userInfoEndpoint;
-        try {
-            userInfoEndpoint = new URL(discovery.getUserinfoEndpoint().toString());
-        } catch (MalformedURLException urlEx) {
-            Log.e(TAG, "Failed to construct user info endpoint URL", urlEx);
-            mUserInfoJson.set(null);
-            runOnUiThread(this::displayAuthorized);
-            return;
-        }
-
-        mExecutor.submit(() -> {
-            try {
-                HttpURLConnection conn =
-                        (HttpURLConnection) userInfoEndpoint.openConnection();
-                conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-                conn.setInstanceFollowRedirects(false);
-                String response = Okio.buffer(Okio.source(conn.getInputStream()))
-                        .readString(Charset.forName("UTF-8"));
-                mUserInfoJson.set(new JSONObject(response));
-            } catch (IOException ioEx) {
-                Log.e(TAG, "Network error when querying userinfo endpoint", ioEx);
-                showSnackbar("Fetching user info failed");
-            } catch (JSONException jsonEx) {
-                Log.e(TAG, "Failed to parse userinfo response");
-                showSnackbar("Failed to parse user info");
-            }
-
-            runOnUiThread(this::displayAuthorized);
-        });
-    }
-
-    @MainThread
-    private void showSnackbar(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        AuthState state = mStateManager.getCurrent();
+        IdentityManager.getInstance().authenticateWithToken(state.getAccessToken());
+        findViewById(R.id.loading_container).setVisibility(View.VISIBLE);
+//        displayLoading("Fetching user info");
+//        mStateManager.getCurrent().performActionWithFreshTokens(mAuthService, this::fetchUserInfo);
     }
 
     @MainThread
@@ -390,6 +376,8 @@ public class TokenActivity extends AppCompatActivity {
             clearedState.update(currentState.getLastRegistrationResponse());
         }
         mStateManager.replace(clearedState);
+
+        IdentityManager.getInstance().logOutUser();
 
         Intent mainIntent = new Intent(this, WebAuthActivity.class);
         mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
