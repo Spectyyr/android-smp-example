@@ -176,14 +176,6 @@ public final class Configuration {
         mScope = getRequiredConfigString("authorization_scope");
         mRedirectUri = getRequiredConfigUri("redirect_uri");
 
-//        if (!isRedirectUriRegistered()) {
-//            throw new InvalidConfigurationException(
-//                    "redirect_uri is not handled by any activity in this app! "
-//                            + "Ensure that the appAuthRedirectScheme in your build.gradle file "
-//                            + "is correctly configured, or that an appropriate intent filter "
-//                            + "exists in your app manifest.");
-//        }
-
         if (getConfigString("discovery_uri") == null) {
             mAuthEndpointUri = getRequiredConfigWebUri("authorization_endpoint_uri");
 

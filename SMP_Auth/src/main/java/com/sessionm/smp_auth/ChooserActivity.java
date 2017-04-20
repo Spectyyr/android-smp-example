@@ -22,28 +22,30 @@ import com.sessionm.smp_auth.webauth.WebAuthActivity;
  * Simple list-based Activity to redirect to one of the other Activities. This Activity does not
  * contain any useful code related to SMP Authentication. You may want to start with
  * one of the following Files:
- *     {@link WebAuthActivity}
- *     {@link EmailPasswordActivity}
- *     {@link GoogleSignInActivity}
- *     {@link FacebookLoginActivity}
- *     {@link CustomAuthActivity}
+ * {@link WebAuthActivity}
+ * {@link EmailPasswordActivity}
+ * {@link GoogleSignInActivity}
+ * {@link FacebookLoginActivity}
+ * {@link CustomAuthActivity}
  */
 public class ChooserActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final Class[] CLASSES = new Class[]{
             WebAuthActivity.class,
-            EmailPasswordActivity.class,
-            GoogleSignInActivity.class,
-            FacebookLoginActivity.class,
-            CustomAuthActivity.class
+            EmailPasswordActivity.class
+            //TODO: We don't support native login on backend yet
+//            GoogleSignInActivity.class,
+//            FacebookLoginActivity.class,
+//            CustomAuthActivity.class
     };
 
-    private static final int[] DESCRIPTION_IDS = new int[] {
+    private static final int[] DESCRIPTION_IDS = new int[]{
             R.string.desc_webauth,
-            R.string.desc_emailpassword,
-            R.string.desc_google_sign_in,
-            R.string.desc_facebook_login,
-            R.string.desc_custom_auth,
+            R.string.desc_emailpassword
+            //TODO: We don't support native login on backend yet
+//            R.string.desc_google_sign_in,
+//            R.string.desc_facebook_login,
+//            R.string.desc_custom_auth,
     };
 
     @Override

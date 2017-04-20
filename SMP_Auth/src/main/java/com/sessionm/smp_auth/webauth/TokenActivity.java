@@ -41,10 +41,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Displays the authorized state of the user. This activity is provided with the outcome of the
- * authorization flow, which it uses to negotiate the final authorized state,
- * by performing an authorization code exchange if necessary. After this, the activity provides
- * additional post-authorization operations if available, such as fetching user info and refreshing
- * access tokens.
+ * authorization flow, such as SMP access token. The activity also provides additional
+ * post-authorization operations such as fetching user info.
  */
 public class TokenActivity extends AppCompatActivity {
     private static final String TAG = "TokenActivity";
@@ -118,16 +116,7 @@ public class TokenActivity extends AppCompatActivity {
         }
 
         displayAuthorized();
-//        if (response != null && response.authorizationCode != null) {
-//            // authorization code exchange is required
-//            mStateManager.updateAfterAuthorization(response, ex);
-//            exchangeAuthorizationCode(response);
-//        } else if (ex != null) {
-//            displayNotAuthorized("Authorization flow failed: " + ex.getMessage());
-//        } else {
-//            displayNotAuthorized("No authorization state retained - reauthorization required");
-//        }
-    }
+   }
 
     @Override
     protected void onSaveInstanceState(Bundle state) {
@@ -139,6 +128,7 @@ public class TokenActivity extends AppCompatActivity {
         }
     }
 
+    //User listener
     UserListener userListener = new UserListener() {
         @Override
         public void onUserUpdated(SMPUser smpUser, Set<String> set) {
@@ -239,14 +229,8 @@ public class TokenActivity extends AppCompatActivity {
 
         Button viewProfileButton = (Button) findViewById(R.id.view_profile);
 
-//        AuthorizationServiceDiscovery discoveryDoc =
-//                state.getAuthorizationServiceConfiguration().discoveryDoc;
-//        if (discoveryDoc == null || discoveryDoc.getUserinfoEndpoint() == null) {
-//            viewProfileButton.setVisibility(View.GONE);
-//        } else {
         viewProfileButton.setVisibility(View.VISIBLE);
         viewProfileButton.setOnClickListener((View view) -> fetchUserInfo());
-//        }
 
         ((Button) findViewById(R.id.sign_out)).setOnClickListener((View view) -> signOut());
 
@@ -262,13 +246,6 @@ public class TokenActivity extends AppCompatActivity {
                 }
                 ((TextView) findViewById(R.id.userinfo_name)).setText(name);
 
-//                if (userInfo.has("picture")) {
-//                    Glide.with(TokenActivity.this)
-//                            .load(Uri.parse(userInfo.getString("picture")))
-//                            .fitCenter()
-//                            .into((ImageView) findViewById(R.id.userinfo_profile));
-//                }
-
                 ((TextView) findViewById(R.id.userinfo_json)).setText(mUserInfoJson.toString());
                 userInfoCard.setVisibility(View.VISIBLE);
             } catch (JSONException ex) {
@@ -283,14 +260,6 @@ public class TokenActivity extends AppCompatActivity {
         performTokenRequest(
                 mStateManager.getCurrent().createTokenRefreshRequest(),
                 this::handleAccessTokenResponse);
-    }
-
-    @MainThread
-    private void exchangeAuthorizationCode(AuthorizationResponse authorizationResponse) {
-        displayLoading("Exchanging authorization code");
-        performTokenRequest(
-                authorizationResponse.createTokenExchangeRequest(),
-                this::handleCodeExchangeResponse);
     }
 
     @MainThread
@@ -321,36 +290,11 @@ public class TokenActivity extends AppCompatActivity {
         runOnUiThread(this::displayAuthorized);
     }
 
-    @WorkerThread
-    private void handleCodeExchangeResponse(
-            @Nullable TokenResponse tokenResponse,
-            @Nullable AuthorizationException authException) {
-
-        mStateManager.updateAfterTokenResponse(tokenResponse, authException);
-        if (!mStateManager.getCurrent().isAuthorized()) {
-            final String message = "Authorization Code exchange failed"
-                    + ((authException != null) ? authException.error : "");
-
-            // WrongThread inference is incorrect for lambdas
-            //noinspection WrongThread
-            runOnUiThread(() -> displayNotAuthorized(message));
-        } else {
-            runOnUiThread(this::displayAuthorized);
-        }
-    }
-
-    /**
-     * Demonstrates the use of {@link AuthState#performActionWithFreshTokens} to retrieve
-     * user info from the IDP's user info endpoint. This callback will negotiate a new access
-     * token / id token for use in a follow-up action, or provide an error if this fails.
-     */
     @MainThread
     private void fetchUserInfo() {
         AuthState state = mStateManager.getCurrent();
         IdentityManager.getInstance().authenticateWithToken(state.getAccessToken());
         findViewById(R.id.loading_container).setVisibility(View.VISIBLE);
-//        displayLoading("Fetching user info");
-//        mStateManager.getCurrent().performActionWithFreshTokens(mAuthService, this::fetchUserInfo);
     }
 
     @MainThread

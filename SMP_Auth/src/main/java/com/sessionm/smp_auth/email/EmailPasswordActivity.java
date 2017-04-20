@@ -22,6 +22,9 @@ import com.sessionm.smp_auth.UserDetailsActivity;
 
 import java.util.Set;
 
+/**
+ * Demonstrates the usage of the SMP SDK to create/authorize a user with email and password.
+ */
 public class EmailPasswordActivity extends BaseActivity implements
         View.OnClickListener {
 
