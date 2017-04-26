@@ -1,4 +1,4 @@
-//include ':app', ':SMP_Campaigns', ':SMP_Rewards', ':SMP_Transactions', ':SMP_Inbox',
-//        ':SMP_PushNotification', ':SMP_Places', ':SMP_Identity', ':SMP_Receipt',
-//        ':SMP_LoyaltyCard', ':SMP_Referrals', ':SMP_FCM', ':SMP_Geofence', 'SMP_Contents',
-include ':SMP_Auth', ':appauth-release'
+include ':app', ':SMP_Campaigns', ':SMP_Rewards', ':SMP_Transactions', ':SMP_Inbox',
+        ':SMP_PushNotification', ':SMP_Places', ':SMP_Receipt', ':SMP_LoyaltyCard',
+        ':SMP_Referrals', ':SMP_FCM', ':SMP_Geofence', 'SMP_Contents',
+        ':SMP_Auth', ':appauth-release'
