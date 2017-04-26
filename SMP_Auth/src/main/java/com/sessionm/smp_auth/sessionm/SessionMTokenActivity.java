@@ -40,6 +40,7 @@ public class SessionMTokenActivity extends BaseActivity implements
 
     private IdentityManager identityManager;
     private UserManager userManager;
+    private IdentityListener identityListener;
     private UserListener userListener;
 
     @Override
@@ -66,6 +67,19 @@ public class SessionMTokenActivity extends BaseActivity implements
         identityManager = IdentityManager.getInstance();
         userManager = UserManager.getInstance();
 
+        identityListener = new IdentityListener() {
+            @Override
+            public void onAuthStateUpdated(IdentityManager.AuthState authState) {
+                hideProgressDialog();
+            }
+
+            @Override
+            public void onFailure(SessionMError sessionMError) {
+                hideProgressDialog();
+                Toast.makeText(SessionMTokenActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
         userListener = new UserListener() {
             @Override
             public void onUserUpdated(SMPUser smpUser, Set<String> set) {
@@ -89,6 +103,7 @@ public class SessionMTokenActivity extends BaseActivity implements
     @Override
     public void onStart() {
         super.onStart();
+        identityManager.setListener(identityListener);
         userManager.setListener(userListener);
     }
 
