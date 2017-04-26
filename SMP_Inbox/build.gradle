@@ -25,14 +25,17 @@ repositories {
 }
 
 dependencies {
-    compile 'com.yanzhenjie:recyclerview-swipe:1.0.2'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:appcompat-v7:25.1.0'
 
+    //SessionM Dependencies
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.sessionm.sdk:sessionm-sdk:2.1.5'
+    compile "com.sessionm.sdk:sessionm-sdk:${rootProject.sessionMSdkVersion}"
+
+    compile 'com.yanzhenjie:recyclerview-swipe:1.0.2'
+
+    compile "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
+    compile "com.android.support:design:${rootProject.supportLibVersion}"
 
     //Optional: Generate random English word for new Inbox message
     compile 'com.github.maximeroussy:invitrode:1.0.10'

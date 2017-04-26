@@ -23,12 +23,13 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.sessionm.sdk:sessionm-sdk:2.1.5'
-    compile 'com.google.android.gms:play-services-gcm:9.8.0'
-    compile 'com.google.firebase:firebase-core:9.8.0'
-    compile 'com.google.firebase:firebase-messaging:9.8.0'
+    compile "com.sessionm.sdk:sessionm-sdk:${rootProject.sessionMSdkVersion}"
 
-    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile "com.google.android.gms:play-services-gcm:${rootProject.playServicesVersion}"
+    compile "com.google.firebase:firebase-core:${rootProject.playServicesVersion}"
+    compile "com.google.firebase:firebase-messaging:${rootProject.playServicesVersion}"
+
+    compile "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
 }
 apply plugin: 'com.google.gms.google-services'
 

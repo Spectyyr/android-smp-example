@@ -17,6 +17,10 @@ allprojects {
     }
 }
 
+project.ext.sessionMSdkVersion = '2.2.0'
+project.ext.supportLibVersion = '24.2.0'
+project.ext.playServicesVersion = '9.8.0'
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
