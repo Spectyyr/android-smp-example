@@ -1,6 +1,7 @@
 package com.sessionm.smp_inbox;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
                             + RandomWord.getNewWord(length) + " "
                             + RandomWord.getNewWord(length) + " "
                             + RandomWord.getNewWord(length) + " "
-                            + RandomWord.getNewWord(length);
+                            + RandomWord.getNewWord(length) + "Aenean scelerisque venenatis nisl vel imperdiet. In volutpat id ipsum et convallis. Duis suscipit, enim non auctor varius, nunc lectus ornare felis, quis dapibus mi ex sit amet ipsum. Mauris maximus ultricies odio, quis sodales orci facilisis vel. Sed vitae dui sit amet sapien posuere viverra. Nulla eget ex dui. Proin iaculis porttitor ullamcorper. Donec facilisis vitae ante sed viverra. Aenean nec libero varius, bibendum arcu in, ultricies mi. In et magna nec urna ornare tempus at vitae dui. Curabitur tincidunt placerat dolor at scelerisque. Nulla porttitor erat a risus faucibus vulputate. Aliquam vitae neque a arcu lacinia ullamcorper. Aliquam quis tincidunt tortor. Aliquam nec augue nisi. Praesent id sollicitudin tellus.";
                 } catch (WordLengthException e) {
                     e.printStackTrace();
                 }
@@ -156,6 +157,10 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
     private OnItemClickListener onItemClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(int position) {
+            SessionM.getInstance().getInboxManager().updateInboxMessageState(messages.get(position), InboxMessage.STATE_TYPES.READ);
+            Intent intent = new Intent(MainActivity.this, InboxDetailActivity.class);
+            intent.putExtra("index", position);
+            startActivity(intent);
         }
     };
 
