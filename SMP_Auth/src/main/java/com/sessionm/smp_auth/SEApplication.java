@@ -18,10 +18,8 @@ public class SEApplication extends Application{
         registerActivityLifecycleCallbacks(new SessionMActivityLifecycleCallbacks());
         final SessionM sessionM = SessionM.getInstance();
         sessionM.setApplicationContext(this);
-//        sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api.tour-sessionm.com");
-//        sessionM.setAppKey("e2f1d6d709e44f5404a2091852617e60f473de85");
-        sessionM.setAppKey("04e54a2689ec2d96e2cd5394f377671f80166165");
-        sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api-demo.stg-sessionm.com");
+        sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api.tour-sessionm.com");
+        sessionM.setAppKey("c4d9427e894e3b0ddf67bd08280b11e051f66c82");
 
 
         //TODO: support native facebook SDK

@@ -1,0 +1,89 @@
+<LinearLayout android:id="@+id/main_layout"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/grey_100"
+              android:orientation="vertical"
+              android:weightSum="4">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/title_bottom_margin"
+            android:text="@string/token_title_text"
+            android:theme="@style/ThemeOverlay.MyTitleText"/>
+
+        <TextView
+            android:id="@+id/status"
+            style="@style/ThemeOverlay.MyTextDetail"
+            android:text="@string/logged_out"/>
+
+        <TextView
+            android:id="@+id/detail"
+            style="@style/ThemeOverlay.MyTextDetail"
+            tools:text="SMP User ID: 123456789abc"/>
+
+        <Button
+            android:id="@+id/logged_in_view_profile"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/view_profile"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/grey_300"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:id="@+id/email_password_buttons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <Button
+                android:id="@+id/authenticate_with_sample_token_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/sample_token"
+                android:theme="@style/ThemeOverlay.MyDarkButton"/>
+
+            <Button
+                android:id="@+id/authenticate_with_custom_token_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/custom_token"
+                android:theme="@style/ThemeOverlay.MyDarkButton"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/sign_out"
+            android:theme="@style/ThemeOverlay.MyDarkButton"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

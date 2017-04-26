@@ -40,6 +40,10 @@
             android:name=".email.EmailPasswordActivity"
             android:label="@string/label_emailpassword"
             android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".sessionm.SessionMTokenActivity"
+            android:label="@string/label_sessionm_token"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
 
         <activity
             android:name=".UserDetailsActivity"

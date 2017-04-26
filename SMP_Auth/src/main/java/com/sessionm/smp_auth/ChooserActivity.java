@@ -16,6 +16,7 @@ import com.sessionm.smp_auth.custom.CustomAuthActivity;
 import com.sessionm.smp_auth.email.EmailPasswordActivity;
 import com.sessionm.smp_auth.facebook.FacebookLoginActivity;
 import com.sessionm.smp_auth.google.GoogleSignInActivity;
+import com.sessionm.smp_auth.sessionm.SessionMTokenActivity;
 import com.sessionm.smp_auth.webauth.WebAuthActivity;
 
 /**
@@ -24,6 +25,7 @@ import com.sessionm.smp_auth.webauth.WebAuthActivity;
  * one of the following Files:
  * {@link WebAuthActivity}
  * {@link EmailPasswordActivity}
+ * {@link SessionMTokenActivity}
  * {@link GoogleSignInActivity}
  * {@link FacebookLoginActivity}
  * {@link CustomAuthActivity}
@@ -32,7 +34,8 @@ public class ChooserActivity extends AppCompatActivity implements AdapterView.On
 
     private static final Class[] CLASSES = new Class[]{
             WebAuthActivity.class,
-            EmailPasswordActivity.class
+            EmailPasswordActivity.class,
+            SessionMTokenActivity.class
             //TODO: We don't support native login on backend yet
 //            GoogleSignInActivity.class,
 //            FacebookLoginActivity.class,
@@ -41,7 +44,8 @@ public class ChooserActivity extends AppCompatActivity implements AdapterView.On
 
     private static final int[] DESCRIPTION_IDS = new int[]{
             R.string.desc_webauth,
-            R.string.desc_emailpassword
+            R.string.desc_emailpassword,
+            R.string.desc_sessionm_token
             //TODO: We don't support native login on backend yet
 //            R.string.desc_google_sign_in,
 //            R.string.desc_facebook_login,
