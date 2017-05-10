@@ -44,16 +44,13 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.sessionm.sdk:sessionm-sdk:2.2.0'
+    compile 'com.sessionm.sdk:sessionm-sdk:2.3.0-a2'
     compile 'com.squareup.okio:okio:1.11.0'
     compile 'com.android.support:design:25.0.1'
     compile 'com.android.support:appcompat-v7:25.0.1'
     // Google Sign In SDK (only required for Google Sign In)
     compile 'com.google.android.gms:play-services-auth:10.0.1'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
-    //    compile 'net.openid:appauth:0.5.1'
-    compile 'joda-time:joda-time:2.9.7'
-    compile project(':appauth-release')
 }
 
 apply plugin: 'com.google.gms.google-services'

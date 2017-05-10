@@ -1,10 +1,10 @@
 {
-  "client_id": "1913e9563da1aba37be6fd334b0ad626c6d8d0730d40ec077675bf2f57184eda",
+  "client_id": "a0f3c7ad54729e799d476e30f8591bb8b7f20dcf373797a44f02a8fd0e2514b5",
   "redirect_uri": "smpauth://com.sessionm.smp_auth:/oauth2redirect",
   "authorization_scope": "openid email profile",
   "discovery_uri": "",
-  "authorization_endpoint_uri": "https://login-demo.stg-sessionm.com/oauth/authorize",
-  "token_endpoint_uri": "https://login-demo.stg-sessionm.com/oauth/token",
+  "authorization_endpoint_uri": "https://login-miamiheat.stg-sessionm.com/oauth/authorize",
+  "token_endpoint_uri": "https://login-miamiheat.stg-sessionm.com/oauth/token",
   "registration_endpoint_uri": "",
   "https_required": true
 }
