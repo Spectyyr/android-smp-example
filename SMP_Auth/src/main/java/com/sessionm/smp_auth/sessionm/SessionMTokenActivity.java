@@ -2,10 +2,8 @@ package com.sessionm.smp_auth.sessionm;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,7 +13,6 @@ import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.identity.UserListener;
 import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.identity.data.SMPUserCreate;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
 import com.sessionm.smp_auth.UserDetailsActivity;
