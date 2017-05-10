@@ -64,10 +64,6 @@
                     android:host="com.sessionm.smp_auth"
                     android:path="/oauth2redirect"
                     android:scheme="smpauth"/>
-                <data
-                    android:host="sessionm.com"
-                    android:path="/oauth2redirect"
-                    android:scheme="https"/>
             </intent-filter>
         </activity>
     </application>
