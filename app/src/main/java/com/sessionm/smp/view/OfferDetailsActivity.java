@@ -22,10 +22,9 @@ import android.widget.Toast;
 
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityListener;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.data.MMCUser;
 import com.sessionm.api.identity.data.SMSVerification;
+import com.sessionm.api.identity.sms.SMSVerificationListener;
+import com.sessionm.api.identity.sms.SMSVerificationManager;
 import com.sessionm.api.reward.RewardsListener;
 import com.sessionm.api.reward.RewardsManager;
 import com.sessionm.api.reward.data.offer.Offer;
@@ -46,8 +45,6 @@ public class OfferDetailsActivity extends AppCompatActivity {
     private Offer _currentOffer;
     private RewardsManager _rewardsManager;
     private ProgressDialog _progressDialog;
-
-    private IdentityManager _identityManager = SessionM.getInstance().getIdentityManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +97,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
         placeOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _identityManager.fetchSMSVerification();
+                SMSVerificationManager.getInstance().fetchSMSVerification();
                 _progressDialog.show();
             }
         });
@@ -143,7 +140,8 @@ public class OfferDetailsActivity extends AppCompatActivity {
         }
     };
 
-    IdentityListener _identityListener = new IdentityListener() {
+    SMSVerificationListener _smsListener = new SMSVerificationListener() {
+
         @Override
         public void onSMSVerificationMessageSent(SMSVerification smsVerification) {
             _progressDialog.dismiss();
@@ -179,39 +177,10 @@ public class OfferDetailsActivity extends AppCompatActivity {
 
         }
 
-        @Override
-        public void onMMCUserFetched(MMCUser mmcUser) {
-
-        }
 
         @Override
-        public void onMMCUserUpdated(MMCUser mmcUser) {
-
-        }
-
-        @Override
-        public void onMMCUserTagsFetched(Map map) {
-
-        }
-
-        @Override
-        public void onMMCUserTagsUpdated(Map map) {
-
-        }
-
-        @Override
-        public void onMMCUserMetadataFetched(Map map) {
-
-        }
-
-        @Override
-        public void onMMCUserMetadataUpdated(Map map) {
-
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            Toast.makeText(OfferDetailsActivity.this, "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+        public void onFailure(SessionMError sessionMError) {
+            Toast.makeText(OfferDetailsActivity.this, "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -219,7 +188,7 @@ public class OfferDetailsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         _rewardsManager.setListener(_rewardsListener);
-        _identityManager.setListener(_identityListener);
+        SMSVerificationManager.getInstance().setListener(_smsListener);
     }
 
     @Override
@@ -267,10 +236,10 @@ public class OfferDetailsActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 if (type.equals("send_code")) {
                     String phone = inputEditText.getText().toString();
-                    _identityManager.sendSMSVerificationMessage(phone);
+                    SMSVerificationManager.getInstance().sendSMSVerificationMessage(phone);
                 } else if (type.equals("verify_code")) {
                     String code = inputEditText.getText().toString();
-                    _identityManager.checkSMSVerificationCode(code);
+                    SMSVerificationManager.getInstance().checkSMSVerificationCode(code);
                 }
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

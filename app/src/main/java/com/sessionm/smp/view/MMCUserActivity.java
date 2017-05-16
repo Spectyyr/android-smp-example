@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -18,17 +17,19 @@ import android.widget.Toast;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.User;
-import com.sessionm.api.identity.IdentityListener;
-import com.sessionm.api.identity.data.MMCUser;
-import com.sessionm.api.identity.data.MMCUserUpdate;
-import com.sessionm.api.identity.data.SMSVerification;
+import com.sessionm.api.identity.UserListener;
+import com.sessionm.api.identity.UserManager;
+import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.api.identity.data.SMPUserUpdate;
+import com.sessionm.api.identity.tag.UserTagsListener;
+import com.sessionm.api.identity.tag.UserTagsManager;
 import com.sessionm.smp.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class MMCUserActivity extends AppCompatActivity {
 
@@ -64,7 +65,6 @@ public class MMCUserActivity extends AppCompatActivity {
     TextView isTestAccount;
 
     TableLayout tagsTable;
-    TableLayout metadataTable;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,71 +115,24 @@ public class MMCUserActivity extends AppCompatActivity {
                 popUpUpdateUserTagsDialog();
             }
         });
-
-        metadataTable = (TableLayout) findViewById(R.id.mmc_metadata_table_layout);
-        Button updateMetadataButton = (Button) findViewById(R.id.mmc_user_metadata_update_btn);
-        updateMetadataButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popUpUpdateUserMetadataDialog();
-            }
-        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        sessionM.getIdentityManager().setListener(_identifyListener);
+        UserManager.getInstance().setListener(_userListener);
+        UserTagsManager.getInstance().setListener(_userTagsListener);
         User user = sessionM.getUser();
         if (user != null) {
-            sessionM.getIdentityManager().fetchMMCUser();
-            sessionM.getIdentityManager().fetchMMCUserTags();
-            sessionM.getIdentityManager().fetchMMCUserMetadata();
+            UserManager.getInstance().fetchUser();
+            UserTagsManager.getInstance().fetchUserTags();
         }
     }
 
-    IdentityListener _identifyListener = new IdentityListener() {
+    UserListener _userListener = new UserListener() {
         @Override
-        public void onSMSVerificationMessageSent(SMSVerification smsVerification) {
-        }
-
-        @Override
-        public void onSMSVerificationCodeChecked(SMSVerification smsVerification) {
-        }
-
-        @Override
-        public void onSMSVerificationFetched(SMSVerification smsVerification) {
-        }
-
-        @Override
-        public void onMMCUserFetched(MMCUser mmcUser) {
-            refreshUI(mmcUser);
-        }
-
-        @Override
-        public void onMMCUserUpdated(MMCUser mmcUser) {
-            Toast.makeText(MMCUserActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-            refreshUI(mmcUser);
-        }
-
-        @Override
-        public void onMMCUserTagsFetched(Map tags) {
-            refreshUserTagsTable(tags);
-        }
-
-        @Override
-        public void onMMCUserTagsUpdated(Map tags) {
-            refreshUserTagsTable(tags);
-        }
-
-        @Override
-        public void onMMCUserMetadataFetched(Map metadata) {
-            refreshUserMetadataTable(metadata);
-        }
-
-        @Override
-        public void onMMCUserMetadataUpdated(Map metadata) {
-            refreshUserMetadataTable(metadata);
+        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
+            refreshUI(smpUser);
         }
 
         @Override
@@ -188,37 +141,54 @@ public class MMCUserActivity extends AppCompatActivity {
         }
     };
 
-    private void refreshUI(MMCUser mmcUser) {
-        id.setText("ID: " + mmcUser.getID());
-        externalID.setText("External ID: " + mmcUser.getExternalID());
-        points.setText("Points: " + mmcUser.getAvailablePoints());
-        availableAchievementsCount.setText("Unclaimed Achievements Count: " + mmcUser.getUnclaimedAchievementCount());
-        testPoints.setText("Test Points: " + mmcUser.getTestPoints());
-        email.setText("Email: " + mmcUser.getEmail());
-        firstName.setText("First Name: " + mmcUser.getFirstName());
-        lastName.setText("Last Name: " + mmcUser.getLastName());
-        gender.setText("Gender: " + mmcUser.getGender());
-        dob.setText("DOB: " + mmcUser.getDateOfBirth());
-        createdTime.setText("Created Time: " + mmcUser.getCreatedTime());
-        updatedTime.setText("Updated Time: " + mmcUser.getUpdatedTime());
-        zip.setText("Zip: " + mmcUser.getZipCode());
-        dma.setText("DMA: " + mmcUser.getDMA());
-        state.setText("State: " + mmcUser.getState());
-        country.setText("Country: " + mmcUser.getCountry());
-        latitude.setText("Latitude: " + mmcUser.getLatitude());
-        longitude.setText("Longitude: " + mmcUser.getLongitude());
-        nextTierPercentage.setText("Next Tier Percentage: " + mmcUser.getNextTierPercentage());
-        accountStatus.setText("Account Status: " + mmcUser.getAccountStatus());
-        currentZip.setText("Current Zip: " + mmcUser.getCurrentZipCode());
-        currentDMA.setText("Current DMA: " + mmcUser.getCurrentDMA());
-        currentState.setText("Current State: " + mmcUser.getCurrentState());
-        currentCountry.setText("Current Country: " + mmcUser.getCurrentCountry());
-        if (mmcUser.getProxyIDs() != null)
-            proxyIDs.setText("Proxy IDs: " + mmcUser.getProxyIDs().toString());
-        if (mmcUser.getUserProfile() != null)
-            profile.setText("User Profile: " + mmcUser.getUserProfile().toString());
-        isSuspended.setText("Suspended: " + mmcUser.isSuspended());
-        isTestAccount.setText("Test Account: " + mmcUser.isTestAccount());
+    UserTagsListener _userTagsListener = new UserTagsListener() {
+        @Override
+        public void onUserTagsFetched(Map map) {
+            refreshUserTagsTable(map);
+        }
+
+        @Override
+        public void onUserTagsUpdated(Map map) {
+            refreshUserTagsTable(map);
+        }
+
+        @Override
+        public void onFailure(SessionMError sessionMError) {
+
+        }
+    };
+
+    private void refreshUI(SMPUser smpUser) {
+        id.setText("ID: " + smpUser.getID());
+        externalID.setText("External ID: " + smpUser.getExternalID());
+        points.setText("Points: " + smpUser.getAvailablePoints());
+        availableAchievementsCount.setText("Unclaimed Achievements Count: " + smpUser.getUnclaimedAchievementCount());
+        testPoints.setText("Test Points: " + smpUser.getTestPoints());
+        email.setText("Email: " + smpUser.getEmail());
+        firstName.setText("First Name: " + smpUser.getFirstName());
+        lastName.setText("Last Name: " + smpUser.getLastName());
+        gender.setText("Gender: " + smpUser.getGender());
+        dob.setText("DOB: " + smpUser.getDateOfBirth());
+        createdTime.setText("Created Time: " + smpUser.getCreatedTime());
+        updatedTime.setText("Updated Time: " + smpUser.getUpdatedTime());
+        zip.setText("Zip: " + smpUser.getZipCode());
+        dma.setText("DMA: " + smpUser.getDMA());
+        state.setText("State: " + smpUser.getState());
+        country.setText("Country: " + smpUser.getCountry());
+        latitude.setText("Latitude: " + smpUser.getLatitude());
+        longitude.setText("Longitude: " + smpUser.getLongitude());
+        nextTierPercentage.setText("Next Tier Percentage: " + smpUser.getNextTierPercentage());
+        accountStatus.setText("Account Status: " + smpUser.getAccountStatus());
+        currentZip.setText("Current Zip: " + smpUser.getCurrentZipCode());
+        currentDMA.setText("Current DMA: " + smpUser.getCurrentDMA());
+        currentState.setText("Current State: " + smpUser.getCurrentState());
+        currentCountry.setText("Current Country: " + smpUser.getCurrentCountry());
+        if (smpUser.getProxyIDs() != null)
+            proxyIDs.setText("Proxy IDs: " + smpUser.getProxyIDs().toString());
+        if (smpUser.getUserProfile() != null)
+            profile.setText("User Profile: " + smpUser.getUserProfile().toString());
+        isSuspended.setText("Suspended: " + smpUser.isSuspended());
+        isTestAccount.setText("Test Account: " + smpUser.isTestAccount());
     }
 
     private void refreshUserTagsTable(Map tags) {
@@ -231,19 +201,6 @@ public class MMCUserActivity extends AppCompatActivity {
             textView.setText(key + ": " + tags.get(key));
             row.addView(textView);
             tagsTable.addView(row);
-        }
-    }
-
-    private void refreshUserMetadataTable(Map metadata) {
-        metadataTable.removeAllViews();
-        for (Object key : metadata.keySet()) {
-            TableRow row = new TableRow(this);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
-            row.setLayoutParams(lp);
-            TextView textView = new TextView(this);
-            textView.setText(key + ": " + metadata.get(key));
-            row.addView(textView);
-            metadataTable.addView(row);
         }
     }
 
@@ -276,34 +233,23 @@ public class MMCUserActivity extends AppCompatActivity {
         builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                MMCUserUpdate mmcUserRequest = new MMCUserUpdate();
-                mmcUserRequest.setExternalID(updateNonEmptyField(externalIDView));
-                mmcUserRequest.setEmail(updateNonEmptyField(emailView));
-                mmcUserRequest.setGender(updateNonEmptyField(genderView));
-                mmcUserRequest.setFirstName(updateNonEmptyField(firstNameView));
-                mmcUserRequest.setLastName(updateNonEmptyField(lastNameView));
-                mmcUserRequest.setDateOfBirth(updateNonEmptyField(dobView));
-                mmcUserRequest.setZipCode(updateNonEmptyField(zipView));
-                mmcUserRequest.setDMA(updateNonEmptyField(dmaView));
-                mmcUserRequest.setState(updateNonEmptyField(stateView));
-                mmcUserRequest.setCountry(updateNonEmptyField(countryView));
-                mmcUserRequest.setLatitude(updateNonEmptyFieldDouble(latitudeView));
-                mmcUserRequest.setLongitude(updateNonEmptyFieldDouble(longitudeView));
-                mmcUserRequest.setIPAddress(updateNonEmptyField(ipAddressView));
-                mmcUserRequest.setLocale(Locale.getDefault());
-                /* Also supports additional user profile filed with customized key, such as children
-                Map<String, Map[]> childrenMap = new HashMap<>();
-                Map<String, String> child1 = new HashMap<>();
-                child1.put("gender", "m");
-                child1.put("dob", "2016-04-01");
-                Map<String, String> child2 = new HashMap<>();
-                child2.put("gender", "f");
-                child2.put("dob", "2016-04-01");
-                Map[] children = {child1, child2};
-                childrenMap.put("children", children);
-                mmcUserRequest.addUserProfile(childrenMap);
-                */
-                sessionM.getIdentityManager().updateMMCUser(mmcUserRequest);
+                SMPUserUpdate.Builder smpUserRequest = new SMPUserUpdate.Builder()
+                        .externalID(updateNonEmptyField(externalIDView))
+                        .email(updateNonEmptyField(emailView))
+                        .gender(updateNonEmptyField(genderView))
+                        .firstName(updateNonEmptyField(firstNameView))
+                        .lastName(updateNonEmptyField(lastNameView))
+                        .dateOfBirth(updateNonEmptyField(dobView))
+                        .zipCode(updateNonEmptyField(zipView))
+                        .DMA(updateNonEmptyField(dmaView))
+                        .state(updateNonEmptyField(stateView))
+                        .country(updateNonEmptyField(countryView))
+                        .latitude(updateNonEmptyFieldDouble(latitudeView))
+                        .longitude(updateNonEmptyFieldDouble(longitudeView))
+                        .ipAddress(updateNonEmptyField(ipAddressView))
+                        .locale(Locale.getDefault());
+
+                UserManager.getInstance().updateUser(smpUserRequest.build());
             }
         });
 
@@ -356,9 +302,9 @@ public class MMCUserActivity extends AppCompatActivity {
                 }
                 if (!ttlEditView.getText().toString().isEmpty()) {
                     long ttl = Long.parseLong(ttlEditView.getText().toString());
-                    sessionM.getIdentityManager().updateMMCUserTags(tags, ttl);
+                    UserTagsManager.getInstance().updateUserTags(tags, ttl);
                 } else
-                    sessionM.getIdentityManager().updateMMCUserTags(tags);
+                    UserTagsManager.getInstance().updateUserTags(tags);
             }
         });
 
@@ -385,84 +331,6 @@ public class MMCUserActivity extends AppCompatActivity {
                 editText.setHint("New Tag");
                 row.addView(editText);
                 tagsViews.add(editText);
-                newTagsTable.addView(row, 0);
-            }
-        });
-    }
-
-    private void popUpUpdateUserMetadataDialog() {
-        LayoutInflater inflater = getLayoutInflater();
-        final View dialogLayout = inflater.inflate(R.layout.dialog_update_user_metadata, null);
-
-        final List<EditText> keyViews = new ArrayList<>();
-        final List<EditText> valueViews = new ArrayList<>();
-
-        final TableLayout newTagsTable = (TableLayout) dialogLayout.findViewById(R.id.update_metadata_table_layout);
-
-        final EditText keyEditView = (EditText) dialogLayout.findViewById(R.id.update_metadata_add_key_edittext);
-        final EditText valueEditView = (EditText) dialogLayout.findViewById(R.id.update_metadata_add_value_edittext);
-
-        keyViews.add(keyEditView);
-        valueViews.add(valueEditView);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-
-        builder.setNeutralButton("Add Pair", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-
-        builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Map<String, Object> pairs = new HashMap<>();
-                for (int i = 0; i < keyViews.size(); i++) {
-                    EditText keyView = keyViews.get(i);
-                    EditText valueView = valueViews.get(i);
-                    pairs.put(keyView.getText().toString(), valueView.getText().toString());
-                }
-                sessionM.getIdentityManager().updateMMCUserMetadata(pairs);
-            }
-        });
-
-        AlertDialog dialog = builder.create();
-
-        dialog.setView(dialogLayout);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-            }
-        });
-
-        dialog.show();
-
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TableRow row = new TableRow(dialogLayout.getContext());
-                TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
-                row.setLayoutParams(lp);
-                LinearLayout linearLayout = new LinearLayout(dialogLayout.getContext());
-
-                EditText keyEditText = new EditText(dialogLayout.getContext());
-                keyEditText.setHint("Key");
-                linearLayout.addView(keyEditText);
-                keyViews.add(keyEditText);
-
-                EditText valueEditText = new EditText(dialogLayout.getContext());
-                valueEditText.setHint("Value");
-                linearLayout.addView(valueEditText);
-                valueViews.add(valueEditText);
-
-                row.addView(linearLayout);
                 newTagsTable.addView(row, 0);
             }
         });

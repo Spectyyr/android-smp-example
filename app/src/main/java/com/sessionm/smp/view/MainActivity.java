@@ -40,8 +40,10 @@ import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.User;
 import com.sessionm.api.identity.IdentityListener;
-import com.sessionm.api.identity.data.MMCUser;
-import com.sessionm.api.identity.data.SMSVerification;
+import com.sessionm.api.identity.IdentityManager;
+import com.sessionm.api.identity.UserListener;
+import com.sessionm.api.identity.UserManager;
+import com.sessionm.api.identity.data.SMPUser;
 import com.sessionm.api.message.data.Message;
 import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.api.receipt.ReceiptsManager;
@@ -51,7 +53,7 @@ import com.sessionm.smp.util.LocationObserver;
 import com.sessionm.smp.util.PermissionUtils;
 import com.sessionm.smp.util.Utility;
 
-import java.util.Map;
+import java.util.Set;
 
 //Having the MainActivity implement the SessionM SessionListener allows the developer to listen on the SessionM Session State and update the activity:
 //- when the Session.State changes (Starting, Started_online, Started_offline, Stopped, Stopping)
@@ -198,10 +200,11 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
         if (notificationMessage != null) {
             sessionM.getMessageManager().executePendingNotificationFromPush(notificationMessage);
         }
-        sessionM.getIdentityManager().setListener(_identifyListener);
+        IdentityManager.getInstance().setListener(_identifyListener);
+        UserManager.getInstance().setListener(_userListener);
         User user = sessionM.getUser();
         if (user != null) {
-            sessionM.getIdentityManager().fetchMMCUser();
+            UserManager.getInstance().fetchUser();
         }
     }
 
@@ -365,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
                 String errorMessage = SessionM.getInstance().getResponseErrorMessage();
                 Toast.makeText(this, "Authentication Failed! " + errorMessage, Toast.LENGTH_SHORT).show();
             }
-            sessionM.getIdentityManager().fetchMMCUser();
+            UserManager.getInstance().fetchUser();
         }
     }
 
@@ -404,55 +407,28 @@ public class MainActivity extends AppCompatActivity implements SessionListener, 
 
     IdentityListener _identifyListener = new IdentityListener() {
         @Override
-        public void onSMSVerificationMessageSent(SMSVerification smsVerification) {
+        public void onAuthStateUpdated(IdentityManager.AuthState authState) {
 
         }
 
         @Override
-        public void onSMSVerificationCodeChecked(SMSVerification smsVerification) {
+        public void onFailure(SessionMError sessionMError) {
 
         }
+    };
 
+    UserListener _userListener = new UserListener() {
         @Override
-        public void onSMSVerificationFetched(SMSVerification smsVerification) {
-
-        }
-
-        @Override
-        public void onMMCUserFetched(MMCUser mmcUser) {
-            String firstName = mmcUser.getFirstName();
-            String lastName = mmcUser.getLastName();
+        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
+            String firstName = smpUser.getFirstName();
+            String lastName = smpUser.getLastName();
             String name = "Anonymous";
             if ((firstName != null) || (lastName != null)) {
                 name = String.format("%s %s", firstName != null ? firstName : "",
                         lastName != null ? lastName : "");
             }
             userNameTextView.setText(name);
-            userPointsTextView.setText(mmcUser.getAvailablePoints() + " pts");
-        }
-
-        @Override
-        public void onMMCUserUpdated(MMCUser mmcUser) {
-
-        }
-
-        @Override
-        public void onMMCUserTagsFetched(Map map) {
-
-        }
-
-        @Override
-        public void onMMCUserTagsUpdated(Map map) {
-
-        }
-
-        @Override
-        public void onMMCUserMetadataFetched(Map map) {
-
-        }
-
-        @Override
-        public void onMMCUserMetadataUpdated(Map map) {
+            userPointsTextView.setText(smpUser.getAvailablePoints() + " pts");
 
         }
 

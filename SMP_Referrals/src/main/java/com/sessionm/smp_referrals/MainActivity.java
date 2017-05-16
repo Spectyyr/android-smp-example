@@ -15,7 +15,6 @@ import com.sessionm.api.AchievementData;
 import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.User;
-import com.sessionm.api.message.notification.data.NotificationMessage;
 import com.sessionm.api.referral.ReferralsManager;
 import com.sessionm.api.referral.data.Referral;
 import com.sessionm.api.referral.data.ReferralRequest;
