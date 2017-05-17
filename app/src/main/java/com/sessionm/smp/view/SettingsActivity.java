@@ -114,9 +114,9 @@ public class SettingsActivity extends Activity implements SessionListener {
                             _geofenceEnabled = !_geofenceEnabled;
                             checkBox.setChecked(_geofenceEnabled);
                             if (_geofenceEnabled)
-                                GeofenceManager.startGeofenceService(getApplicationContext(), null);
+                                GeofenceManager.getInstance(getApplicationContext()).startGeofenceService(null);
                             else
-                                GeofenceManager.stopGeofenceService(getApplicationContext());
+                                GeofenceManager.getInstance(getApplicationContext()).stopGeofenceService();
                         }
                     });
                     break;

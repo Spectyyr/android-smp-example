@@ -1,7 +1,7 @@
 package com.sessionm.smp_inbox;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.sessionm.api.SessionM;

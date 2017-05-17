@@ -75,14 +75,7 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         @Override
         public void onReceiptsFetched(List<Receipt> receipts) {
-            _swipeRefreshLayout.setRefreshing(false);
-            if (ReceiptsFragment.this._receipts == null) {
-                ReceiptsFragment.this._receipts = new ArrayList<>();
-            } else {
-                ReceiptsFragment.this._receipts.clear();
-            }
-            ReceiptsFragment.this._receipts.addAll(receipts);
-            _listAdapter.notifyDataSetChanged();
+            refreshListUI(receipts);
         }
 
         @Override
@@ -93,6 +86,7 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
         @Override
         public void onFailure(SessionMError error) {
             _swipeRefreshLayout.setRefreshing(false);
+            refreshListUI(new ArrayList<Receipt>());
             Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
@@ -111,6 +105,17 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onRefresh() {
         _receiptManager.fetchReceipts();
+    }
+
+    private void refreshListUI(List<Receipt> receipts) {
+        _swipeRefreshLayout.setRefreshing(false);
+        if (ReceiptsFragment.this._receipts == null) {
+            ReceiptsFragment.this._receipts = new ArrayList<>();
+        } else {
+            ReceiptsFragment.this._receipts.clear();
+        }
+        ReceiptsFragment.this._receipts.addAll(receipts);
+        _listAdapter.notifyDataSetChanged();
     }
 
     public void popUpImageDialog(final List<String> urls) {

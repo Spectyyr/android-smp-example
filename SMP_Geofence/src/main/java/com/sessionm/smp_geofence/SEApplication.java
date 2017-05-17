@@ -8,7 +8,6 @@ import android.app.Application;
 
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMActivityLifecycleCallbacks;
-import com.sessionm.api.geofence.GeofenceManager;
 
 public class SEApplication extends Application{
     private static final String TAG = "AppController";
