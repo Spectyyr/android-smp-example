@@ -16,6 +16,7 @@ import com.sessionm.api.identity.data.SMPUser;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
 import com.sessionm.smp_auth.UserDetailsActivity;
+import com.sessionm.webauth.api.WebAuthManager;
 
 import java.util.Set;
 
@@ -95,7 +96,7 @@ public class WebAuthActivity extends BaseActivity implements
 
     private void authenticateWithWeb() {
         showProgressDialog();
-        identityManager.startWebAuthentication(this);
+        WebAuthManager.getInstance().startWebAuthorization(this);
     }
 
     private void signOut() {

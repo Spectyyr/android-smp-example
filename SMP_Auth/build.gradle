@@ -41,10 +41,13 @@ configurations.all {
 }
 
 dependencies {
-    compile 'com.squareup.okhttp:okhttp:2.6.0'
+    compile 'com.sessionm.sdk:sessionm-sdk:2.3.0-a12'
+    compile 'com.sessionm.sdk:sessionm-sdk-webauth:2.3.0-a12'
+
+    compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.sessionm.sdk:sessionm-sdk:2.3.0-a6'
+    compile 'com.google.code.gson:gson:2.7'
+
     compile 'com.squareup.okio:okio:1.11.0'
     compile 'com.android.support:design:25.0.1'
     compile 'com.android.support:appcompat-v7:25.0.1'

@@ -53,7 +53,7 @@
             android:name=".UserDetailsActivity"
             android:label="@string/user_details"/>
 
-        <activity android:name="com.sessionm.api.identity.webauth.RedirectUriReceiverActivity">
+        <activity android:name="com.sessionm.webauth.api.RedirectUriReceiverActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
