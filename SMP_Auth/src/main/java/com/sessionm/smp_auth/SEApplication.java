@@ -26,6 +26,9 @@ public class SEApplication extends Application {
         sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api-demo.stg-sessionm.com");
         sessionM.setAppKey("04e54a2689ec2d96e2cd5394f377671f80166165");
 
+//        sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://sessionm-api.ngrok.io");
+//        sessionM.setAppKey("34e76a7cf8632b14b41307afa9d2e7b3831c87fa");
+
 
         //TODO: support native facebook SDK
 //        FacebookSdk.sdkInitialize(getApplicationContext());

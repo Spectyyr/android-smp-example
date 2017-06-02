@@ -41,8 +41,8 @@ configurations.all {
 }
 
 dependencies {
-    compile 'com.sessionm.sdk:sessionm-sdk:2.3.0-a12'
-    compile 'com.sessionm.sdk:sessionm-sdk-webauth:2.3.0-a12'
+    compile 'com.sessionm.sdk:sessionm-sdk:2.3.0-a13'
+    compile 'com.sessionm.sdk:sessionm-sdk-webauth:2.3.0-a13'
 
     compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
     compile 'com.squareup.picasso:picasso:2.5.2'

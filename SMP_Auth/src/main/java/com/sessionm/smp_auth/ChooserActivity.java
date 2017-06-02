@@ -35,20 +35,20 @@ public class ChooserActivity extends AppCompatActivity implements AdapterView.On
     private static final Class[] CLASSES = new Class[]{
             WebAuthActivity.class,
             EmailPasswordActivity.class,
-            SessionMTokenActivity.class
+            SessionMTokenActivity.class,
             //TODO: We don't support native login on backend yet
 //            GoogleSignInActivity.class,
-//            FacebookLoginActivity.class,
+            FacebookLoginActivity.class
 //            CustomAuthActivity.class
     };
 
     private static final int[] DESCRIPTION_IDS = new int[]{
             R.string.desc_webauth,
             R.string.desc_emailpassword,
-            R.string.desc_sessionm_token
+            R.string.desc_sessionm_token,
             //TODO: We don't support native login on backend yet
 //            R.string.desc_google_sign_in,
-//            R.string.desc_facebook_login,
+            R.string.desc_facebook_login
 //            R.string.desc_custom_auth,
     };
 

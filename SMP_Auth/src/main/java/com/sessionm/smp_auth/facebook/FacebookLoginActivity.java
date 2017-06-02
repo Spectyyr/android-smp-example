@@ -16,9 +16,13 @@ import com.facebook.login.widget.LoginButton;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
+import com.sessionm.api.identity.UserListener;
+import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
+
+import java.util.Set;
 
 /**
  * Demonstrate SMP Authentication using a Facebook ID Token.
@@ -28,13 +32,14 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
     private static final String TAG = "SessionM.GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
 
-    private IdentityManager identityManager;
-
-    private IdentityListener identityListener;
-
     private LoginButton loginButton;
     private TextView mStatusTextView;
     private TextView mDetailTextView;
+
+    private IdentityManager identityManager;
+    private IdentityListener identityListener;
+    private UserManager userManager;
+    private UserListener userListener;
 
     private CallbackManager callbackManager;
 
@@ -75,11 +80,12 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
         });
 
         identityManager = IdentityManager.getInstance();
+        userManager = UserManager.getInstance();
 
         identityListener = new IdentityListener() {
             @Override
             public void onAuthStateUpdated(IdentityManager.AuthState authState) {
-
+                hideProgressDialog();
             }
 
             @Override
@@ -88,11 +94,32 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
                 Toast.makeText(FacebookLoginActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
+
+        userListener = new UserListener() {
+            @Override
+            public void onUserUpdated(SMPUser smpUser, Set<String> set) {
+                if (smpUser != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                updateUI(smpUser);
+            }
+
+            @Override
+            public void onFailure(SessionMError sessionMError) {
+                Toast.makeText(FacebookLoginActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        identityManager.setListener(identityListener);
+        userManager.setListener(userListener);
     }
 
     @Override
@@ -107,8 +134,10 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
     }
 
     private void authWithFacebook(LoginResult loginResult) {
-        Log.d(TAG, "authWithFacebook:" + loginResult.getAccessToken().getToken());
+        String fbToken = loginResult.getAccessToken().getToken();
+        Log.d(TAG, "authWithFacebook:" + fbToken);
         // [START_EXCLUDE silent]
+        identityManager.authenticateWithToken(fbToken, "facebook");
         showProgressDialog();
         // [END_EXCLUDE]
     }
