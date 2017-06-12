@@ -13,6 +13,8 @@ import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.identity.UserListener;
 import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.api.identity.webauth.WebAuthListener;
+import com.sessionm.api.identity.webauth.WebAuthResponse;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
 import com.sessionm.smp_auth.UserDetailsActivity;
@@ -32,7 +34,7 @@ public class WebAuthActivity extends BaseActivity implements
 
     private IdentityManager identityManager;
     private UserManager userManager;
-    private IdentityListener identityListener;
+    private WebAuthListener webAuthListener;
     private UserListener userListener;
 
     @Override
@@ -53,7 +55,12 @@ public class WebAuthActivity extends BaseActivity implements
         identityManager = IdentityManager.getInstance();
         userManager = UserManager.getInstance();
 
-        identityListener = new IdentityListener() {
+        webAuthListener = new WebAuthListener() {
+            @Override
+            public void onWebAuthFinished(WebAuthResponse webAuthResponse) {
+                hideProgressDialog();
+            }
+
             @Override
             public void onAuthStateUpdated(IdentityManager.AuthState authState) {
                 hideProgressDialog();
@@ -89,7 +96,7 @@ public class WebAuthActivity extends BaseActivity implements
     @Override
     public void onStart() {
         super.onStart();
-        identityManager.setListener(identityListener);
+        identityManager.setListener(webAuthListener);
         userManager.setListener(userListener);
     }
 

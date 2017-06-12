@@ -15,7 +15,7 @@ android {
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
 
         manifestPlaceholders = [
-                'appAuthRedirectScheme': 'smpauth://com.sessionm.smp_auth'
+                'appAuthRedirectScheme': 'smpauth2://com.sessionm.smp_auth'
         ]
     }
 
@@ -41,8 +41,8 @@ configurations.all {
 }
 
 dependencies {
-    compile 'com.sessionm.sdk:sessionm-sdk:2.3.0-a13'
-    compile 'com.sessionm.sdk:sessionm-sdk-webauth:2.3.0-a13'
+    compile 'com.sessionm.sdk:sessionm-sdk:2.3.0-a19'
+    compile 'com.sessionm.sdk:sessionm-sdk-webauth:2.3.0-a19'
 
     compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
     compile 'com.squareup.picasso:picasso:2.5.2'

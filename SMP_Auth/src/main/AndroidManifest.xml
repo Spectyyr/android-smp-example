@@ -63,7 +63,7 @@
                 <data
                     android:host="com.sessionm.smp_auth"
                     android:path="/oauth2redirect"
-                    android:scheme="smpauth"/>
+                    android:scheme="smpauth2"/>
             </intent-filter>
         </activity>
     </application>
