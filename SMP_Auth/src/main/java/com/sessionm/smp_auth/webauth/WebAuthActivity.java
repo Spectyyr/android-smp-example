@@ -1,6 +1,7 @@
 package com.sessionm.smp_auth.webauth;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,12 +14,11 @@ import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.identity.UserListener;
 import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.identity.webauth.WebAuthListener;
-import com.sessionm.api.identity.webauth.WebAuthResponse;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
 import com.sessionm.smp_auth.UserDetailsActivity;
 
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -34,7 +34,6 @@ public class WebAuthActivity extends BaseActivity implements
 
     private IdentityManager identityManager;
     private UserManager userManager;
-    private WebAuthListener webAuthListener;
     private UserListener userListener;
 
     @Override
@@ -51,27 +50,10 @@ public class WebAuthActivity extends BaseActivity implements
         findViewById(R.id.authenticate_with_browser).setOnClickListener(this);
         findViewById(R.id.logged_in_view_profile).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
+        findViewById(R.id.single_sign_out_button).setOnClickListener(this);
 
         identityManager = IdentityManager.getInstance();
         userManager = UserManager.getInstance();
-
-        webAuthListener = new WebAuthListener() {
-            @Override
-            public void onWebAuthFinished(WebAuthResponse webAuthResponse) {
-                hideProgressDialog();
-            }
-
-            @Override
-            public void onAuthStateUpdated(IdentityManager.AuthState authState) {
-                hideProgressDialog();
-            }
-
-            @Override
-            public void onFailure(SessionMError sessionMError) {
-                hideProgressDialog();
-                Toast.makeText(WebAuthActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
 
         userListener = new UserListener() {
             @Override
@@ -96,7 +78,6 @@ public class WebAuthActivity extends BaseActivity implements
     @Override
     public void onStart() {
         super.onStart();
-        identityManager.setListener(webAuthListener);
         userManager.setListener(userListener);
     }
 
@@ -110,6 +91,15 @@ public class WebAuthActivity extends BaseActivity implements
         updateUI(null);
     }
 
+    private void singleSignOut() {
+        identityManager.logOutUser();
+        String url = String.format(Locale.US, "https://login-demo.stg-sessionm.com/8c06e928d3082681e1dc40e39bdfac25686f65b9/logout?redirect_uri=sessionmsinglesignout2://test");
+        Intent logOutIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(logOutIntent);
+        finish();
+        updateUI(null);
+    }
+
     private void updateUI(SMPUser smpUser) {
         hideProgressDialog();
         if (smpUser != null) {
@@ -119,6 +109,7 @@ public class WebAuthActivity extends BaseActivity implements
             findViewById(R.id.authenticate_with_custom_tab).setVisibility(View.GONE);
             findViewById(R.id.authenticate_with_browser).setVisibility(View.GONE);
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.single_sign_out_button).setVisibility(View.VISIBLE);
             findViewById(R.id.logged_in_view_profile).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.logged_out);
@@ -127,6 +118,7 @@ public class WebAuthActivity extends BaseActivity implements
             findViewById(R.id.authenticate_with_custom_tab).setVisibility(View.VISIBLE);
             findViewById(R.id.authenticate_with_browser).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+            findViewById(R.id.single_sign_out_button).setVisibility(View.GONE);
             findViewById(R.id.logged_in_view_profile).setVisibility(View.GONE);
         }
     }
@@ -142,5 +134,7 @@ public class WebAuthActivity extends BaseActivity implements
             startActivity(new Intent(WebAuthActivity.this, UserDetailsActivity.class));
         else if (i == R.id.sign_out_button)
             signOut();
+        else if (i == R.id.single_sign_out_button)
+            singleSignOut();
     }
 }

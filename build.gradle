@@ -19,7 +19,7 @@ allprojects {
     }
 }
 
-project.ext.sessionMSdkVersion = '2.2.1'
+project.ext.sessionMSdkVersion = '2.3.0-b2'
 project.ext.supportLibVersion = '24.2.0'
 project.ext.playServicesVersion = '9.8.0'
 project.ext.okHttpVersion = '3.8.0'

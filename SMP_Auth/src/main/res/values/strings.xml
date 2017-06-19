@@ -23,6 +23,7 @@
     <string name="sign_in">Sign In</string>
     <string name="create_account">Create Account</string>
     <string name="sign_out">Sign Out</string>
+    <string name="single_sign_out">Single Sign Out</string>
     <string name="sample_token">Sample Token</string>
     <string name="custom_token">Custom Token</string>
     <string name="update_user">Update User</string>
