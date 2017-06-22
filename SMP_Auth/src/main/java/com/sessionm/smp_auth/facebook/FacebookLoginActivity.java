@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public class FacebookLoginActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final String TAG = "SessionM.GoogleActivity";
+    private static final String TAG = "SessionM.FBActivity";
     private static final int RC_SIGN_IN = 9001;
 
     private LoginButton loginButton;
@@ -52,7 +52,6 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
         mDetailTextView = (TextView) findViewById(R.id.detail);
 
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -151,17 +150,17 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
     private void updateUI(SMPUser user) {
         hideProgressDialog();
         if (user != null) {
-            mStatusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
+            mStatusTextView.setText(getString(R.string.facebook_status_fmt, user.getEmail()));
             mDetailTextView.setText(getString(R.string.smp_status_fmt, user.getID()));
 
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+            findViewById(R.id.login_button).setVisibility(View.GONE);
+            findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.logged_out);
             mDetailTextView.setText(null);
 
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
+            findViewById(R.id.login_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.sign_out_button).setVisibility(View.GONE);
         }
     }
 
