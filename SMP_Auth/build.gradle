@@ -15,7 +15,8 @@ android {
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
 
         manifestPlaceholders = [
-                'appAuthRedirectScheme': 'smpauth2://com.sessionm.smp_auth'
+//                'appAuthRedirectScheme': 'smpauth2://com.sessionm.smp_auth'
+                'appAuthRedirectScheme': 'com.sessionm.smp://com.sessionm.smp_auth:/oauth2redirect'
         ]
     }
 

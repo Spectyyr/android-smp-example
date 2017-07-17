@@ -23,7 +23,6 @@ import com.sessionm.api.SessionMActivityLifecycleCallbacks;
 public class SMApplication extends Application {
 
     private static SMApplication instance;
-    private final SessionMActivityLifecycleCallbacks _mCallbacks = new SessionMActivityLifecycleCallbacks();
 
     @Override
     public void onCreate() {
@@ -33,11 +32,7 @@ public class SMApplication extends Application {
             instance = this;
         }
 
-        registerActivityLifecycleCallbacks(_mCallbacks);
-        final SessionM sessionM = SessionM.getInstance();
-        sessionM.setApplicationContext(this);
-//        sessionM.setAppKey(getString(R.string.sessionm_app_key));
-        sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "https://api.tour-sessionm.com");
+        SessionM.getInstance().init(this);
     }
 
     public static SMApplication getInstance() {
