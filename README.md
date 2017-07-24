@@ -25,6 +25,8 @@ For more help see https://mmc.sessionm.com/docs/mmc-sdk/
 
 ## Table of Contents  
 
+[Auth](#Auth)
+
 [Campaigns](#Campaigns)
 
 [Contents](#Contents)
@@ -47,6 +49,29 @@ For more help see https://mmc.sessionm.com/docs/mmc-sdk/
 
 [Transactions](#Transactions)
 
+<a name="Campaigns"/>
+
+## Auth
+
+This app showcases how to use SessionM SDK to integrate SessionM Identity Services.
+
+API docs: https://mmc.sessionm.com/docs/mmc-sdk/#identity-api
+
+A list of features:
+- Web Authorization
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/auth_web_login.gif" alt="AuthWebLogin Anima" width="324" height="576" />
+
+- Email/Password Authorization
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/auth_email_login.gif" alt="AuthEmailLogin Anima" width="324" height="576" />
+
+<img src="https://raw.githubusercontent.com/sessionm/android-smp-example/gifs/images/auth_email_sign_up.gif" alt="AuthEmailSignup Anima" width="324" height="576" />
+
+- Third party token authorization
+- Facebook authorization
+
+[Back to top](#ToC)
 
 <a name="Campaigns"/>
 
