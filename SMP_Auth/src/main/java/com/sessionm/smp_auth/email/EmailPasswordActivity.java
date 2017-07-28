@@ -32,6 +32,7 @@ public class EmailPasswordActivity extends BaseActivity implements
 
     private TextView mStatusTextView;
     private TextView mDetailTextView;
+    private TextView mAuthCodeTextView;
     private EditText mEmailField;
     private EditText mPasswordField;
 
@@ -48,11 +49,13 @@ public class EmailPasswordActivity extends BaseActivity implements
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
         mDetailTextView = (TextView) findViewById(R.id.detail);
+        mAuthCodeTextView = (TextView) findViewById(R.id.auth_code);
         mEmailField = (EditText) findViewById(R.id.field_email);
         mPasswordField = (EditText) findViewById(R.id.field_password);
 
         // Buttons
         findViewById(R.id.email_sign_in_button).setOnClickListener(this);
+        findViewById(R.id.logged_in_auth_code).setOnClickListener(this);
         findViewById(R.id.email_create_account_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
 
@@ -137,6 +140,23 @@ public class EmailPasswordActivity extends BaseActivity implements
         }
     }
 
+    private void requestAuthCode() {
+        identityManager.setAuthCodeListener(new IdentityManager.AuthCodeListener() {
+            @Override
+            public void onAuthCodeRequested(String authCode) {
+                mAuthCodeTextView.setText(authCode);
+            }
+
+            @Override
+            public void onFailure(SessionMError error) {
+
+            }
+        });
+        SessionMError error = identityManager.requestAuthCode(null);
+        if (error != null)
+            Toast.makeText(this, "Error: " + error, Toast.LENGTH_LONG).show();
+    }
+
     private void signOut() {
         identityManager.logOutUser();
         updateUI(null);
@@ -169,14 +189,17 @@ public class EmailPasswordActivity extends BaseActivity implements
         if (smpUser != null) {
             mStatusTextView.setText(getString(R.string.emailpassword_status_fmt, smpUser.getEmail()));
             mDetailTextView.setText(getString(R.string.smp_status_fmt, smpUser.getID()));
+            mAuthCodeTextView.setText("Auth Code");
 
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
             findViewById(R.id.email_password_fields).setVisibility(View.GONE);
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
             findViewById(R.id.logged_in_view_profile).setVisibility(View.VISIBLE);
+            findViewById(R.id.logged_in_auth_code).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.logged_out);
             mDetailTextView.setText(null);
+            mAuthCodeTextView.setText(null);
 
             findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
             findViewById(R.id.email_password_fields).setVisibility(View.VISIBLE);
@@ -192,6 +215,8 @@ public class EmailPasswordActivity extends BaseActivity implements
             createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
         } else if (i == R.id.email_sign_in_button) {
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+        } else if (i == R.id.logged_in_auth_code) {
+            requestAuthCode();
         } else if (i == R.id.sign_out_button) {
             signOut();
         }
