@@ -143,8 +143,13 @@ public class EmailPasswordActivity extends BaseActivity implements
     private void requestAuthCode() {
         identityManager.setAuthCodeListener(new IdentityManager.AuthCodeListener() {
             @Override
-            public void onAuthCodeRequested(String authCode) {
-                mAuthCodeTextView.setText(authCode);
+            public void onAuthCodeRequested(final String authCode) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAuthCodeTextView.setText(authCode);
+                    }
+                });
             }
 
             @Override
