@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         UserManager.getInstance().setListener(_userListener);
+        UserManager.getInstance().fetchUser();
     }
 
     GeofenceListener geofenceListener = new GeofenceListener() {
