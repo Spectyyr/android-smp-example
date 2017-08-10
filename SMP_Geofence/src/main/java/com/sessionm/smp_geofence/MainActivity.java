@@ -14,27 +14,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.sessionm.api.AchievementData;
-import com.sessionm.api.SessionListener;
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
-import com.sessionm.api.User;
 import com.sessionm.api.geofence.GeofenceListener;
 import com.sessionm.api.geofence.GeofenceManager;
 import com.sessionm.api.geofence.data.GeofenceEvent;
 import com.sessionm.api.geofence.data.TriggeredEvent;
+import com.sessionm.api.identity.IdentityManager;
+import com.sessionm.api.identity.UserListener;
+import com.sessionm.api.identity.UserManager;
+import com.sessionm.api.identity.data.SMPUser;
 
 import java.util.List;
+import java.util.Set;
 
 import rx.Subscription;
 import rx.functions.Action1;
 
-public class MainActivity extends AppCompatActivity implements SessionListener {
+public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final String SAMPLE_USER_TOKEN = "v2--Sd2T8UBqlCGQovVPnsUs4eqwFe0-1i9JV4nq__RWmsA=--dWM8r8RggUJCToOaiiT6NXmiOipkovvD9HueM_jZECStExtGFkZzVmCUhkdDJe5NQw==";
     private TextView userBalanceTextView;
-    private SessionM sessionM = SessionM.getInstance();
 
     ViewPager viewPager;
 
@@ -57,10 +57,10 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!sessionM.getUser().isRegistered())
-                    sessionM.authenticateWithToken("auth_token", SAMPLE_USER_TOKEN);
+                if (UserManager.getInstance().getCurrentUser() == null)
+                    IdentityManager.getInstance().authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
                 else
-                    sessionM.logOutUser();
+                    IdentityManager.getInstance().logOutUser();
             }
         });
 
@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
             RxBus.getInstance().setGeofenceList(geofenceManager.getGeofenceEventsList());
         }
 
-
         subscription = RxBus.getInstance().getStringObservable().subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -130,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
                 }
             }
         });
+        UserManager.getInstance().setListener(_userListener);
     }
 
     GeofenceListener geofenceListener = new GeofenceListener() {
@@ -165,6 +165,21 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         }
     };
 
+    UserListener _userListener = new UserListener() {
+        @Override
+        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
+            if (smpUser != null) {
+                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+            } else
+                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+        }
+
+        @Override
+        public void onFailure(SessionMError sessionMError) {
+
+        }
+    };
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -172,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
         super.onStop();
         subscription.unsubscribe();
     }
@@ -199,30 +214,6 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         public int getCount() {
             return 2;
         }
-    }
-
-    @Override
-    public void onSessionStateChanged(SessionM sessionM, SessionM.State state) {
-        if (state.equals(SessionM.State.STARTED_ONLINE))
-            sessionM.authenticateWithToken("auth_token", SAMPLE_USER_TOKEN);
-    }
-
-    @Override
-    public void onSessionFailed(SessionM sessionM, int i) {
-
-    }
-
-    @Override
-    public void onUserUpdated(SessionM sessionM, User user) {
-        if (user.isRegistered())
-            userBalanceTextView.setText(user.getPointBalance() + "pts");
-        else
-            userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-    }
-
-    @Override
-    public void onUnclaimedAchievement(SessionM sessionM, AchievementData achievementData) {
-
     }
 
     @Override
