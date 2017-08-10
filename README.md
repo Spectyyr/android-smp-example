@@ -49,7 +49,7 @@ For more help see https://mmc.sessionm.com/docs/mmc-sdk/
 
 [Transactions](#Transactions)
 
-<a name="Campaigns"/>
+<a name="Auth"/>
 
 ## Auth
 
