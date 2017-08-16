@@ -22,8 +22,7 @@ import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.campaign.CampaignsListener;
 import com.sessionm.api.campaign.CampaignsManager;
-import com.sessionm.api.message.data.Message;
-import com.sessionm.api.message.feed.data.FeedMessage;
+import com.sessionm.api.campaign.data.FeedMessage;
 import com.sessionm.smp.R;
 import com.sessionm.smp.controller.CampaignsRecAdapter;
 
@@ -137,13 +136,13 @@ public class CampaignsFragment extends BaseScrollAndRefreshFragment {
         }
     }
 
-    public void onItemTapped(Message.MessageActionType actionType, String actionURL) {
+    public void onItemTapped(FeedMessage.MessageActionType actionType, String actionURL) {
         onDeepLinkTappedListener.onDeepLinkTapped(actionType, actionURL);
     }
 
     //On deep link listener to talk up to activity
     public interface OnDeepLinkTappedListener {
-        void onDeepLinkTapped(Message.MessageActionType actionType, String actionURL);
+        void onDeepLinkTapped(FeedMessage.MessageActionType actionType, String actionURL);
     }
 
     @Override

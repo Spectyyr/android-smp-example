@@ -16,8 +16,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.sessionm.api.SessionM;
-import com.sessionm.api.message.data.Message;
-import com.sessionm.api.message.feed.data.FeedMessage;
+import com.sessionm.api.campaign.data.FeedMessage;
 import com.sessionm.smp.R;
 import com.sessionm.smp.view.CampaignsFragment;
 import com.squareup.picasso.Picasso;
@@ -142,8 +141,8 @@ public class CampaignsRecAdapter extends RecyclerView.Adapter<CampaignsRecAdapte
 
     //TODO Needs to handle more events
     private void showDetails(FeedMessage data) {
-        Message.MessageActionType actionType = data.getActionType();
-        if (actionType.equals(Message.MessageActionType.FULL_SCREEN)) {
+        FeedMessage.MessageActionType actionType = data.getActionType();
+        if (actionType.equals(FeedMessage.MessageActionType.FULL_SCREEN)) {
             SessionM.getInstance().presentActivity(SessionM.ActivityType.PORTAL, data.getActionURL());
         } else {
             _fragment.onItemTapped(actionType, data.getActionURL());

@@ -16,8 +16,10 @@ import com.sessionm.api.SessionMError;
 import com.sessionm.api.User;
 import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.message.MessagesListener;
-import com.sessionm.api.message.data.Message;
 import com.sessionm.api.message.notification.data.NotificationMessage;
+
+import static com.sessionm.api.message.notification.data.NotificationMessage.ActionType.DEEP_LINK;
+import static com.sessionm.api.message.notification.data.NotificationMessage.ActionType.EXTERNAL_LINK;
 
 public class MainActivity extends AppCompatActivity implements SessionListener {
 
@@ -133,10 +135,10 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         // Optionally check message type
         if (message == null)
             return;
-        if (message.getActionType() == Message.MessageActionType.EXTERNAL_LINK) {
+        if (message.getActionType() == EXTERNAL_LINK) {
             // Launch URL in Mobile Browser
             // Provide sample code
-        } else if (message.getActionType() == Message.MessageActionType.DEEP_LINK) {
+        } else if (message.getActionType() == DEEP_LINK) {
             // handle navigation to deep line
         } else {
             // Log Error
