@@ -86,6 +86,8 @@ public class WebAuthActivity extends BaseActivity implements
         IdentityManager.getInstance().startWebAuthorization(this, IdentityManager.WebAuthResponseType.AccessToken);
     }
 
+
+
     private void signOut() {
         identityManager.logOutUser();
         updateUI(null);
@@ -120,6 +122,7 @@ public class WebAuthActivity extends BaseActivity implements
             findViewById(R.id.sign_out_button).setVisibility(View.GONE);
             findViewById(R.id.single_sign_out_button).setVisibility(View.GONE);
             findViewById(R.id.logged_in_view_profile).setVisibility(View.GONE);
+            findViewById(R.id.logged_in_auth_code).setVisibility(View.GONE);
         }
     }
 
@@ -132,6 +135,7 @@ public class WebAuthActivity extends BaseActivity implements
             authenticateWithWeb();
         else if (i == R.id.logged_in_view_profile)
             startActivity(new Intent(WebAuthActivity.this, UserDetailsActivity.class));
+
         else if (i == R.id.sign_out_button)
             signOut();
         else if (i == R.id.single_sign_out_button)
