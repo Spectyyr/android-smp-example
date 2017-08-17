@@ -18,6 +18,7 @@ import com.sessionm.api.identity.UserListener;
 import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
 import com.sessionm.api.message.MessagesListener;
+import com.sessionm.api.message.MessagesManager;
 import com.sessionm.api.message.notification.data.NotificationMessage;
 
 import java.util.Set;
@@ -27,7 +28,7 @@ import static com.sessionm.api.message.notification.data.NotificationMessage.Act
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String SAMPLE_USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA3LTE0IDE4OjM4OjIwICswMDAwIiwiZXhwIjoiMjAxNy0wNy0yOCAxODozODoyMCArMDAwMCJ9.wXLHwQYWtfXA4_Kn4mBrdPXFsMvrCdHaLr4GK67CoPUx3jDwKXX4Wg0HPDjY5RFPzLdOAZGnPXhSna0rVkIkxEzEi0I6gzx_6CggUluxMJnDMUW5HHG0yo040e6tgqIl99VAZZZFbIwCF7qiDnIH01H7IdZz8e0uokq2TaHTKLoo16sUJCJIgSNfOkaRfS9uvlcwFftdH-wqZl5KZ3kUqscAW0lqEVcLdxUaA76Oc0bUFEuvpIRX7iWzAM-nIZcLPCCpRqtqaN3LnuorMxytcgYNUmec6F5228wK7X1mN3C8NbMD24SHRQnVtV4hsTNzycA23CnlwjZJhiye4n7FqQ";
+    private static final String SAMPLE_USER_TOKEN = "v2--Sd2T8UBqlCGQovVPnsUs4eqwFe0-1i9JV4nq__RWmsA=--dWM8r8RggUJCToOaiiT6NXmiOipkovvD9HueM_jZECStExtGFkZzVmCUhkdDJe5NQw==";
 
     private TextView userBalanceTextView;
     private ToggleButton useBundleExtrasButton;
@@ -76,9 +77,16 @@ public class MainActivity extends AppCompatActivity {
                 handleDeepLinkString(url);
             }
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Only needed when use bundle extras enabled.
+        if (pushMessage != null) {
+            MessagesManager.getInstance().executePendingNotificationFromPush(pushMessage);
+        }
         UserManager.getInstance().setListener(_userListener);
-        UserManager.getInstance().fetchUser();
     }
 
     UserListener _userListener = new UserListener() {
@@ -109,17 +117,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Only needed when use bundle extras enabled.
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (pushMessage != null) {
-            sessionM.getMessageManager().executePendingNotificationFromPush(pushMessage);
-        }
-    }
-
-    //Only needed when use bundle extras enabled.
     private void setUpPushMessaging() {
-        SessionM.getInstance().getMessageManager().setListener(new MessagesListener() {
+        MessagesManager.getInstance().setListener(new MessagesListener() {
             @Override
             public void onNotificationMessage(NotificationMessage notificationMessage) {
                 handleMessageAction(notificationMessage);

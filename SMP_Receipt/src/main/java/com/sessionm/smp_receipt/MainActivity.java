@@ -17,16 +17,19 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.AchievementData;
-import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
-import com.sessionm.api.User;
+import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityManager;
+import com.sessionm.api.identity.UserListener;
+import com.sessionm.api.identity.UserManager;
+import com.sessionm.api.identity.data.SMPUser;
 import com.sessionm.api.receipt.ReceiptsManager;
 
-public class MainActivity extends AppCompatActivity implements SessionListener {
+import java.util.Set;
 
-    private static final String SAMPLE_USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA3LTE0IDE4OjM4OjIwICswMDAwIiwiZXhwIjoiMjAxNy0wNy0yOCAxODozODoyMCArMDAwMCJ9.wXLHwQYWtfXA4_Kn4mBrdPXFsMvrCdHaLr4GK67CoPUx3jDwKXX4Wg0HPDjY5RFPzLdOAZGnPXhSna0rVkIkxEzEi0I6gzx_6CggUluxMJnDMUW5HHG0yo040e6tgqIl99VAZZZFbIwCF7qiDnIH01H7IdZz8e0uokq2TaHTKLoo16sUJCJIgSNfOkaRfS9uvlcwFftdH-wqZl5KZ3kUqscAW0lqEVcLdxUaA76Oc0bUFEuvpIRX7iWzAM-nIZcLPCCpRqtqaN3LnuorMxytcgYNUmec6F5228wK7X1mN3C8NbMD24SHRQnVtV4hsTNzycA23CnlwjZJhiye4n7FqQ";
+public class MainActivity extends AppCompatActivity {
+
+    private static final String SAMPLE_USER_TOKEN = "v2--Sd2T8UBqlCGQovVPnsUs4eqwFe0-1i9JV4nq__RWmsA=--dWM8r8RggUJCToOaiiT6NXmiOipkovvD9HueM_jZECStExtGFkZzVmCUhkdDJe5NQw==";
 
     private static final int WRITE_EXTERNAL_PERMISSION_REQUEST_CODE = 1;
     private TextView userBalanceTextView;
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!sessionM.getUser().isRegistered())
+                if (UserManager.getInstance().getCurrentUser() == null)
                     IdentityManager.getInstance().authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
                 else
                     IdentityManager.getInstance().logOutUser();
@@ -70,28 +73,26 @@ public class MainActivity extends AppCompatActivity implements SessionListener {
     }
 
     @Override
-    public void onSessionStateChanged(SessionM sessionM, SessionM.State state) {
-
+    protected void onResume() {
+        super.onResume();
+        UserManager.getInstance().setListener(_userListener);
     }
 
-    @Override
-    public void onSessionFailed(SessionM sessionM, int i) {
+    UserListener _userListener = new UserListener() {
+        @Override
+        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
+            if (smpUser != null) {
+                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+            } else
+                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+            ReceiptsManager.getInstance().fetchReceipts(100, 1);
+        }
 
-    }
+        @Override
+        public void onFailure(SessionMError sessionMError) {
 
-    @Override
-    public void onUserUpdated(SessionM sessionM, User user) {
-        if (user.isRegistered())
-            userBalanceTextView.setText(user.getPointBalance() + "pts");
-        else
-            userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-        sessionM.getReceiptsManager().fetchReceipts();
-    }
-
-    @Override
-    public void onUnclaimedAchievement(SessionM sessionM, AchievementData achievementData) {
-
-    }
+        }
+    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {

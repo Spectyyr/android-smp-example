@@ -65,7 +65,7 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        _receiptManager.fetchReceipts();
+        _receiptManager.fetchReceipts(100, 1);
     }
 
     ReceiptsListener _receiptListener = new ReceiptsListener() {
@@ -104,7 +104,7 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        _receiptManager.fetchReceipts();
+        _receiptManager.fetchReceipts(100, 1);
     }
 
     private void refreshListUI(List<Receipt> receipts) {

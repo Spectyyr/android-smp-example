@@ -195,7 +195,7 @@ public class TransactionsRecAdapter extends RecyclerView.Adapter<TransactionsRec
             _resultID = resultID;
             _receiptManager = SessionM.getInstance().getReceiptsManager();
             _receiptManager.setListener(_receiptListener);
-            _receiptManager.fetchReceipts();
+            _receiptManager.fetchReceipts(100, 1);
         }
 
         private ReceiptsListener _receiptListener = new ReceiptsListener() {

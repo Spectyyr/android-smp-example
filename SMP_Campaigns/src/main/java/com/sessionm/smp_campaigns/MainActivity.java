@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.sessionm.api.SessionMError;
+import com.sessionm.api.campaign.CampaignsManager;
 import com.sessionm.api.campaign.data.FeedMessage;
 import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.identity.UserListener;
@@ -40,7 +41,11 @@ public class MainActivity extends AppCompatActivity implements CampaignsFragment
                     IdentityManager.getInstance().logOutUser();
             }
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         UserManager.getInstance().setListener(_userListener);
     }
 
@@ -51,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements CampaignsFragment
                 userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
             } else
                 userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+            CampaignsManager.getInstance().fetchFeedMessages();
         }
 
         @Override

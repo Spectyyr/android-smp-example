@@ -18,12 +18,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.sessionm.api.AchievementData;
-import com.sessionm.api.SessionListener;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionMError;
-import com.sessionm.api.User;
 import com.sessionm.api.identity.IdentityManager;
+import com.sessionm.api.identity.UserListener;
+import com.sessionm.api.identity.UserManager;
+import com.sessionm.api.identity.data.SMPUser;
 import com.sessionm.api.place.PlacesListener;
 import com.sessionm.api.place.PlacesManager;
 import com.sessionm.api.place.data.CheckinResult;
@@ -33,8 +33,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, SessionListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final String SAMPLE_USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA3LTE0IDE4OjM4OjIwICswMDAwIiwiZXhwIjoiMjAxNy0wNy0yOCAxODozODoyMCArMDAwMCJ9.wXLHwQYWtfXA4_Kn4mBrdPXFsMvrCdHaLr4GK67CoPUx3jDwKXX4Wg0HPDjY5RFPzLdOAZGnPXhSna0rVkIkxEzEi0I6gzx_6CggUluxMJnDMUW5HHG0yo040e6tgqIl99VAZZZFbIwCF7qiDnIH01H7IdZz8e0uokq2TaHTKLoo16sUJCJIgSNfOkaRfS9uvlcwFftdH-wqZl5KZ3kUqscAW0lqEVcLdxUaA76Oc0bUFEuvpIRX7iWzAM-nIZcLPCCpRqtqaN3LnuorMxytcgYNUmec6F5228wK7X1mN3C8NbMD24SHRQnVtV4hsTNzycA23CnlwjZJhiye4n7FqQ";
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!sessionM.getUser().isRegistered())
+                if (UserManager.getInstance().getCurrentUser() == null)
                     IdentityManager.getInstance().authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
                 else
                     IdentityManager.getInstance().logOutUser();
@@ -118,7 +119,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onResume() {
         super.onResume();
         placesManager.setListener(_placesListener);
+        UserManager.getInstance().setListener(_userListener);
     }
+
+    UserListener _userListener = new UserListener() {
+        @Override
+        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
+            if (smpUser != null) {
+                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+            } else
+                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+        }
+
+        @Override
+        public void onFailure(SessionMError sessionMError) {
+
+        }
+    };
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -154,28 +171,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
         }
-    }
-
-    @Override
-    public void onSessionStateChanged(SessionM sessionM, SessionM.State state) {
-
-    }
-
-    @Override
-    public void onSessionFailed(SessionM sessionM, int i) {
-
-    }
-
-    @Override
-    public void onUserUpdated(SessionM sessionM, User user) {
-        if (user.isRegistered())
-            userBalanceTextView.setText(user.getPointBalance() + "pts");
-        else
-            userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-    }
-
-    @Override
-    public void onUnclaimedAchievement(SessionM sessionM, AchievementData achievementData) {
-
     }
 }
