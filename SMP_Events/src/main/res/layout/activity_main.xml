@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/activity_main"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sessionm.smp_events.MainActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include
+        android:id="@+id/custom_action_bar"
+        layout="@layout/custom_action_bar"/>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="3"
+        android:orientation="vertical">
+
+
+        <EditText
+            android:id="@+id/event"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:ems="10"
+            android:hint="Event Name"
+            android:inputType="text"/>
+
+        <Button
+            android:id="@+id/post"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:onClick="doPostEvent"
+            android:text="Post Event"/>
+
+        <ToggleButton
+            android:id="@+id/by_event_name"
+            app:layout_constraintRight_toLeftOf="@+id/fetch"
+            app:layout_constraintTop_toBottomOf="@+id/post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="8dp"
+            android:checked="true"
+            android:onClick="doFetchShowByEventName"
+            android:text="Events List"
+            android:textOff="Event Name"
+            android:textOn="Behavior"/>
+
+        <Button
+            android:id="@+id/fetch"
+            app:layout_constraintBottom_toBottomOf="@+id/by_event_name"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/by_event_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="0dp"
+            android:onClick="doFetchProgress"
+            android:text="Fetch Progress"/>
+
+        <EditText
+            android:id="@+id/result"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fetch"
+            app:layout_constraintVertical_bias="0.0"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="16dp"
+            android:editable="false"
+            android:fontFamily="monospace"
+            android:gravity="top"
+            android:text=""
+            android:textSize="12sp"/>
+
+        <Button
+            android:id="@+id/purchaseEvent"
+            app:layout_constraintBottom_toBottomOf="@+id/post"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/post"
+            app:layout_constraintVertical_bias="0.0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="0dp"
+            android:onClick="doPurchaseEvent"
+            android:text="Purchase Event"/>
+
+        <Button
+            android:id="@+id/quickPostEvent"
+            app:layout_constraintBottom_toBottomOf="@+id/post"
+            app:layout_constraintLeft_toRightOf="@+id/post"
+            app:layout_constraintTop_toTopOf="@+id/post"
+            app:layout_constraintVertical_bias="0.0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:onClick="doQuickPostEvent"
+            android:text="Quick Post"/>
+
+    </android.support.constraint.ConstraintLayout>
+</RelativeLayout>
