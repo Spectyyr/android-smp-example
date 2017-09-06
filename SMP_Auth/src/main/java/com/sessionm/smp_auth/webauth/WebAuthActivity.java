@@ -9,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityListener;
 import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.identity.UserListener;
 import com.sessionm.api.identity.UserManager;
@@ -122,7 +121,6 @@ public class WebAuthActivity extends BaseActivity implements
             findViewById(R.id.sign_out_button).setVisibility(View.GONE);
             findViewById(R.id.single_sign_out_button).setVisibility(View.GONE);
             findViewById(R.id.logged_in_view_profile).setVisibility(View.GONE);
-            findViewById(R.id.logged_in_auth_code).setVisibility(View.GONE);
         }
     }
 
