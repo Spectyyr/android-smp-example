@@ -1,6 +1,8 @@
 package com.sessionm.smp_fcm;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -25,7 +27,7 @@ import static com.sessionm.api.message.notification.data.NotificationMessage.Act
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String SAMPLE_USER_TOKEN = "v2--Sd2T8UBqlCGQovVPnsUs4eqwFe0-1i9JV4nq__RWmsA=--dWM8r8RggUJCToOaiiT6NXmiOipkovvD9HueM_jZECStExtGFkZzVmCUhkdDJe5NQw==";
+    private static final String SAMPLE_USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA5LTI3IDE1OjMwOjU1ICswMDAwIiwiZXhwIjoiMjAxNy0xMC0xMSAxNTozMDo1NSArMDAwMCIsImRhdGEiOnsiaWQiOiJkYTYxZGNkYS1hMzk4LTExZTctODcxZi05ZjZkNTQzYmUwNDAifX0.iBrHv9-INszE-SSL9rsuNnLDv7DBBaIUuqM6XDUvecxzap2CuoN4v3juXPvw-dZWuzbiHY2H3TPJJlRcI5_fZPxH2FjDqGA1S5nwEwEYVn9D1oMvnXUB6jLIq3ev4omE7ZUj5zVytsn_rKdryllfHro_8g5TneiOUoFBa_1N_RcC9AK_8640xbYPtZaNWhxsJiCwTsKWaLSYQ6RQv_xo1M4reL56dbjJ16Y-50HUy6Pxax6biKVvpjNRDizrkY0bka07lHMLAHMZD5-D3OYnxpxyg9aVX2kJd36iZuwsKaXVMtrCzwmzzGuhQD1PUUhC43wkNUbYw9z2d94v0FDxvQ";
 
     private TextView userBalanceTextView;
     private ToggleButton useBundleExtrasButton;
@@ -38,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         sessionM = SessionM.getInstance();
-
 
         Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
@@ -69,18 +70,17 @@ public class MainActivity extends AppCompatActivity {
             pushMessage = sessionM.getMessageManager().getPendingNotification(extras);
             setUpPushMessaging();
         }
-    }
-
-    //Only needed when use bundle extras enabled.
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (pushMessage != null) {
-            sessionM.getMessageManager().executePendingNotificationFromPush(pushMessage);
+        //Handle deep link, if needed
+        else {
+            Intent intent = getIntent();
+            if (intent.getAction().equals(Intent.ACTION_VIEW)) {
+                String url = intent.getData().toString();
+                handleDeepLinkString(url);
+            }
         }
-        UserManager.getInstance().setListener(_userListener);
     }
 
+    //User has to be authenticated in order to receive a push
     UserListener _userListener = new UserListener() {
         @Override
         public void onUserUpdated(SMPUser smpUser, Set<String> set) {
@@ -96,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void TriggerOpenAdPush(View view) {
-        SessionM.getInstance().logAction("push_notification_open_ad");
+    public void TriggerOpenAppPush(View view) {
+        sessionM.logAction("push_open_property");
     }
 
     public void TriggerDeepLinkPush(View view) {
@@ -108,8 +108,25 @@ public class MainActivity extends AppCompatActivity {
         sessionM.logAction("push_notification_external_link");
     }
 
+    private void handleDeepLinkString(String url) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Deep Link").setMessage(url);
 
-    //Only needed when use bundle extras enabled.
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    //************************The following code is only needed when use bundle extras enabled.********************//
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (pushMessage != null) {
+            sessionM.getMessageManager().executePendingNotificationFromPush(pushMessage);
+        }
+        UserManager.getInstance().setListener(_userListener);
+    }
+
     private void setUpPushMessaging() {
         SessionM.getInstance().getMessageManager().setListener(new MessagesListener() {
             @Override
@@ -126,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //Only needed when use bundle extras enabled.
     private void handleMessageAction(NotificationMessage message) {
         // Optionally check message type
         if (message == null)

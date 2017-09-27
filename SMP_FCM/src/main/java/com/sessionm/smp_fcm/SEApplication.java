@@ -7,15 +7,17 @@ package com.sessionm.smp_fcm;
 import android.app.Application;
 
 import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMActivityLifecycleCallbacks;
+import com.sessionm.api.message.MessagesManager;
 
 public class SEApplication extends Application{
-
-    @Override
+@Override
     public void onCreate() {
         super.onCreate();
-
+        //Creates SessionM activity lifecycle callbacks to handle activities lifecycle
         SessionM.getInstance().init(this);
-        SessionM.getInstance().getMessageManager().setPushNotificationEnabled(true);
+        //Enables SessionM to receive push notifications, generates and sends a token to the server so the device can receive push notifications
+        if (!MessagesManager.getInstance().isPushNotificationEnabled())
+            MessagesManager.getInstance().setPushNotificationEnabled(true);
     }
+
 }

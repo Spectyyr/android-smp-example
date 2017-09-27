@@ -18,33 +18,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
 
-        <meta-data
-            android:name="com.sessionm.appid"
-            android:value="c4d9427e894e3b0ddf67bd08280b11e051f66c82"/>
-
-        <activity
-            android:name="com.sessionm.ui.SessionMActivity"
-            android:configChanges="keyboard|orientation|screenSize"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
-
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-
-                <data android:scheme="sessionmc4d9427e894e3b0ddf67bd08280b11e051f66c82"/>
+                <data android:scheme="smp"/>
             </intent-filter>
         </activity>
-
-        <service android:name="com.sessionm.net.http.DownloadService"/>
 
         <receiver android:name="com.sessionm.api.ConnectionReceiver">
             <intent-filter>
@@ -53,36 +40,27 @@
             </intent-filter>
         </receiver>
 
-        <!-- Push Notification-->
-        <receiver
-            android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-
-                <category android:name="com.sessionm.smp_push_notification"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name="com.sessionm.api.message.notification.service.NotificationReceiver">
-        </receiver>
+        <!-- Firebase Push Notification-->
 
         <service
-            android:name="com.sessionm.api.message.notification.service.GCMListenerService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".MyFirebaseInstanceIdService"
+            android:name="com.sessionm.api.message.notification.service.SessionMFirebaseInstanceIDService"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+
+
+        <service
+            android:name="com.sessionm.api.message.notification.service.SessionMFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <receiver android:name="com.sessionm.api.message.notification.service.NotificationReceiver">
+        </receiver>
     </application>
 
 </manifest>
