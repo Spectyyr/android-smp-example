@@ -1,6 +1,8 @@
 package com.sessionm.smp_fcm;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -39,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
         sessionM = SessionM.getInstance();
 
-
         Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
 
@@ -69,18 +70,17 @@ public class MainActivity extends AppCompatActivity {
             pushMessage = sessionM.getMessageManager().getPendingNotification(extras);
             setUpPushMessaging();
         }
-    }
-
-    //Only needed when use bundle extras enabled.
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (pushMessage != null) {
-            sessionM.getMessageManager().executePendingNotificationFromPush(pushMessage);
+        //Handle deep link, if needed
+        else {
+            Intent intent = getIntent();
+            if (intent.getAction().equals(Intent.ACTION_VIEW)) {
+                String url = intent.getData().toString();
+                handleDeepLinkString(url);
+            }
         }
-        UserManager.getInstance().setListener(_userListener);
     }
 
+    //User has to be authenticated in order to receive a push
     UserListener _userListener = new UserListener() {
         @Override
         public void onUserUpdated(SMPUser smpUser, Set<String> set) {
@@ -96,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void TriggerOpenAdPush(View view) {
-        SessionM.getInstance().logAction("push_notification_open_ad");
+    public void TriggerOpenAppPush(View view) {
+        sessionM.logAction("push_open_property");
     }
 
     public void TriggerDeepLinkPush(View view) {
@@ -105,11 +105,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void TriggerExternalLinkPush(View view) {
-        sessionM.logAction("push_open_property");
+        sessionM.logAction("push_notification_external_link");
+    }
+
+    private void handleDeepLinkString(String url) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Deep Link").setMessage(url);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 
-    //Only needed when use bundle extras enabled.
+    //************************The following code is only needed when use bundle extras enabled.********************//
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (pushMessage != null) {
+            sessionM.getMessageManager().executePendingNotificationFromPush(pushMessage);
+        }
+        UserManager.getInstance().setListener(_userListener);
+    }
+
     private void setUpPushMessaging() {
         SessionM.getInstance().getMessageManager().setListener(new MessagesListener() {
             @Override
@@ -126,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //Only needed when use bundle extras enabled.
     private void handleMessageAction(NotificationMessage message) {
         // Optionally check message type
         if (message == null)
