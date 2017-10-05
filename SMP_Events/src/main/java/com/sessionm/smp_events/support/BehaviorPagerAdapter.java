@@ -70,7 +70,9 @@ public class BehaviorPagerAdapter extends android.support.v4.app.FragmentPagerAd
         }
 
         public void setBehaviors(BehaviorList behaviorList) {
-            behaviorList.show(BehaviorList.ByType.Behavior, _list);
+            if (behaviorList != null) {
+                behaviorList.show(BehaviorList.ByType.Behavior, _list);
+            }
         }
     }
 
@@ -86,7 +88,9 @@ public class BehaviorPagerAdapter extends android.support.v4.app.FragmentPagerAd
         }
 
         public void setBehaviors(BehaviorList behaviorList) {
-            behaviorList.show(BehaviorList.ByType.Event, _list);
+            if (behaviorList != null) {
+                behaviorList.show(BehaviorList.ByType.Event, _list);
+            }
         }
     }
 }
