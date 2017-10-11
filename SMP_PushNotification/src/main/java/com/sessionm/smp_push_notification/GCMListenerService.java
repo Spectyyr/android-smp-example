@@ -5,12 +5,18 @@
 package com.sessionm.smp_push_notification;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import com.sessionm.api.message.notification.data.NotificationMessage;
+
+import static android.app.NotificationManager.IMPORTANCE_DEFAULT;
 
 public class GCMListenerService extends com.sessionm.api.message.notification.service.GCMListenerService {
     public static final int NOTIFICATION_ID = 1;
@@ -18,15 +24,26 @@ public class GCMListenerService extends com.sessionm.api.message.notification.se
     /**
      * Change this block to override sendNotification method for customized push.
      */
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void sendNotification(NotificationMessage pushNotificationData) {
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        NotificationChannel mChannel = new NotificationChannel("test", "sefe", IMPORTANCE_DEFAULT);
+        // Configure the notification channel.
+        mChannel.setDescription("TEST");
+        mChannel.enableLights(true);
+        // Sets the notification light color for notifications posted to this
+        // channel, if the device supports this feature.
+        mChannel.setLightColor(Color.RED);
+        mChannel.enableVibration(true);
+        mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+        mNotificationManager.createNotificationChannel(mChannel);
 
         Notification.Builder mBuilder =
-                new Notification.Builder(this)
+                new Notification.Builder(this, "test")
                         .setSmallIcon(getNotificationSmallIcon())
                         .setLargeIcon(largeIcon)
                         .setAutoCancel(true)
