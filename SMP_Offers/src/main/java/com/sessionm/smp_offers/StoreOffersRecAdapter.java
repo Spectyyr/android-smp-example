@@ -14,33 +14,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.loyaltycard.LoyaltyCardsListener;
-import com.sessionm.api.loyaltycard.LoyaltyCardsManager;
-import com.sessionm.api.loyaltycard.data.LoyaltyCard;
-import com.sessionm.api.loyaltycard.data.LoyaltyCardTransaction;
-import com.sessionm.api.loyaltycard.data.Retailer;
 import com.sessionm.api.offers.data.results.store.StoreOfferItem;
-import com.sessionm.api.receipt.ReceiptsListener;
-import com.sessionm.api.receipt.ReceiptsManager;
-import com.sessionm.api.receipt.data.Receipt;
-import com.sessionm.api.receipt.data.ReceiptResult;
-import com.sessionm.api.transaction.data.Transaction;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
 // Adapter class to draw Offers List
@@ -80,8 +65,10 @@ public class StoreOffersRecAdapter extends RecyclerView.Adapter<StoreOffersRecAd
 
         holder.name.setText(offer.getName());
         holder.points.setText(String.format("%.0f", offer.getPrice()));
-        holder.startDate.setText(offer.getStartDate() != null ? df.format(offer.getStartDate()) : " --");
-        holder.endDate.setText(offer.getEndDate() != null ? df.format(offer.getEndDate()) : " --");
+        holder.validDates.setText(String.format("This offer is available %s through %s",
+                offer.getStartDate() != null ? df.format(offer.getStartDate()) : " -- ",
+                offer.getEndDate() != null ? df.format(offer.getEndDate()) : " -- "
+        ));
 
         Picasso.with(holder.itemView.getContext()).load(Uri.parse(offer.getMedia().get(0).getURI())).into(holder.media);
 
@@ -108,13 +95,11 @@ public class StoreOffersRecAdapter extends RecyclerView.Adapter<StoreOffersRecAd
         private final TextView name;
         private final ImageView media;
         private final TextView points;
-        private final TextView startDate;
-        private final TextView endDate;
+        private final TextView validDates;
 
         public OffersViewHolder(View v) {
             super(v);
-            startDate = (TextView)v.findViewById(R.id.end_date);
-            endDate = (TextView)v.findViewById(R.id.start_date);
+            validDates = (TextView)v.findViewById(R.id.valid_dates);
             name = (TextView)v.findViewById(R.id.offer_name);
             media = (ImageView)v.findViewById(R.id.offer_media);
             points = (TextView)v.findViewById(R.id.offer_points);
@@ -160,7 +145,7 @@ public class StoreOffersRecAdapter extends RecyclerView.Adapter<StoreOffersRecAd
             SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
             ((TextView)dialogLayout.findViewById(R.id.purchase_range))
-                    .setText(String.format("This offers is available %s through %s",
+                    .setText(String.format("This offer is available %s through %s",
                                 item.getStartDate() != null ? df.format(item.getStartDate()) : " -- ",
                                 item.getEndDate() != null ? df.format(item.getEndDate()) : " -- "
                             ));

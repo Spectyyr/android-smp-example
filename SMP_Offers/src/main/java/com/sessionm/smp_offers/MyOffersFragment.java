@@ -2,7 +2,6 @@ package com.sessionm.smp_offers;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -26,7 +25,6 @@ import com.sessionm.api.offers.data.results.user.UserOffersResult;
 import com.sessionm.core.Util;
 import com.sessionm.core.offers.data.results.user.CoreUserOffersResult;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

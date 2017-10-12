@@ -5,7 +5,6 @@ package com.sessionm.smp_offers;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.offers.OffersListener;
 import com.sessionm.api.offers.OffersManager;
@@ -25,10 +23,6 @@ import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResult;
 import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResult;
 import com.sessionm.api.offers.data.results.store.OffersStoreResult;
 import com.sessionm.api.offers.data.results.user.UserOffersResult;
-import com.sessionm.core.Util;
-import com.sessionm.core.offers.data.results.store.CoreOffersStoreResult;
-
-import java.util.HashMap;
 
 public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 

@@ -19,25 +19,23 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.offers.OffersListener;
 import com.sessionm.api.offers.OffersManager;
-import com.sessionm.api.offers.data.builders.ClaimUserOfferRequestBuilder;
 import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResult;
 import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResult;
 import com.sessionm.api.offers.data.results.store.OffersStoreResult;
 import com.sessionm.api.offers.data.results.user.UserOfferItem;
 import com.sessionm.api.offers.data.results.user.UserOffersResult;
-import com.sessionm.core.Util;
-import com.sessionm.core.offers.data.results.claim.CoreUserOfferClaimedResult;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by pmattheis on 10/2/17.
@@ -87,7 +85,7 @@ class MyOffersRecAdapter extends RecyclerView.Adapter<MyOffersRecAdapter.OffersV
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                (new RedeemOffer(_fragment.getActivity())).redeem(offer);
+                (new ClaimOffer(_fragment.getActivity())).redeem(offer);
             }
         });
     }
@@ -116,37 +114,26 @@ class MyOffersRecAdapter extends RecyclerView.Adapter<MyOffersRecAdapter.OffersV
         }
     }
 
-    private class RedeemOffer {
+    private class ClaimOffer {
         private final Activity _activity;
+        private UserOfferItem _offer;
 
-        public RedeemOffer(Activity activity) {
+        public ClaimOffer(Activity activity) {
             _activity = activity;
         }
 
         private Gson _gson = new Gson();
         public void redeem(UserOfferItem offer) {
+            _offer = offer;
             offerManager.setListener(claimListener);
-            offerManager.claimUserOffer((new ClaimUserOfferRequestBuilder(offer.getID())).build());
-            /*
-            claimListener.onUserOfferClaimed(new CoreUserOfferClaimedResult(Util.deNull(_gson.fromJson(
-                    "{" +
-                    "   \"status\" : \"ok\"," +
-                    "   \"response_payload\" : {" +
-                    "      \"claimed_offer\": {" +
-                    "         \"code\" : \"046386\"," +
-                    "         \"code_image_uri\" : \"https://www.barcodesinc.com/generator/image.php?code=046386&style=197&type=C128B&width=128&height=50&xres=1&font=3\"," +
-                    "         \"server_date_time\" : \"2017-10-14T08:40:13\"," +
-                    "         \"code_expiration_date_time\" : \"2017-10-14T18:42:11.8121313\"," +
-                    "         \"name\" : \"Your Bar Code\"," +
-                    "         \"description\" : \"Something lengthy\"" +
-                    "      }" +
-                    "   }" +
-                    "}"
-                    , HashMap.class))));
-                    */
+            offerManager.claimUserOffer(offer.getID());
         }
 
         private OffersListener claimListener = new OffersListener() {
+            public Date _start;
+            public Timer _timer;
+            public TextView _validDates;
+
             @Override public void onOfferPurchased(OfferPurchaseResult purchase) {}
             @Override public void onUserOffersFetched(UserOffersResult userOffers) {}
             @Override public void onOffersStoreFetched(OffersStoreResult offersStore) {}
@@ -161,15 +148,10 @@ class MyOffersRecAdapter extends RecyclerView.Adapter<MyOffersRecAdapter.OffersV
                     }
                 });
                 AlertDialog dialog = builder.create();
-                View dialogLayout = _activity.getLayoutInflater().inflate(R.layout.redeem_offer, null);
-
-                RotateAnimation anim = new RotateAnimation(0, 360f, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, .5f);
-                anim.setInterpolator(new LinearInterpolator());
-                anim.setDuration(8 * 1000);
-                anim.setRepeatCount(Animation.INFINITE);
-                ((ImageView)dialogLayout.findViewById(R.id.spinny)).setAnimation(anim);
+                View dialogLayout = _activity.getLayoutInflater().inflate(R.layout.claim_offer, null);
 
                 Picasso.with(_activity).load(Uri.parse(claimedResult.getClaimedOffer().getCodeImageURI())).into((ImageView) dialogLayout.findViewById(R.id.barcode_image));
+                Picasso.with(_activity).load(Uri.parse(_offer.getMedia().get(0).getURI())).into((ImageView) dialogLayout.findViewById(R.id.picture));
 
                 ((TextView)dialogLayout.findViewById(R.id.barcode_text)).setText(claimedResult.getClaimedOffer().getCode());
                 ((TextView)dialogLayout.findViewById(R.id.title)).setText(claimedResult.getClaimedOffer().getName());
@@ -180,6 +162,18 @@ class MyOffersRecAdapter extends RecyclerView.Adapter<MyOffersRecAdapter.OffersV
                 dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 
                 dialog.show();
+
+                _validDates = (TextView)dialogLayout.findViewById(R.id.valid_dates);
+                _start = new Date();
+                _timer = new Timer();
+                _timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Date now = new Date();
+                        long secs = (now.getTime() - _start.getTime()) / 1000;
+                        Log.d("SessionM", "Tick: " + (60 - secs));
+                    }
+                }, 0, 1 * 1000);
             }
 
             @Override
