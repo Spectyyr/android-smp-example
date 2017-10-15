@@ -41,7 +41,8 @@ public class BehaviorList {
     }
 
     private void showByEventName(TextView display) {
-
+        if (_behaviorResponse == null)
+            return;
         StringBuilder out = new StringBuilder();
         out.append(String.format("Points: %d\n\n", _behaviorResponse.getAvailablePoints()));
 

@@ -1,28 +1,24 @@
-plugins {
-    id "me.tatarka.retrolambda" version "3.6.0"
-}
 apply plugin: 'com.android.application'
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
         applicationId "com.sessionm.smp_auth"
-        minSdkVersion 16
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode rootProject.versionCode
+        versionName rootProject.versionName
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
 
         manifestPlaceholders = [
-//                'appAuthRedirectScheme': 'smpauth2://com.sessionm.smp_auth'
                 'appAuthRedirectScheme': 'com.sessionm.smp://com.sessionm.smp_auth:/oauth2redirect'
         ]
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -33,7 +29,7 @@ android {
     }
 
     lintOptions {
-      abortOnError false
+        abortOnError false
     }
 }
 
@@ -44,17 +40,12 @@ configurations.all {
 dependencies {
     compile "com.sessionm.sdk:sessionm-sdk:${rootProject.sessionMSdkVersion}"
     compile "com.sessionm.sdk:sessionm-sdk-webauth:${rootProject.sessionMSdkVersion}"
-
     compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.google.code.gson:gson:2.7'
-
-    compile 'com.squareup.okio:okio:1.11.0'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    // Google Sign In SDK (only required for Google Sign In)
-    compile 'com.google.android.gms:play-services-auth:10.2.1'
-    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile 'com.squareup.okio:okio:1.13.0'
+    compile "com.google.code.gson:gson:${rootProject.gsonVersion}"
+    compile "com.android.support:design:${rootProject.supportLibVersion}"
+    compile "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
+    compile 'com.facebook.android:facebook-android-sdk:4.27.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -31,33 +31,49 @@ public class GCMListenerService extends com.sessionm.api.message.notification.se
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-        NotificationChannel mChannel = new NotificationChannel("test", "sefe", IMPORTANCE_DEFAULT);
-        // Configure the notification channel.
-        mChannel.setDescription("TEST");
-        mChannel.enableLights(true);
-        // Sets the notification light color for notifications posted to this
-        // channel, if the device supports this feature.
-        mChannel.setLightColor(Color.RED);
-        mChannel.enableVibration(true);
-        mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-        mNotificationManager.createNotificationChannel(mChannel);
 
-        Notification.Builder mBuilder =
-                new Notification.Builder(this, "test")
-                        .setSmallIcon(getNotificationSmallIcon())
-                        .setLargeIcon(largeIcon)
-                        .setAutoCancel(true)
-                        .setContentTitle(pushNotificationData.getTitle())
-                        .setContentText(pushNotificationData.getBody())
-                        .setStyle(new Notification.BigTextStyle()
-                                .bigText(pushNotificationData.getBody()))
-                        //Override pendingIntent to have customized behaviors
-                        .setContentIntent(pendingIntent);
-        //Multiple Action for future use
-        //.addAction(0, pushNotificationData.getAction(), openAppIntent);
-        //if (url != null && !url.isEmpty())
-        //    mBuilder.addAction(0, pushNotificationData.getAction1(), openBrowserIntent);
-        //mBuilder.setContentIntent(contentIntent);
+        Notification.Builder mBuilder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            NotificationChannel mChannel = new NotificationChannel("test", "sefe", IMPORTANCE_DEFAULT);
+            // Configure the notification channel.
+            mChannel.setDescription("TEST");
+            mChannel.enableLights(true);
+            // Sets the notification light color for notifications posted to this
+            // channel, if the device supports this feature.
+            mChannel.setLightColor(Color.RED);
+            mChannel.enableVibration(true);
+            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            mNotificationManager.createNotificationChannel(mChannel);
+
+            mBuilder = new Notification.Builder(this, "test")
+                    .setSmallIcon(getNotificationSmallIcon())
+                    .setLargeIcon(largeIcon)
+                    .setAutoCancel(true)
+                    .setContentTitle(pushNotificationData.getTitle())
+                    .setContentText(pushNotificationData.getBody())
+                    .setStyle(new Notification.BigTextStyle()
+                            .bigText(pushNotificationData.getBody()))
+                    //Override pendingIntent to have customized behaviors
+                    .setContentIntent(pendingIntent);
+        } else {
+            mBuilder =
+                    new Notification.Builder(this)
+                            .setSmallIcon(getNotificationSmallIcon())
+                            .setLargeIcon(largeIcon)
+                            .setAutoCancel(true)
+                            .setContentTitle(pushNotificationData.getTitle())
+                            .setContentText(pushNotificationData.getBody())
+                            .setStyle(new Notification.BigTextStyle()
+                                    .bigText(pushNotificationData.getBody()))
+                            //Override pendingIntent to have customized behaviors
+                            .setContentIntent(pendingIntent);
+            //Multiple Action for future use
+            //.addAction(0, pushNotificationData.getAction(), openAppIntent);
+            //if (url != null && !url.isEmpty())
+            //    mBuilder.addAction(0, pushNotificationData.getAction1(), openBrowserIntent);
+            //mBuilder.setContentIntent(contentIntent);
+        }
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 

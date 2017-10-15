@@ -5,8 +5,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0-rc1'
         classpath 'com.google.gms:google-services:3.0.0'
+        classpath "me.tatarka:gradle-retrolambda:3.7.0"
     }
 }
 
@@ -20,10 +21,19 @@ allprojects {
     }
 }
 
+project.ext.compileSdkVersion = 26
+project.ext.buildToolsVersion = '26.0.2'
+project.ext.minSdkVersion = 16
+project.ext.targetSdkVersion = 26
+
 project.ext.sessionMSdkVersion = '2.4.0.4'
-project.ext.supportLibVersion = '24.2.0'
+project.ext.supportLibVersion = '26.1.0'
 project.ext.playServicesVersion = '11.4.2'
 project.ext.okHttpVersion = '3.8.0'
+project.ext.gsonVersion = '2.8.0'
+
+project.ext.versionCode = 1
+project.ext.versionName = '1.0'
 
 task clean(type: Delete) {
     delete rootProject.buildDir

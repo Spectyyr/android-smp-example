@@ -54,6 +54,11 @@ public class BehaviorPagerAdapter extends android.support.v4.app.FragmentPagerAd
     }
 
     public void setBehaviors(BehaviorList behaviorList) {
+        if (behaviorList == null) {
+            //TODO: Clean list
+            return;
+        }
+
         _eventsFragment.setBehaviors(behaviorList);
         _behaviorFragment.setBehaviors(behaviorList);
     }

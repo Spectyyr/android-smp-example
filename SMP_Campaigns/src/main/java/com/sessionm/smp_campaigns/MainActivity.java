@@ -67,9 +67,11 @@ public class MainActivity extends AppCompatActivity implements CampaignsFragment
 
     @Override
     public void onDeepLinkTapped(FeedMessage.MessageActionType actionType, String actionURL) {
-        Uri uri = Uri.parse(actionURL);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        intent.putExtra("url", actionURL);
-        startActivity(intent);
+        if (actionURL != null) {
+            Uri uri = Uri.parse(actionURL);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.putExtra("url", actionURL);
+            startActivity(intent);
+        }
     }
 }
