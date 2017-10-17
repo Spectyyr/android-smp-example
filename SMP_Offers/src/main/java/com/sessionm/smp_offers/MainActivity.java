@@ -8,16 +8,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.IdentityManager;
 import com.sessionm.api.identity.UserListener;
 import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.smp_offers.my_offers.MyOffersFragment;
+import com.sessionm.smp_offers.store_offers.StoreOffersFragment;
 
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements StoreOffersFragment.Callbacks {
+public class MainActivity extends AppCompatActivity {
 
     private static final String SAMPLE_USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA5LTI3IDE1OjMwOjU1ICswMDAwIiwiZXhwIjoiMjAxNy0xMC0xMSAxNTozMDo1NSArMDAwMCIsImRhdGEiOnsiaWQiOiJkYTYxZGNkYS1hMzk4LTExZTctODcxZi05ZjZkNTQzYmUwNDAifX0.iBrHv9-INszE-SSL9rsuNnLDv7DBBaIUuqM6XDUvecxzap2CuoN4v3juXPvw-dZWuzbiHY2H3TPJJlRcI5_fZPxH2FjDqGA1S5nwEwEYVn9D1oMvnXUB6jLIq3ev4omE7ZUj5zVytsn_rKdryllfHro_8g5TneiOUoFBa_1N_RcC9AK_8640xbYPtZaNWhxsJiCwTsKWaLSYQ6RQv_xo1M4reL56dbjJ16Y-50HUy6Pxax6biKVvpjNRDizrkY0bka07lHMLAHMZD5-D3OYnxpxyg9aVX2kJd36iZuwsKaXVMtrCzwmzzGuhQD1PUUhC43wkNUbYw9z2d94v0FDxvQ";
 
@@ -42,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
             public void onClick(View view) {
                 if (userManager.getCurrentUser() == null) {
                     identityManager.authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
-                    //SessionM.getInstance().logInUserWithEmail("tiger@sessionm.com", "sessi0nM");
                 } else {
                     identityManager.logOutUser();
                 }
@@ -56,16 +58,7 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
 
             @Override
             public void onPageSelected(int position) {
-                switch (position) {
-                    case 0:
-                        _myOffersFragment.fetchOffers();
-                        break;
-                    case 1:
-                        _storeOffersFragment.fetchOffers();
-                        break;
-                    default:
-                        Log.d("TAG", "Too Many Tabls");
-                }
+                fetchForPage(position);
             }
 
             @Override public void onPageScrollStateChanged(int state) {}
@@ -77,6 +70,19 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
 
     }
 
+    private void fetchForPage(int position) {
+        switch (position) {
+            case 0:
+                _myOffersFragment.fetchOffers();
+                break;
+            case 1:
+                _storeOffersFragment.fetchOffers();
+                break;
+            default:
+                Log.d("TAG", "Too Many Tabs");
+        }
+    }
+
     private MyOffersFragment _myOffersFragment = new MyOffersFragment();
     private StoreOffersFragment _storeOffersFragment = new StoreOffersFragment();
 
@@ -86,8 +92,7 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
 
         userManager.setListener(_userListener);
         if (userManager.getCurrentUser() != null) {
-            _pager.setCurrentItem(0);
-            _myOffersFragment.fetchOffers();
+            fetchForPage(_pager.getCurrentItem());
         }
     }
 
@@ -103,16 +108,16 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
             if (smpUser != null) {
                 userBalance.setText(smpUser.getAvailablePoints() + " pts");
                 authenticate.setText("Logout");
-                _pager.setCurrentItem(0);
-                _myOffersFragment.fetchOffers();
+                fetchForPage(_pager.getCurrentItem());
             } else {
+                userBalance.setText("");
                 authenticate.setText("Login");
             }
         }
 
         @Override
         public void onFailure(SessionMError sessionMError) {
-
+            Toast.makeText(MainActivity.this, "Failure: '" + sessionMError.getCode() + "' " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
 }

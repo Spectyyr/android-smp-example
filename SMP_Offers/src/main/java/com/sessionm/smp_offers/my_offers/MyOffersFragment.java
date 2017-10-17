@@ -1,11 +1,6 @@
-/*
-* Copyright (c) 2016 SessionM. All rights reserved.
-*/
-package com.sessionm.smp_offers;
+package com.sessionm.smp_offers.my_offers;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -23,36 +18,26 @@ import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResult;
 import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResult;
 import com.sessionm.api.offers.data.results.store.OffersStoreResult;
 import com.sessionm.api.offers.data.results.user.UserOffersResult;
+import com.sessionm.smp_offers.R;
 
-public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class MyOffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private Callbacks _contextListener;
     private final OffersManager offerManager = OffersManager.getInstance();
 
     public void fetchOffers() {
-        _swipeRefreshLayout.setRefreshing(true);
+        if (_swipeRefreshLayout != null) { _swipeRefreshLayout.setRefreshing(true); }
+
         offerManager.setListener(offersListener);
-        offerManager.fetchOffersStore();
-    }
-
-    interface Callbacks {
-
+        offerManager.fetchUserOffers();
     }
 
     private SwipeRefreshLayout _swipeRefreshLayout;
-    private StoreOffersRecAdapter _offersRecAdapter;
+    private MyOffersRecAdapter _offersRecAdapter;
     private RecyclerView _recyclerView;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        _contextListener = (Callbacks)context;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.store_offers_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.my_offers_fragment, container, false);
         ViewCompat.setElevation(rootView, 50);
 
         _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
@@ -62,15 +47,11 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         _recyclerView.setLayoutManager(llm);
-        _offersRecAdapter = new StoreOffersRecAdapter(this);
+
+        _offersRecAdapter = new MyOffersRecAdapter(this);
         _recyclerView.setAdapter(_offersRecAdapter);
 
         return rootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -78,17 +59,15 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
 
     OffersListener offersListener = new OffersListener() {
         @Override public void onOfferPurchased(OfferPurchaseResult offerPurchaseResult) {}
-
         @Override public void onUserOfferClaimed(UserOfferClaimedResult userOfferClaimedResult) {}
-
-        @Override public void onUserOffersFetched(UserOffersResult userOffersResult) {}
+        @Override public void onOffersStoreFetched(OffersStoreResult offersStoreResult) {}
 
         @Override
-        public void onOffersStoreFetched(OffersStoreResult offersStoreResult) {
+        public void onUserOffersFetched(UserOffersResult userOffersResult) {
             if (_swipeRefreshLayout.isRefreshing()) {
                 _swipeRefreshLayout.setRefreshing(false);
             }
-            _offersRecAdapter.setOffers(offersStoreResult.getOffers());
+            _offersRecAdapter.setOffers(userOffersResult.getUserOffers());
         }
 
         @Override
@@ -96,8 +75,8 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
             if (_swipeRefreshLayout.isRefreshing()) {
                 _swipeRefreshLayout.setRefreshing(false);
             }
-            Toast.makeText(StoreOffersFragment.this.getContext(), "Failure: '" + sessionMError.getCode() + "' " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MyOffersFragment.this.getContext(), "Failure: '" + sessionMError.getCode() + "' " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
-}
 
+}

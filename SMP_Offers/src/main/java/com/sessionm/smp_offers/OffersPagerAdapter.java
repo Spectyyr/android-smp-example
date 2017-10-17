@@ -3,9 +3,8 @@ package com.sessionm.smp_offers;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-/**
- * Created by pmattheis on 10/2/17.
- */
+import com.sessionm.smp_offers.my_offers.MyOffersFragment;
+import com.sessionm.smp_offers.store_offers.StoreOffersFragment;
 
 class OffersPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
 

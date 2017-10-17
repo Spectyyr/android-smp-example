@@ -13,6 +13,7 @@ public class SEApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
+
         SessionM.getInstance().init(this);
     }
 }

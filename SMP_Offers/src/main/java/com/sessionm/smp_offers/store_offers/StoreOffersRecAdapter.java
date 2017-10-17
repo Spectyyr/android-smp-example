@@ -2,7 +2,7 @@
  * Copyright (c) 2016 SessionM. All rights reserved.
  */
 
-package com.sessionm.smp_offers;
+package com.sessionm.smp_offers.store_offers;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -16,10 +16,19 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.sessionm.api.SessionMError;
 import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.api.offers.OffersListener;
+import com.sessionm.api.offers.OffersManager;
+import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResult;
+import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResult;
+import com.sessionm.api.offers.data.results.store.OffersStoreResult;
 import com.sessionm.api.offers.data.results.store.StoreOfferItem;
+import com.sessionm.api.offers.data.results.user.UserOffersResult;
+import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -106,56 +115,4 @@ public class StoreOffersRecAdapter extends RecyclerView.Adapter<StoreOffersRecAd
         }
     }
 
-    private static class PurchaseOffer {
-        private Activity _activity;
-        private StoreOfferItem _item;
-
-        public PurchaseOffer(Activity activity) {
-            this._activity = activity;
-        }
-
-        private void purchase(StoreOfferItem item) {
-            _item = item;
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
-            builder.setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Log.d("TAG", "button dismiss");
-                }
-            });
-            builder.setPositiveButton("Purchase Offer", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Log.d("TAG", "button purchase");
-                }
-            });
-
-            AlertDialog dialog = builder.create();
-            LayoutInflater inflater = _activity.getLayoutInflater();
-            View dialogLayout = inflater.inflate(R.layout.purchase_offer, null);
-
-            dialog.setView(dialogLayout);
-            dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-
-            Picasso.with(_activity).load(Uri.parse(_item.getMedia().get(0).getURI())).into((ImageView) dialogLayout.findViewById(R.id.imageView));
-            ((TextView)dialogLayout.findViewById(R.id.title)).setText(item.getName());
-            ((TextView)dialogLayout.findViewById(R.id.purchase_terms)).setText(item.getDescription() + "\n" + item.getTerms());
-
-            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
-            ((TextView)dialogLayout.findViewById(R.id.purchase_range))
-                    .setText(String.format("This offer is available %s through %s",
-                                item.getStartDate() != null ? df.format(item.getStartDate()) : " -- ",
-                                item.getEndDate() != null ? df.format(item.getEndDate()) : " -- "
-                            ));
-
-            SMPUser user = UserManager.getInstance().getCurrentUser();
-            if (user != null) {
-                ((TextView)dialogLayout.findViewById(R.id.purchase_available)).setText(String.format("%d", user.getAvailablePoints()));
-            }
-
-            dialog.show();
-        }
-    }
 }
