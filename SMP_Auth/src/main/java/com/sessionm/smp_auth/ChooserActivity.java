@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.sessionm.smp_auth.custom.CustomAuthActivity;
 import com.sessionm.smp_auth.email.EmailPasswordActivity;
 import com.sessionm.smp_auth.facebook.FacebookLoginActivity;
-import com.sessionm.smp_auth.google.GoogleSignInActivity;
 import com.sessionm.smp_auth.sessionm.SessionMTokenActivity;
 import com.sessionm.smp_auth.webauth.WebAuthActivity;
 
@@ -26,7 +25,6 @@ import com.sessionm.smp_auth.webauth.WebAuthActivity;
  * {@link WebAuthActivity}
  * {@link EmailPasswordActivity}
  * {@link SessionMTokenActivity}
- * {@link GoogleSignInActivity}
  * {@link FacebookLoginActivity}
  * {@link CustomAuthActivity}
  */

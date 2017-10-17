@@ -218,8 +218,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onFailure(SessionMError error) {
             _response = null;
-            _behaviorList = null;
-            _adapter.setBehaviors(_behaviorList);
+            _adapter.setBehaviors(null);
             Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
         }
     };
