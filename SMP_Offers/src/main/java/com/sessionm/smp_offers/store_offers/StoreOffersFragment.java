@@ -3,6 +3,7 @@
 */
 package com.sessionm.smp_offers.store_offers;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -25,6 +26,12 @@ import com.sessionm.smp_offers.R;
 
 public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
+    private Callback _callback;
+
+    public interface Callback {
+        void updatePoints(int points);
+    }
+
     private final OffersManager offerManager = OffersManager.getInstance();
 
     public void fetchOffers() {
@@ -39,6 +46,14 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
     private RecyclerView _recyclerView;
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Callback) {
+            _callback = (Callback)context;
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.store_offers_fragment, container, false);
         ViewCompat.setElevation(rootView, 50);
@@ -51,7 +66,7 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         _recyclerView.setLayoutManager(llm);
 
-        _offersRecAdapter = new StoreOffersRecAdapter(this);
+        _offersRecAdapter = new StoreOffersRecAdapter(this, _callback);
         _recyclerView.setAdapter(_offersRecAdapter);
 
         return rootView;
@@ -81,5 +96,6 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
             Toast.makeText(StoreOffersFragment.this.getContext(), "Failure: '" + sessionMError.getCode() + "' " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
+
 }
 

@@ -4,30 +4,15 @@
 
 package com.sessionm.smp_offers.store_offers;
 
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.net.Uri;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.offers.OffersListener;
-import com.sessionm.api.offers.OffersManager;
-import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResult;
-import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResult;
-import com.sessionm.api.offers.data.results.store.OffersStoreResult;
 import com.sessionm.api.offers.data.results.store.StoreOfferItem;
-import com.sessionm.api.offers.data.results.user.UserOffersResult;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
@@ -40,11 +25,13 @@ import java.util.List;
 // Adapter class to draw Offers List
 public class StoreOffersRecAdapter extends RecyclerView.Adapter<StoreOffersRecAdapter.OffersViewHolder> {
 
+    private final StoreOffersFragment.Callback _callback;
     private List<StoreOfferItem> _offers = new ArrayList<>();
     private StoreOffersFragment _fragment;
 
-    public StoreOffersRecAdapter(StoreOffersFragment fragment) {
+    public StoreOffersRecAdapter(StoreOffersFragment fragment, StoreOffersFragment.Callback callback) {
         _fragment = fragment;
+        _callback = callback;
     }
 
     public void setOffers(List<StoreOfferItem> offers) {
@@ -84,7 +71,7 @@ public class StoreOffersRecAdapter extends RecyclerView.Adapter<StoreOffersRecAd
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                (new PurchaseOffer(_fragment.getActivity())).purchase(offer);
+                (new PurchaseOffer(_fragment.getActivity(), _callback)).purchase(offer);
             }
         });
     }

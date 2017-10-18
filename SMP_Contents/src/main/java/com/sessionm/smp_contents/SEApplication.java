@@ -7,7 +7,6 @@ package com.sessionm.smp_contents;
 import android.app.Application;
 
 import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMActivityLifecycleCallbacks;
 
 public class SEApplication extends Application{
 

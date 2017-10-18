@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sessionm.api.offers.OffersManager;
 import com.sessionm.api.offers.data.results.user.UserOfferItem;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;

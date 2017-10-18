@@ -20,7 +20,7 @@ import com.sessionm.smp_offers.store_offers.StoreOffersFragment;
 
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements StoreOffersFragment.Callback {
 
     private static final String SAMPLE_USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA5LTI3IDE1OjMwOjU1ICswMDAwIiwiZXhwIjoiMjAxNy0xMC0xMSAxNTozMDo1NSArMDAwMCIsImRhdGEiOnsiaWQiOiJkYTYxZGNkYS1hMzk4LTExZTctODcxZi05ZjZkNTQzYmUwNDAifX0.iBrHv9-INszE-SSL9rsuNnLDv7DBBaIUuqM6XDUvecxzap2CuoN4v3juXPvw-dZWuzbiHY2H3TPJJlRcI5_fZPxH2FjDqGA1S5nwEwEYVn9D1oMvnXUB6jLIq3ev4omE7ZUj5zVytsn_rKdryllfHro_8g5TneiOUoFBa_1N_RcC9AK_8640xbYPtZaNWhxsJiCwTsKWaLSYQ6RQv_xo1M4reL56dbjJ16Y-50HUy6Pxax6biKVvpjNRDizrkY0bka07lHMLAHMZD5-D3OYnxpxyg9aVX2kJd36iZuwsKaXVMtrCzwmzzGuhQD1PUUhC43wkNUbYw9z2d94v0FDxvQ";
 
@@ -70,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void updatePoints(int points) {
+        userBalance.setText(points + " pts");
+    }
+
     private void fetchForPage(int position) {
         switch (position) {
             case 0:
@@ -92,7 +97,10 @@ public class MainActivity extends AppCompatActivity {
 
         userManager.setListener(_userListener);
         if (userManager.getCurrentUser() != null) {
+            updatePoints(userManager.getCurrentUser().getAvailablePoints());
             fetchForPage(_pager.getCurrentItem());
+        } else {
+            userManager.fetchUser();
         }
     }
 
@@ -106,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onUserUpdated(SMPUser smpUser, Set<String> set) {
             if (smpUser != null) {
-                userBalance.setText(smpUser.getAvailablePoints() + " pts");
+                updatePoints(smpUser.getAvailablePoints());
                 authenticate.setText("Logout");
                 fetchForPage(_pager.getCurrentItem());
             } else {

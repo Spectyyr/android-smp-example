@@ -30,9 +30,11 @@ import java.text.SimpleDateFormat;
 public class PurchaseOffer {
     private Activity _activity;
     private StoreOfferItem _item;
+    private StoreOffersFragment.Callback _callback;
 
-    public PurchaseOffer(Activity activity) {
+    public PurchaseOffer(Activity activity, StoreOffersFragment.Callback callback) {
         this._activity = activity;
+        _callback = callback;
     }
 
     void purchase(final StoreOfferItem item) {
@@ -87,15 +89,18 @@ public class PurchaseOffer {
             }
         });
 
-
         dialog.show();
     }
 
     OffersListener _purchaseListener = new OffersListener() {
-        @Override public void onOfferPurchased(OfferPurchaseResult purchase) {}
         @Override public void onUserOfferClaimed(UserOfferClaimedResult claimedResult) {}
         @Override public void onUserOffersFetched(UserOffersResult userOffers) {}
         @Override public void onOffersStoreFetched(OffersStoreResult offersStore) {}
+
+        @Override public void onOfferPurchased(OfferPurchaseResult purchase) {
+            Toast.makeText(_activity, "Success: '" + purchase.getUserOffer().getID() + "' Name: '" + purchase.getUserOffer().getName() , Toast.LENGTH_SHORT).show();
+            _callback.updatePoints(purchase.getPointsRemaining());
+        }
 
         @Override
         public void onFailure(SessionMError error) {
