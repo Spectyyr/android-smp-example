@@ -123,9 +123,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    viewPager.setCurrentItem(1);
+                    geofenceManager.allowMockLocationProvider(true);
+//                    viewPager.setCurrentItem(1);
                 } else {
-                    viewPager.setCurrentItem(0);
+//                    viewPager.setCurrentItem(0);
+                    geofenceManager.allowMockLocationProvider(false);
                 }
             }
         });
