@@ -83,7 +83,7 @@ public class PurchaseOffer {
                     public void onClick(View v) {
                         Log.d("TAG", "" + dialog.getClass().toString());
                         OffersManager.getInstance().setListener(_purchaseListener);
-                        OffersManager.getInstance().purchaseOffer(item.getID(), 1);
+                        OffersManager.getInstance().purchaseOffer(item.getOfferID(), 1);
                     }
                 });
             }
@@ -98,7 +98,7 @@ public class PurchaseOffer {
         @Override public void onOffersStoreFetched(OffersStoreResponse offersStore) {}
 
         @Override public void onOfferPurchased(OfferPurchaseResponse purchase) {
-            Toast.makeText(_activity, "Success: '" + purchase.getUserOffer().getID() + "' Name: '" + purchase.getUserOffer().getName() , Toast.LENGTH_SHORT).show();
+            Toast.makeText(_activity, "Success: '" + purchase.getUserOffer().getUserOfferID() + "' Name: '" + purchase.getUserOffer().getName() , Toast.LENGTH_SHORT).show();
             _callback.updatePoints(purchase.getPointsRemaining());
         }
 

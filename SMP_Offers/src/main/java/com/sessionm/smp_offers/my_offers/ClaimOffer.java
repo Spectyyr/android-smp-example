@@ -42,7 +42,7 @@ public class ClaimOffer {
     public void redeem(UserOfferItem offer) {
         _offer = offer;
         _offerManager.setListener(claimListener);
-        _offerManager.claimUserOffer(offer.getID());
+        _offerManager.claimUserOffer(offer.getUserOfferID());
     }
 
     private OffersListener claimListener = new OffersListener() {
@@ -76,7 +76,7 @@ public class ClaimOffer {
             ((TextView) dialogLayout.findViewById(R.id.barcode_text)).setText(claimedResult.getClaimedOffer().getCode());
             ((TextView) dialogLayout.findViewById(R.id.title)).setText(claimedResult.getClaimedOffer().getName());
             ((TextView) dialogLayout.findViewById(R.id.description)).setText(claimedResult.getClaimedOffer().getDescription());
-            ((TextView) dialogLayout.findViewById(R.id.expiration_date)).setText("Expires: " + dateTimeFormat.format(claimedResult.getClaimedOffer().getCodeExpirationDate()));
+            ((TextView) dialogLayout.findViewById(R.id.expiration_date)).setText("Expires: " + dateTimeFormat.format(claimedResult.getClaimedOffer().getCodeExpirationTime()));
 
             _dialog = builder.create();
             _dialog.setView(dialogLayout);
