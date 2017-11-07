@@ -29,7 +29,7 @@ project.ext.buildToolsVersion = '25.0.2'
 project.ext.minSdkVersion = 16
 project.ext.targetSdkVersion = 25
 
-project.ext.sessionMSdkVersion = '2.4.0.4'
+project.ext.sessionMSdkVersion = '2.4.1-b1'
 project.ext.supportLibVersion = '25.4.0'
 project.ext.playServicesVersion = '11.4.2'
 project.ext.okHttpVersion = '3.8.0'
