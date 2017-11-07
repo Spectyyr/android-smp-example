@@ -15,11 +15,11 @@ import com.google.gson.Gson;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.offers.OffersListener;
 import com.sessionm.api.offers.OffersManager;
-import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResult;
-import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResult;
-import com.sessionm.api.offers.data.results.store.OffersStoreResult;
+import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResponse;
+import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResponse;
+import com.sessionm.api.offers.data.results.store.OffersStoreResponse;
 import com.sessionm.api.offers.data.results.user.UserOfferItem;
-import com.sessionm.api.offers.data.results.user.UserOffersResult;
+import com.sessionm.api.offers.data.results.user.UserOffersResponse;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
@@ -51,12 +51,12 @@ public class ClaimOffer {
         public Timer _timer;
         public TextView _countDown;
 
-        @Override public void onOfferPurchased(OfferPurchaseResult purchase) {}
-        @Override public void onUserOffersFetched(UserOffersResult userOffers) {}
-        @Override public void onOffersStoreFetched(OffersStoreResult offersStore) {}
+        @Override public void onOfferPurchased(OfferPurchaseResponse purchase) {}
+        @Override public void onUserOffersFetched(UserOffersResponse userOffers) {}
+        @Override public void onOffersStoreFetched(OffersStoreResponse offersStore) {}
 
         @Override
-        public void onUserOfferClaimed(UserOfferClaimedResult claimedResult) {
+        public void onUserOfferClaimed(UserOfferClaimedResponse claimedResult) {
 
             SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
@@ -76,7 +76,7 @@ public class ClaimOffer {
             ((TextView) dialogLayout.findViewById(R.id.barcode_text)).setText(claimedResult.getClaimedOffer().getCode());
             ((TextView) dialogLayout.findViewById(R.id.title)).setText(claimedResult.getClaimedOffer().getName());
             ((TextView) dialogLayout.findViewById(R.id.description)).setText(claimedResult.getClaimedOffer().getDescription());
-            ((TextView) dialogLayout.findViewById(R.id.expiration_date)).setText("Expires: " + dateTimeFormat.format(claimedResult.getClaimedOffer().getCodeExpirationDateTime()));
+            ((TextView) dialogLayout.findViewById(R.id.expiration_date)).setText("Expires: " + dateTimeFormat.format(claimedResult.getClaimedOffer().getCodeExpirationDate()));
 
             _dialog = builder.create();
             _dialog.setView(dialogLayout);

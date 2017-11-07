@@ -14,10 +14,10 @@ import android.widget.Toast;
 import com.sessionm.api.SessionMError;
 import com.sessionm.api.offers.OffersListener;
 import com.sessionm.api.offers.OffersManager;
-import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResult;
-import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResult;
-import com.sessionm.api.offers.data.results.store.OffersStoreResult;
-import com.sessionm.api.offers.data.results.user.UserOffersResult;
+import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResponse;
+import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResponse;
+import com.sessionm.api.offers.data.results.store.OffersStoreResponse;
+import com.sessionm.api.offers.data.results.user.UserOffersResponse;
 import com.sessionm.smp_offers.R;
 
 public class MyOffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -58,12 +58,12 @@ public class MyOffersFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void onRefresh() { fetchOffers(); }
 
     OffersListener offersListener = new OffersListener() {
-        @Override public void onOfferPurchased(OfferPurchaseResult offerPurchaseResult) {}
-        @Override public void onUserOfferClaimed(UserOfferClaimedResult userOfferClaimedResult) {}
-        @Override public void onOffersStoreFetched(OffersStoreResult offersStoreResult) {}
+        @Override public void onOfferPurchased(OfferPurchaseResponse offerPurchaseResult) {}
+        @Override public void onUserOfferClaimed(UserOfferClaimedResponse userOfferClaimedResult) {}
+        @Override public void onOffersStoreFetched(OffersStoreResponse offersStoreResult) {}
 
         @Override
-        public void onUserOffersFetched(UserOffersResult userOffersResult) {
+        public void onUserOffersFetched(UserOffersResponse userOffersResult) {
             if (_swipeRefreshLayout.isRefreshing()) {
                 _swipeRefreshLayout.setRefreshing(false);
             }

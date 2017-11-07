@@ -17,11 +17,11 @@ import com.sessionm.api.identity.UserManager;
 import com.sessionm.api.identity.data.SMPUser;
 import com.sessionm.api.offers.OffersListener;
 import com.sessionm.api.offers.OffersManager;
-import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResult;
-import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResult;
-import com.sessionm.api.offers.data.results.store.OffersStoreResult;
+import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResponse;
+import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResponse;
+import com.sessionm.api.offers.data.results.store.OffersStoreResponse;
 import com.sessionm.api.offers.data.results.store.StoreOfferItem;
-import com.sessionm.api.offers.data.results.user.UserOffersResult;
+import com.sessionm.api.offers.data.results.user.UserOffersResponse;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
@@ -93,11 +93,11 @@ public class PurchaseOffer {
     }
 
     OffersListener _purchaseListener = new OffersListener() {
-        @Override public void onUserOfferClaimed(UserOfferClaimedResult claimedResult) {}
-        @Override public void onUserOffersFetched(UserOffersResult userOffers) {}
-        @Override public void onOffersStoreFetched(OffersStoreResult offersStore) {}
+        @Override public void onUserOfferClaimed(UserOfferClaimedResponse claimedResponse) {}
+        @Override public void onUserOffersFetched(UserOffersResponse userOffers) {}
+        @Override public void onOffersStoreFetched(OffersStoreResponse offersStore) {}
 
-        @Override public void onOfferPurchased(OfferPurchaseResult purchase) {
+        @Override public void onOfferPurchased(OfferPurchaseResponse purchase) {
             Toast.makeText(_activity, "Success: '" + purchase.getUserOffer().getID() + "' Name: '" + purchase.getUserOffer().getName() , Toast.LENGTH_SHORT).show();
             _callback.updatePoints(purchase.getPointsRemaining());
         }
