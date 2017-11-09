@@ -129,7 +129,7 @@ Content details and play video
 
 This app showcases how to use SessionM SDK to track the user's location and monitor regions that the user enters and exits.
 
-API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#geofencing
+API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#geofences
 
 After refresh install the app, you’ll need to follow these steps:
 - Grant the location permission request
@@ -158,7 +158,7 @@ Geofence Exit Dunkin
 
 This app showcases how to use SessionM SDK to create UI for a user inbox.
 
-API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#inbox
+API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#inbox-api
 
 The main view shows a list of messages in the user's inbox, with subjects, creation dates and inbox message body for each message. New message is with blank text color and Read message is with gray text color.
 
@@ -180,7 +180,7 @@ You could also click on the floating button to create a random new inbox message
 
 This app showcases how to use SessionM SDK to link and unlink loyalty cards to a user's account.
 
-API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#loyalty-card-linking
+API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#loyalty-card-linking-api
 
 The main view shows a list of loyalty cards that have been linked to the user's account.
 
@@ -202,7 +202,7 @@ Click on the cell you could unlink the card.
 
 This app showcases how to use SessionM SDK to allow users to earn points and promotional opportunities by checking in to sponsored venues.
 
-API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#places
+API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#places-api
 
 After refresh install the app, you’ll need to follow these steps:
 
@@ -258,7 +258,7 @@ There is also an option on how to handle push notification click actions. For mo
 
 This app showcases how to use SessionM SDK to allow users to upload receipt images.
 
-API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#receipt
+API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#receipts-api
 
 The main view shows a list of receipts that have already been uploaded by the user.
 
@@ -286,7 +286,7 @@ Different status receipts
 
 This app showcases how to use SessionM SDK to allow users to send an email to refer other potential users to sign up for an account.
 
-API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#referrals
+API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#referrals-api
 
 The main view shows a list of referrals that have already been sent by the user. 
 
@@ -303,7 +303,7 @@ By default it uses the sample user. You can click on “*pts” textview to logo
 
 This app showcases how to use SessionM SDK to allow users to spend loyalty points to purchase rewards.
 
-API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#rewards
+API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#rewards-api
 
 The main activity view shows a list of offers that are available for purchase. Click on an offer to see more details and make a purchase. If the offer is gated by a skills test (e.g. for a sweepstakes entry), then an alert will appear with a random question. Enter the correct answer to complete the purchase.
 
@@ -323,7 +323,7 @@ By default it uses the sample user. You can click on “*pts” textview to logo
 
 This app showcases how to use SessionM SDK to view a user's loyalty points transaction history.
 
-API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#transactions11
+API Docs: https://mmc.sessionm.com/docs/mmc-sdk/#transactions-api
 
 The main view shows a list of loyalty points transactions made by the user, and the resulting points balance after each transaction.
 
