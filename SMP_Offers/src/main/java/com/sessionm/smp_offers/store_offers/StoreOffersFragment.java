@@ -19,9 +19,9 @@ import com.sessionm.api.SessionMError;
 import com.sessionm.api.offers.OffersListener;
 import com.sessionm.api.offers.OffersManager;
 import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResponse;
-import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResponse;
-import com.sessionm.api.offers.data.results.store.OffersStoreResponse;
-import com.sessionm.api.offers.data.results.user.UserOffersResponse;
+import com.sessionm.api.offers.data.results.purchase.OfferPurchasedResponse;
+import com.sessionm.api.offers.data.results.store.StoreOffersFetchedResponse;
+import com.sessionm.api.offers.data.results.user.UserOffersFetchedResponse;
 import com.sessionm.smp_offers.R;
 
 public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -76,12 +76,12 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
     public void onRefresh() { fetchOffers(); }
 
     OffersListener offersListener = new OffersListener() {
-        @Override public void onOfferPurchased(OfferPurchaseResponse offerPurchaseResult) {}
+        @Override public void onOfferPurchased(OfferPurchasedResponse offerPurchaseResult) {}
         @Override public void onUserOfferClaimed(UserOfferClaimedResponse userOfferClaimedResult) {}
-        @Override public void onUserOffersFetched(UserOffersResponse userOffersResult) {}
+        @Override public void onUserOffersFetched(UserOffersFetchedResponse userOffersResult) {}
 
         @Override
-        public void onOffersStoreFetched(OffersStoreResponse offersStoreResult) {
+        public void onOffersStoreFetched(StoreOffersFetchedResponse offersStoreResult) {
             if (_swipeRefreshLayout.isRefreshing()) {
                 _swipeRefreshLayout.setRefreshing(false);
             }

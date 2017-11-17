@@ -16,10 +16,10 @@ import com.sessionm.api.SessionMError;
 import com.sessionm.api.offers.OffersListener;
 import com.sessionm.api.offers.OffersManager;
 import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResponse;
-import com.sessionm.api.offers.data.results.purchase.OfferPurchaseResponse;
-import com.sessionm.api.offers.data.results.store.OffersStoreResponse;
+import com.sessionm.api.offers.data.results.purchase.OfferPurchasedResponse;
+import com.sessionm.api.offers.data.results.store.StoreOffersFetchedResponse;
 import com.sessionm.api.offers.data.results.user.UserOfferItem;
-import com.sessionm.api.offers.data.results.user.UserOffersResponse;
+import com.sessionm.api.offers.data.results.user.UserOffersFetchedResponse;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
@@ -51,9 +51,9 @@ public class ClaimOffer {
         public Timer _timer;
         public TextView _countDown;
 
-        @Override public void onOfferPurchased(OfferPurchaseResponse purchase) {}
-        @Override public void onUserOffersFetched(UserOffersResponse userOffers) {}
-        @Override public void onOffersStoreFetched(OffersStoreResponse offersStore) {}
+        @Override public void onOfferPurchased(OfferPurchasedResponse purchase) {}
+        @Override public void onUserOffersFetched(UserOffersFetchedResponse userOffers) {}
+        @Override public void onOffersStoreFetched(StoreOffersFetchedResponse offersStore) {}
 
         @Override
         public void onUserOfferClaimed(UserOfferClaimedResponse claimedResult) {
