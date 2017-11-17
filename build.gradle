@@ -3,6 +3,7 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
@@ -21,6 +22,7 @@ allprojects {
         maven { url 'https://maven.fabric.io/public' }
         maven { url 'https://jitpack.io' }
         maven { url "https://maven.google.com" }
+        google()
     }
 }
 
@@ -29,7 +31,7 @@ project.ext.buildToolsVersion = '25.0.2'
 project.ext.minSdkVersion = 16
 project.ext.targetSdkVersion = 25
 
-project.ext.sessionMSdkVersion = '2.4.1-b1'
+project.ext.sessionMSdkVersion = '2.5.0'
 project.ext.supportLibVersion = '25.4.0'
 project.ext.playServicesVersion = '11.4.2'
 project.ext.okHttpVersion = '3.8.0'
