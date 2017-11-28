@@ -1,0 +1,28 @@
+apply plugin: 'com.android.feature'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':base')
+
+    //SessionM Dependencies
+    compile "com.sessionm.sdk:sessionm-sdk:${rootProject.sessionMSdkVersion}"
+    compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile "com.google.code.gson:gson:${rootProject.gsonVersion}"
+}
