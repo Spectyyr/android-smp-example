@@ -47,13 +47,13 @@ public class CampaignsFragment extends Fragment implements SwipeRefreshLayout.On
         View rootView = inflater.inflate(R.layout.fragment_campaigns, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
         _campaignsManager.setListener(_campaignsListener);
         _messages = new ArrayList<>(_campaignsManager.getFeedMessages());
 
-        _recyclerView = (RecyclerView) rootView.findViewById(R.id.message_feed_list);
+        _recyclerView = rootView.findViewById(R.id.message_feed_list);
         _recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);

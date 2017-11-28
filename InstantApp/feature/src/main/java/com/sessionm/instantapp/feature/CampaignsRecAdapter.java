@@ -158,14 +158,14 @@ public class CampaignsRecAdapter extends RecyclerView.Adapter<CampaignsRecAdapte
 
         public CampaignsViewHolder(View v) {
             super(v);
-            iconImageView = (ImageView) v.findViewById(R.id.promotion_icon_image);
-            headerTextView = (TextView) v.findViewById(R.id.promotion_header_text);
-            subHeaderTextView = (TextView) v.findViewById(R.id.promotion_subheader_text);
-            periodTextView = (TextView) v.findViewById(R.id.promotion_period_text);
-            descriptionTextView = (TextView) v.findViewById(R.id.promotion_detail_text);
-            valueTextView = (TextView) v.findViewById(R.id.promotion_value_text);
-            feedImageView = (ImageView) v.findViewById(R.id.promotion_main_image);
-            videoView = (VideoView) v.findViewById(R.id.promotion_main_video);
+            iconImageView = v.findViewById(R.id.promotion_icon_image);
+            headerTextView = v.findViewById(R.id.promotion_header_text);
+            subHeaderTextView = v.findViewById(R.id.promotion_subheader_text);
+            periodTextView = v.findViewById(R.id.promotion_period_text);
+            descriptionTextView = v.findViewById(R.id.promotion_detail_text);
+            valueTextView = v.findViewById(R.id.promotion_value_text);
+            feedImageView = v.findViewById(R.id.promotion_main_image);
+            videoView = v.findViewById(R.id.promotion_main_video);
         }
     }
 }
