@@ -58,13 +58,13 @@ class CampaignsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         val rootView = inflater.inflate(R.layout.fragment_campaigns, container, false)
         ViewCompat.setElevation(rootView, 50f)
 
-        _swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
+        _swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_layout) as SwipeRefreshLayout
         _swipeRefreshLayout!!.setOnRefreshListener(this)
 
         _campaignsManager.listener = _campaignsListener
         _messages = ArrayList(_campaignsManager.feedMessages)
 
-        _recyclerView = rootView.findViewById(R.id.message_feed_list) as RecyclerView
+        _recyclerView = rootView.findViewById<RecyclerView>(R.id.message_feed_list) as RecyclerView
         _recyclerView!!.setHasFixedSize(true)
         val llm = LinearLayoutManager(context)
         llm.orientation = LinearLayoutManager.VERTICAL

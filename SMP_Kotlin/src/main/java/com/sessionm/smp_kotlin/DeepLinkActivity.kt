@@ -12,7 +12,7 @@ class DeepLinkActivity : AppCompatActivity() {
 
         val url = intent.getStringExtra("url")
 
-        val textView = findViewById(R.id.deep_link_textview) as TextView
+        val textView = findViewById<TextView>(R.id.deep_link_textview) as TextView
         textView.text = url
     }
 }

@@ -122,14 +122,14 @@ class CampaignsRecAdapter(private val _fragment: CampaignsFragment, private val 
     }
 
     class CampaignsViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        internal var iconImageView: ImageView = v.findViewById(R.id.promotion_icon_image) as ImageView
-        internal var headerTextView: TextView = v.findViewById(R.id.promotion_header_text) as TextView
-        internal var subHeaderTextView: TextView = v.findViewById(R.id.promotion_subheader_text) as TextView
-        internal var periodTextView: TextView = v.findViewById(R.id.promotion_period_text) as TextView
-        internal var descriptionTextView: TextView = v.findViewById(R.id.promotion_detail_text) as TextView
-        internal var valueTextView: TextView = v.findViewById(R.id.promotion_value_text) as TextView
-        internal var feedImageView: ImageView = v.findViewById(R.id.promotion_main_image) as ImageView
-        internal var videoView: VideoView = v.findViewById(R.id.promotion_main_video) as VideoView
+        internal var iconImageView: ImageView = v.findViewById<ImageView>(R.id.promotion_icon_image) as ImageView
+        internal var headerTextView: TextView = v.findViewById<TextView>(R.id.promotion_header_text) as TextView
+        internal var subHeaderTextView: TextView = v.findViewById<TextView>(R.id.promotion_subheader_text) as TextView
+        internal var periodTextView: TextView = v.findViewById<TextView>(R.id.promotion_period_text) as TextView
+        internal var descriptionTextView: TextView = v.findViewById<TextView>(R.id.promotion_detail_text) as TextView
+        internal var valueTextView: TextView = v.findViewById<TextView>(R.id.promotion_value_text) as TextView
+        internal var feedImageView: ImageView = v.findViewById<ImageView>(R.id.promotion_main_image) as ImageView
+        internal var videoView: VideoView = v.findViewById<VideoView>(R.id.promotion_main_video) as VideoView
 
     }
 }

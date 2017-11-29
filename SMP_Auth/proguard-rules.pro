@@ -29,8 +29,12 @@
 -dontwarn retrofit.**
 -dontwarn retrofit2.**
 -dontwarn okio.**
--keep class com.squareup.okhttp.** { *; }
--keep interface com.squareup.okhttp.** { *; }
+-dontwarn okhttp3.**
+-dontwarn com.sessionm.**
+-keep class com.sessionm.api.** { *; }
+-keep class com.sessionm.net.http.DownloadService { *; }
+-keep class com.sessionm.ui.** { *; }
+-keep class com.sessionm.core.** { *; }
 -keep class retrofit.** { *; }
 -keepclasseswithmembers class * {
     @retrofit.http.* <methods>;

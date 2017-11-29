@@ -41,10 +41,10 @@ class MainActivity : AppCompatActivity(), CampaignsFragment.OnDeepLinkTappedList
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val actionBar = findViewById(R.id.custom_action_bar) as Toolbar
+        val actionBar = findViewById<Toolbar>(R.id.custom_action_bar) as Toolbar
         setSupportActionBar(actionBar)
 
-        userBalanceTextView = findViewById(R.id.user_balance_textview) as TextView
+        userBalanceTextView = findViewById<TextView>(R.id.user_balance_textview) as TextView
         userBalanceTextView!!.setOnClickListener {
             if (UserManager.getInstance().currentUser == null)
                 IdentityManager.getInstance().authenticateCoalitionWithToken(SAMPLE_USER_TOKEN)
