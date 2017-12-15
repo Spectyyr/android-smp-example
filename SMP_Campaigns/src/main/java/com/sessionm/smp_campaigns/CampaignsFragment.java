@@ -22,6 +22,7 @@ import com.sessionm.api.SessionMError;
 import com.sessionm.api.campaign.CampaignsListener;
 import com.sessionm.api.campaign.CampaignsManager;
 import com.sessionm.api.campaign.data.FeedMessage;
+import com.sessionm.api.campaign.data.Promotion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +81,11 @@ public class CampaignsFragment extends Fragment implements SwipeRefreshLayout.On
             }
             _messages.addAll(list);
             _campaignsRecAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onPromotionsFetched(List<Promotion> list) {
+
         }
 
         @Override
