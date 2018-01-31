@@ -11,6 +11,6 @@ import com.sessionm.api.SessionM
 class SEApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        SessionM.getInstance().init(this)
+        SessionM.getInstance().startWithConfigFile(this)
     }
 }

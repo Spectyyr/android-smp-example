@@ -32,7 +32,7 @@ public class SMApplication extends Application {
             instance = this;
         }
 
-        SessionM.getInstance().init(this);
+        SessionM.getInstance().startWithConfigFile(this);
     }
 
     public static SMApplication getInstance() {

@@ -15,7 +15,7 @@ public class SEApplication extends Application {
     public void onCreate() {
         super.onCreate();
         //Creates SessionM activity lifecycle callbacks to handle activities lifecycle
-        SessionM.getInstance().init(this);
+        SessionM.getInstance().startWithConfigFile(this);
         //Enables SessionM to receive push notifications, generates and sends a token to the server so the device can receive push notifications
         if (!MessagesManager.getInstance().isPushNotificationEnabled())
             MessagesManager.getInstance().setPushNotificationEnabled(true);

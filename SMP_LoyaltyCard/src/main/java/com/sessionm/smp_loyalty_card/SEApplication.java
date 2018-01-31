@@ -14,6 +14,6 @@ public class SEApplication extends Application{
     public void onCreate() {
         super.onCreate();
 
-        SessionM.getInstance().init(this);
+        SessionM.getInstance().startWithConfigFile(this);
     }
 }
