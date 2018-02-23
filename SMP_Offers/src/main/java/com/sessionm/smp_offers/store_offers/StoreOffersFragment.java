@@ -49,7 +49,7 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof Callback) {
-            _callback = (Callback)context;
+            _callback = (Callback) context;
         }
     }
 
@@ -73,19 +73,29 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     @Override
-    public void onRefresh() { fetchOffers(); }
+    public void onRefresh() {
+        fetchOffers();
+    }
 
     OffersListener offersListener = new OffersListener() {
-        @Override public void onOfferPurchased(OfferPurchasedResponse offerPurchaseResult) {}
-        @Override public void onUserOfferClaimed(UserOfferClaimedResponse userOfferClaimedResult) {}
-        @Override public void onUserOffersFetched(UserOffersFetchedResponse userOffersResult) {}
+        @Override
+        public void onOfferPurchased(OfferPurchasedResponse offerPurchaseResult) {
+        }
 
         @Override
-        public void onOffersStoreFetched(StoreOffersFetchedResponse offersStoreResult) {
+        public void onUserOfferClaimed(UserOfferClaimedResponse userOfferClaimedResult) {
+        }
+
+        @Override
+        public void onUserOffersFetched(UserOffersFetchedResponse userOffersResult) {
+        }
+
+        @Override
+        public void onStoreOffersFetched(StoreOffersFetchedResponse storeOffersFetchedResponse) {
             if (_swipeRefreshLayout.isRefreshing()) {
                 _swipeRefreshLayout.setRefreshing(false);
             }
-            _offersRecAdapter.setOffers(offersStoreResult.getOffers());
+            _offersRecAdapter.setOffers(storeOffersFetchedResponse.getOffers());
         }
 
         @Override

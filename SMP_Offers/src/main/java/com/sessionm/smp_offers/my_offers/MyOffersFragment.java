@@ -60,7 +60,6 @@ public class MyOffersFragment extends Fragment implements SwipeRefreshLayout.OnR
     OffersListener offersListener = new OffersListener() {
         @Override public void onOfferPurchased(OfferPurchasedResponse offerPurchaseResult) {}
         @Override public void onUserOfferClaimed(UserOfferClaimedResponse userOfferClaimedResult) {}
-        @Override public void onOffersStoreFetched(StoreOffersFetchedResponse offersStoreResult) {}
 
         @Override
         public void onUserOffersFetched(UserOffersFetchedResponse userOffersResult) {
@@ -68,6 +67,11 @@ public class MyOffersFragment extends Fragment implements SwipeRefreshLayout.OnR
                 _swipeRefreshLayout.setRefreshing(false);
             }
             _offersRecAdapter.setOffers(userOffersResult.getUserOffers());
+        }
+
+        @Override
+        public void onStoreOffersFetched(StoreOffersFetchedResponse storeOffersFetchedResponse) {
+
         }
 
         @Override

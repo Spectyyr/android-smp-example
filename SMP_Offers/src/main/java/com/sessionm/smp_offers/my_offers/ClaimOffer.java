@@ -53,7 +53,11 @@ public class ClaimOffer {
 
         @Override public void onOfferPurchased(OfferPurchasedResponse purchase) {}
         @Override public void onUserOffersFetched(UserOffersFetchedResponse userOffers) {}
-        @Override public void onOffersStoreFetched(StoreOffersFetchedResponse offersStore) {}
+
+        @Override
+        public void onStoreOffersFetched(StoreOffersFetchedResponse storeOffersFetchedResponse) {
+
+        }
 
         @Override
         public void onUserOfferClaimed(UserOfferClaimedResponse claimedResult) {

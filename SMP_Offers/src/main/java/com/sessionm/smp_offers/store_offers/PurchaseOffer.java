@@ -95,7 +95,11 @@ public class PurchaseOffer {
     OffersListener _purchaseListener = new OffersListener() {
         @Override public void onUserOfferClaimed(UserOfferClaimedResponse claimedResponse) {}
         @Override public void onUserOffersFetched(UserOffersFetchedResponse userOffers) {}
-        @Override public void onOffersStoreFetched(StoreOffersFetchedResponse offersStore) {}
+
+        @Override
+        public void onStoreOffersFetched(StoreOffersFetchedResponse storeOffersFetchedResponse) {
+
+        }
 
         @Override public void onOfferPurchased(OfferPurchasedResponse purchase) {
             Toast.makeText(_activity, "Success: '" + purchase.getUserOffer().getUserOfferID() + "' Name: '" + purchase.getUserOffer().getName() , Toast.LENGTH_SHORT).show();
