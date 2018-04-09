@@ -12,10 +12,7 @@ import com.sessionm.api.offers.data.results.user.UserOfferItem;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 class MyOffersRecAdapter extends RecyclerView.Adapter<MyOffersRecAdapter.OffersViewHolder> {
@@ -30,12 +27,6 @@ class MyOffersRecAdapter extends RecyclerView.Adapter<MyOffersRecAdapter.OffersV
     public void setOffers(List<UserOfferItem> offers) {
         _offers = offers;
 
-        Collections.sort(_offers, new Comparator() {
-            @Override
-            public int compare(Object lhs, Object rhs) {
-                return ((UserOfferItem) lhs).getAcquireDate().compareTo(((UserOfferItem) rhs).getAcquireDate());
-            }
-        });
         notifyDataSetChanged();
     }
 
@@ -46,14 +37,12 @@ class MyOffersRecAdapter extends RecyclerView.Adapter<MyOffersRecAdapter.OffersV
         return new MyOffersRecAdapter.OffersViewHolder(itemView);
     }
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
     @Override
     public void onBindViewHolder(MyOffersRecAdapter.OffersViewHolder holder, int position) {
         final UserOfferItem offer = _offers.get(position);
 
         holder.name.setText(offer.getName());
-        holder.expires.setText(dateFormat.format(offer.getExpirationDate()));
+        holder.expires.setText(offer.getExpirationDate());
 
         Picasso.with(holder.itemView.getContext()).load(Uri.parse(offer.getMedia().get(0).getURI())).into(holder.media);
 
@@ -83,9 +72,9 @@ class MyOffersRecAdapter extends RecyclerView.Adapter<MyOffersRecAdapter.OffersV
 
         public OffersViewHolder(View v) {
             super(v);
-            expires = (TextView)v.findViewById(R.id.expires_date);
-            name = (TextView)v.findViewById(R.id.offer_name);
-            media = (ImageView)v.findViewById(R.id.offer_media);
+            expires = v.findViewById(R.id.expires_date);
+            name = v.findViewById(R.id.offer_name);
+            media = v.findViewById(R.id.offer_media);
         }
     }
 }

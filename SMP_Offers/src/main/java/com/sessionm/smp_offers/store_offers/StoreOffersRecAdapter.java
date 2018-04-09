@@ -16,10 +16,7 @@ import com.sessionm.api.offers.data.results.store.StoreOfferItem;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 // Adapter class to draw Offers List
@@ -36,13 +33,6 @@ public class StoreOffersRecAdapter extends RecyclerView.Adapter<StoreOffersRecAd
 
     public void setOffers(List<StoreOfferItem> offers) {
         _offers = offers;
-
-        Collections.sort(_offers, new Comparator() {
-            @Override
-            public int compare(Object lhs, Object rhs) {
-                return ((StoreOfferItem) lhs).getStartDate().compareTo(((StoreOfferItem) rhs).getStartDate());
-            }
-        });
         notifyDataSetChanged();
     }
 
@@ -57,13 +47,11 @@ public class StoreOffersRecAdapter extends RecyclerView.Adapter<StoreOffersRecAd
     public void onBindViewHolder(OffersViewHolder holder, int position) {
         final StoreOfferItem offer = _offers.get(position);
 
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
         holder.name.setText(offer.getName());
         holder.points.setText(String.format("%.0f", offer.getPrice()));
         holder.validDates.setText(String.format("This offer is available %s through %s",
-                offer.getStartDate() != null ? df.format(offer.getStartDate()) : " -- ",
-                offer.getEndDate() != null ? df.format(offer.getEndDate()) : " -- "
+                offer.getStartDate(),
+                offer.getEndDate()
         ));
 
         Picasso.with(holder.itemView.getContext()).load(Uri.parse(offer.getMedia().get(0).getURI())).into(holder.media);
@@ -95,10 +83,10 @@ public class StoreOffersRecAdapter extends RecyclerView.Adapter<StoreOffersRecAd
 
         public OffersViewHolder(View v) {
             super(v);
-            validDates = (TextView)v.findViewById(R.id.valid_dates);
-            name = (TextView)v.findViewById(R.id.offer_name);
-            media = (ImageView)v.findViewById(R.id.offer_media);
-            points = (TextView)v.findViewById(R.id.offer_points);
+            validDates = v.findViewById(R.id.valid_dates);
+            name = v.findViewById(R.id.offer_name);
+            media = v.findViewById(R.id.offer_media);
+            points = v.findViewById(R.id.offer_points);
         }
     }
 

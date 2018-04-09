@@ -25,8 +25,6 @@ import com.sessionm.api.offers.data.results.user.UserOffersFetchedResponse;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
-
 public class PurchaseOffer {
     private Activity _activity;
     private StoreOfferItem _item;
@@ -56,12 +54,10 @@ public class PurchaseOffer {
         ((TextView) dialogLayout.findViewById(R.id.title)).setText(item.getName());
         ((TextView) dialogLayout.findViewById(R.id.purchase_terms)).setText(item.getDescription() + "\n\n\n" + item.getTerms());
 
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
         ((TextView) dialogLayout.findViewById(R.id.purchase_range))
                 .setText(String.format("This offer is available %s through %s",
-                        item.getStartDate() != null ? df.format(item.getStartDate()) : " -- ",
-                        item.getEndDate() != null ? df.format(item.getEndDate()) : " -- "
+                        item.getStartDate(),
+                        item.getEndDate()
                 ));
 
         SMPUser user = UserManager.getInstance().getCurrentUser();
@@ -93,16 +89,22 @@ public class PurchaseOffer {
     }
 
     OffersListener _purchaseListener = new OffersListener() {
-        @Override public void onUserOfferClaimed(UserOfferClaimedResponse claimedResponse) {}
-        @Override public void onUserOffersFetched(UserOffersFetchedResponse userOffers) {}
+        @Override
+        public void onUserOfferClaimed(UserOfferClaimedResponse claimedResponse) {
+        }
+
+        @Override
+        public void onUserOffersFetched(UserOffersFetchedResponse userOffers) {
+        }
 
         @Override
         public void onStoreOffersFetched(StoreOffersFetchedResponse storeOffersFetchedResponse) {
 
         }
 
-        @Override public void onOfferPurchased(OfferPurchasedResponse purchase) {
-            Toast.makeText(_activity, "Success: '" + purchase.getUserOffer().getUserOfferID() + "' Name: '" + purchase.getUserOffer().getName() , Toast.LENGTH_SHORT).show();
+        @Override
+        public void onOfferPurchased(OfferPurchasedResponse purchase) {
+            Toast.makeText(_activity, "Success: '" + purchase.getUserOffer().getUserOfferID() + "' Name: '" + purchase.getUserOffer().getName(), Toast.LENGTH_SHORT).show();
             _callback.updatePoints(purchase.getPointsRemaining());
         }
 

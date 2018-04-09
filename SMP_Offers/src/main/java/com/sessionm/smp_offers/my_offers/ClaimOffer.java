@@ -23,7 +23,6 @@ import com.sessionm.api.offers.data.results.user.UserOffersFetchedResponse;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,8 +36,6 @@ public class ClaimOffer {
         _activity = activity;
     }
 
-    private Gson _gson = new Gson();
-
     public void redeem(UserOfferItem offer) {
         _offer = offer;
         _offerManager.setListener(claimListener);
@@ -51,8 +48,13 @@ public class ClaimOffer {
         public Timer _timer;
         public TextView _countDown;
 
-        @Override public void onOfferPurchased(OfferPurchasedResponse purchase) {}
-        @Override public void onUserOffersFetched(UserOffersFetchedResponse userOffers) {}
+        @Override
+        public void onOfferPurchased(OfferPurchasedResponse purchase) {
+        }
+
+        @Override
+        public void onUserOffersFetched(UserOffersFetchedResponse userOffers) {
+        }
 
         @Override
         public void onStoreOffersFetched(StoreOffersFetchedResponse storeOffersFetchedResponse) {
@@ -61,8 +63,6 @@ public class ClaimOffer {
 
         @Override
         public void onUserOfferClaimed(UserOfferClaimedResponse claimedResult) {
-
-            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
             builder.setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -80,7 +80,7 @@ public class ClaimOffer {
             ((TextView) dialogLayout.findViewById(R.id.barcode_text)).setText(claimedResult.getClaimedOffer().getCode());
             ((TextView) dialogLayout.findViewById(R.id.title)).setText(claimedResult.getClaimedOffer().getName());
             ((TextView) dialogLayout.findViewById(R.id.description)).setText(claimedResult.getClaimedOffer().getDescription());
-            ((TextView) dialogLayout.findViewById(R.id.expiration_date)).setText("Expires: " + dateTimeFormat.format(claimedResult.getClaimedOffer().getCodeExpirationTime()));
+            ((TextView) dialogLayout.findViewById(R.id.expiration_date)).setText("Expires: " + claimedResult.getClaimedOffer().getCodeExpirationTime());
 
             _dialog = builder.create();
             _dialog.setView(dialogLayout);
