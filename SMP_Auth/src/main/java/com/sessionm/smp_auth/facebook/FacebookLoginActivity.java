@@ -13,12 +13,13 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityListener;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.core.api.provider.AuthenticationProvider;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
+import com.sessionm.identity.api.provider.SessionMOauthTokenProvider;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
 
@@ -36,10 +37,8 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
     private TextView mStatusTextView;
     private TextView mDetailTextView;
 
-    private IdentityManager identityManager;
-    private IdentityListener identityListener;
-    private UserManager userManager;
-    private UserListener userListener;
+    private SessionMOauthTokenProvider _sessionMOauthTokenProvider;
+    private UserManager _userManager;
 
     private CallbackManager callbackManager;
 
@@ -78,47 +77,19 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             }
         });
 
-        identityManager = IdentityManager.getInstance();
-        userManager = UserManager.getInstance();
-
-        identityListener = new IdentityListener() {
+        _sessionMOauthTokenProvider = new SessionMOauthTokenProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthTokenProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
             @Override
-            public void onAuthStateUpdated(IdentityManager.AuthState authState) {
-                hideProgressDialog();
+            public void onUpdated(SessionMError sessionMError) {
+               
             }
-
-            @Override
-            public void onFailure(SessionMError sessionMError) {
-                hideProgressDialog();
-                Toast.makeText(FacebookLoginActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        userListener = new UserListener() {
-            @Override
-            public void onUserUpdated(SMPUser smpUser, Set<String> set) {
-                if (smpUser != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                updateUI(smpUser);
-            }
-
-            @Override
-            public void onFailure(SessionMError sessionMError) {
-                Toast.makeText(FacebookLoginActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
+        });
+        _userManager = UserManager.getInstance();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        identityManager.setListener(identityListener);
-        userManager.setListener(userListener);
     }
 
     @Override
@@ -136,13 +107,39 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
         String fbToken = loginResult.getAccessToken().getToken();
         Log.d(TAG, "authWithFacebook:" + fbToken);
         // [START_EXCLUDE silent]
-        identityManager.authenticateWithToken(fbToken, "facebook");
+        _sessionMOauthTokenProvider.authenticateWithToken(fbToken, "facebook", new SessionMOauthProvider.SessionMOauthProviderListener() {
+            @Override
+            public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                hideProgressDialog();
+                if (sessionMError != null)
+                    Toast.makeText(FacebookLoginActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                else {
+                    _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                        @Override
+                        public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                            if (sessionMError != null)
+                                Toast.makeText(FacebookLoginActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                            else {
+                                if (smpUser != null) {
+                                    // User is signed in
+                                    Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
+                                } else {
+                                    // User is signed out
+                                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                                }
+                                updateUI(smpUser);
+                            }
+                        }
+                    });
+                }
+            }
+        });
         showProgressDialog();
         // [END_EXCLUDE]
     }
 
     private void signOut() {
-        identityManager.logOutUser();
+        _sessionMOauthTokenProvider.logoutUser(null);
         LoginManager.getInstance().logOut();
         updateUI(null);
     }

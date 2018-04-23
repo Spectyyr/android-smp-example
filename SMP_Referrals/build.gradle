@@ -21,7 +21,7 @@ android {
 
 dependencies {
     //SessionM Dependencies
-    compile "com.sessionm.sdk:sessionm-sdk:${rootProject.sessionMSdkVersion}"
+    compile "com.sessionm.android:sessionm:${rootProject.sessionMSdkVersion}"
     compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
     compile "com.google.code.gson:gson:${rootProject.gsonVersion}"
 

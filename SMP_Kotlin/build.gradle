@@ -23,7 +23,7 @@ android {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile "com.sessionm.sdk:sessionm-sdk:${rootProject.sessionMSdkVersion}"
+    compile "com.sessionm.android:sessionm:${rootProject.sessionMSdkVersion}"
     compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile "com.google.code.gson:gson:${rootProject.gsonVersion}"

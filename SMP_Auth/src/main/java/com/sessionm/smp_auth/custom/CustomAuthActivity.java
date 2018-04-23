@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.smp_auth.R;
 
 /**

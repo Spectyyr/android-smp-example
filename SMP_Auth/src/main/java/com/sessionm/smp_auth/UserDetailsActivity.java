@@ -3,98 +3,41 @@ package com.sessionm.smp_auth;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.identity.data.SMPUserUpdate;
-import com.sessionm.api.identity.tag.UserTagsListener;
-import com.sessionm.api.identity.tag.UserTagsManager;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.identity.api.data.SMPUserUpdate;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 public class UserDetailsActivity extends AppCompatActivity {
 
-    TextView id;
-    TextView externalID;
-    TextView points;
-    TextView availableAchievementsCount;
-    TextView testPoints;
-    TextView email;
-    TextView firstName;
-    TextView lastName;
-    TextView gender;
-    TextView dob;
-    TextView createdTime;
-    TextView updatedTime;
-    TextView zip;
-    TextView dma;
-    TextView state;
-    TextView country;
-    TextView latitude;
-    TextView longitude;
-    TextView nextTierPercentage;
-    TextView accountStatus;
-    TextView currentZip;
-    TextView currentDMA;
-    TextView currentState;
-    TextView currentCountry;
-    TextView proxyIDs;
-    TextView profile;
-    TextView isSuspended;
-    TextView isTestAccount;
-
-    TableLayout tagsTable;
+    TableLayout _userTable;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_details);
 
-        id = (TextView) findViewById(R.id.smp_user_id);
-        externalID = (TextView) findViewById(R.id.smp_user_external_id);
-        points = (TextView) findViewById(R.id.smp_user_points);
-        availableAchievementsCount = (TextView) findViewById(R.id.smp_user_unclaimed_achievement_count);
-        testPoints = (TextView) findViewById(R.id.smp_user_test_points);
-        email = (TextView) findViewById(R.id.smp_user_email);
-        firstName = (TextView) findViewById(R.id.smp_user_first_name);
-        lastName = (TextView) findViewById(R.id.smp_user_last_name);
-        gender = (TextView) findViewById(R.id.smp_user_gender);
-        dob = (TextView) findViewById(R.id.smp_user_dob);
-        createdTime = (TextView) findViewById(R.id.smp_user_created_time);
-        updatedTime = (TextView) findViewById(R.id.smp_user_updated_time);
-        zip = (TextView) findViewById(R.id.smp_user_zip);
-        dma = (TextView) findViewById(R.id.smp_user_dma);
-        state = (TextView) findViewById(R.id.smp_user_state);
-        country = (TextView) findViewById(R.id.smp_user_country);
-        latitude = (TextView) findViewById(R.id.smp_user_latitude);
-        longitude = (TextView) findViewById(R.id.smp_user_longitude);
-        nextTierPercentage = (TextView) findViewById(R.id.smp_user_next_tier_percentage);
-        accountStatus = (TextView) findViewById(R.id.smp_user_account_status);
-        currentZip = (TextView) findViewById(R.id.smp_user_current_zip);
-        currentDMA = (TextView) findViewById(R.id.smp_user_current_dma);
-        currentState = (TextView) findViewById(R.id.smp_user_current_state);
-        currentCountry = (TextView) findViewById(R.id.smp_user_current_country);
-        proxyIDs = (TextView) findViewById(R.id.smp_user_proxy_ids);
-        profile = (TextView) findViewById(R.id.smp_user_profile);
-        isSuspended = (TextView) findViewById(R.id.smp_user_is_suspended);
-        isTestAccount = (TextView) findViewById(R.id.smp_user_is_test_account);
+        _userTable = findViewById(R.id.mmc_user_table);
 
-        Button updateButton = (Button) findViewById(R.id.smp_user_update_btn);
+        Button updateButton = findViewById(R.id.mmc_user_update_btn);
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,103 +45,45 @@ public class UserDetailsActivity extends AppCompatActivity {
             }
         });
 
-        tagsTable = (TableLayout) findViewById(R.id.smp_tags_table_layout);
-        Button updateTagsButton = (Button) findViewById(R.id.smp_user_tags_update_btn);
-        updateTagsButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.present_user_profile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popUpUpdateUserTagsDialog();
+                SessionMError sessionMError = UserManager.getInstance().getWebProfileManager().updateUserProfile(UserDetailsActivity.this);
+                if (sessionMError != null)
+                    Utils.createAlertDialog(UserDetailsActivity.this, sessionMError);
             }
         });
-
-        refreshUI(UserManager.getInstance().getCurrentUser());
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        UserManager.getInstance().setListener(_userProfileListener);
-        UserTagsManager.getInstance().setListener(_userTagsListener);
-        UserTagsManager.getInstance().fetchUserTags();
-    }
-
-    UserListener _userProfileListener = new UserListener() {
-        @Override
-        public void onUserUpdated(SMPUser smpUser, Set<String> deltas) {
-            String deltaString = "";
-            for (String delta : deltas) {
-                deltaString += delta + " ";
+    protected void onResume() {
+        super.onResume();
+        UserManager.getInstance().fetchUser(new UserManager.OnUserFetchedListener() {
+            @Override
+            public void onFetched(SMPUser user, Set<String> deltas, SessionMError error) {
+                handleUserCallback(user, deltas, error);
             }
-            Toast.makeText(UserDetailsActivity.this, "Success! Deltas: " + deltaString, Toast.LENGTH_SHORT).show();
-            refreshUI(smpUser);
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-            Toast.makeText(UserDetailsActivity.this, "Failed! " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    UserTagsListener _userTagsListener = new UserTagsListener() {
-        @Override
-        public void onUserTagsFetched(Map map) {
-            refreshUserTagsTable(map);
-        }
-
-        @Override
-        public void onUserTagsUpdated(Map map) {
-            refreshUserTagsTable(map);
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-            Toast.makeText(UserDetailsActivity.this, "Failed! " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private void refreshUI(SMPUser smpUser) {
-        id.setText("ID: " + smpUser.getID());
-        externalID.setText("External ID: " + smpUser.getExternalID());
-        points.setText("Points: " + smpUser.getAvailablePoints());
-        availableAchievementsCount.setText("Unclaimed Achievements Count: " + smpUser.getUnclaimedAchievementCount());
-        testPoints.setText("Test Points: " + smpUser.getTestPoints());
-        email.setText("Email: " + smpUser.getEmail());
-        firstName.setText("First Name: " + smpUser.getFirstName());
-        lastName.setText("Last Name: " + smpUser.getLastName());
-        gender.setText("Gender: " + smpUser.getGender());
-        dob.setText("DOB: " + smpUser.getDateOfBirth());
-        createdTime.setText("Created Time: " + smpUser.getCreatedTime());
-        updatedTime.setText("Updated Time: " + smpUser.getUpdatedTime());
-        zip.setText("Zip: " + smpUser.getZipCode());
-        dma.setText("DMA: " + smpUser.getDMA());
-        state.setText("State: " + smpUser.getState());
-        country.setText("Country: " + smpUser.getCountry());
-        latitude.setText("Latitude: " + smpUser.getLatitude());
-        longitude.setText("Longitude: " + smpUser.getLongitude());
-        nextTierPercentage.setText("Next Tier Percentage: " + smpUser.getNextTierPercentage());
-        accountStatus.setText("Account Status: " + smpUser.getAccountStatus());
-        currentZip.setText("Current Zip: " + smpUser.getCurrentZipCode());
-        currentDMA.setText("Current DMA: " + smpUser.getCurrentDMA());
-        currentState.setText("Current State: " + smpUser.getCurrentState());
-        currentCountry.setText("Current Country: " + smpUser.getCurrentCountry());
-        if (smpUser.getProxyIDs() != null)
-            proxyIDs.setText("Proxy IDs: " + smpUser.getProxyIDs().toString());
-        if (smpUser.getUserProfile() != null)
-            profile.setText("User Profile: " + smpUser.getUserProfile().toString());
-        isSuspended.setText("Suspended: " + smpUser.isSuspended());
-        isTestAccount.setText("Test Account: " + smpUser.isTestAccount());
+        });
     }
 
-    private void refreshUserTagsTable(Map tags) {
-        tagsTable.removeAllViews();
-        for (Object key : tags.keySet()) {
-            TableRow row = new TableRow(this);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
-            row.setLayoutParams(lp);
-            TextView textView = new TextView(this);
-            textView.setText(key + ": " + tags.get(key));
-            row.addView(textView);
-            tagsTable.addView(row);
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    private void refreshUI(SMPUser user) {
+        Map<String, Object> userMap = Utils.getAllGettersValue("com.sessionm.identity.api.data.SMPUser", user);
+        if (userMap != null) {
+            _userTable.removeAllViews();
+            for (String key : userMap.keySet()) {
+                TableRow row = new TableRow(this);
+                TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
+                row.setLayoutParams(lp);
+                TextView textView = new TextView(this);
+                textView.setText(key + ": " + userMap.get(key));
+                row.addView(textView);
+                _userTable.addView(row);
+            }
         }
     }
 
@@ -206,20 +91,20 @@ public class UserDetailsActivity extends AppCompatActivity {
 
         LayoutInflater inflater = getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_update_user, null);
+        final LinearLayout updateLayout = dialogLayout.findViewById(R.id.update_user_layout);
 
-        final EditText externalIDView = (EditText) dialogLayout.findViewById(R.id.update_user_external_id);
-        final EditText emailView = (EditText) dialogLayout.findViewById(R.id.update_user_email);
-        final EditText genderView = (EditText) dialogLayout.findViewById(R.id.update_user_gender);
-        final EditText lastNameView = (EditText) dialogLayout.findViewById(R.id.update_user_last_name);
-        final EditText firstNameView = (EditText) dialogLayout.findViewById(R.id.update_user_first_name);
-        final EditText dobView = (EditText) dialogLayout.findViewById(R.id.update_user_dob);
-        final EditText dmaView = (EditText) dialogLayout.findViewById(R.id.update_user_dma);
-        final EditText zipView = (EditText) dialogLayout.findViewById(R.id.update_user_zip);
-        final EditText stateView = (EditText) dialogLayout.findViewById(R.id.update_user_state);
-        final EditText countryView = (EditText) dialogLayout.findViewById(R.id.update_user_country);
-        final EditText latitudeView = (EditText) dialogLayout.findViewById(R.id.update_user_latitude);
-        final EditText longitudeView = (EditText) dialogLayout.findViewById(R.id.update_user_longitude);
-        final EditText ipAddressView = (EditText) dialogLayout.findViewById(R.id.update_user_ip_address);
+        Map<String, Object> userMap = Utils.getAllGettersValue("com.sessionm.identity.api.data.SMPUser", UserManager.getInstance().getCurrentUser());
+        if (userMap != null) {
+            userMap.put("IPAddress", "");
+            for (String key : userMap.keySet()) {
+                EditText row = new EditText(this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                row.setLayoutParams(lp);
+                row.setTag(key);
+                row.setHint(key + ": " + userMap.get(key));
+                updateLayout.addView(row);
+            }
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -231,27 +116,33 @@ public class UserDetailsActivity extends AppCompatActivity {
         builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                SMPUserUpdate.Builder smpUserRequest = new SMPUserUpdate.Builder()
-                        .externalID(updateNonEmptyField(externalIDView))
-                        .email(updateNonEmptyField(emailView))
-                        .gender(updateNonEmptyField(genderView))
-                        .firstName(updateNonEmptyField(firstNameView))
-                        .lastName(updateNonEmptyField(lastNameView))
-                        .dateOfBirth(updateNonEmptyField(dobView))
-                        .zipCode(updateNonEmptyField(zipView))
-                        .DMA(updateNonEmptyField(dmaView))
-                        .state(updateNonEmptyField(stateView))
-                        .country(updateNonEmptyField(countryView))
-                        .latitude(updateNonEmptyFieldDouble(latitudeView))
-                        .longitude(updateNonEmptyFieldDouble(longitudeView))
-                        .ipAddress(updateNonEmptyField(ipAddressView))
-                        .locale(Locale.getDefault());
-
-                UserManager.getInstance().updateUser(smpUserRequest.build());
+                SMPUserUpdate.Builder requestBuilder = new SMPUserUpdate.Builder()
+                        .externalID(updateNonEmptyField((EditText) updateLayout.findViewWithTag("ExternalID")))
+                        .email(updateNonEmptyField((EditText) updateLayout.findViewWithTag("Email")))
+                        .gender(updateNonEmptyField((EditText) updateLayout.findViewWithTag("Gender")))
+                        .firstName(updateNonEmptyField((EditText) updateLayout.findViewWithTag("FirstName")))
+                        .lastName(updateNonEmptyField((EditText) updateLayout.findViewWithTag("LastName")))
+                        .dateOfBirth(updateNonEmptyField((EditText) updateLayout.findViewWithTag("DateOfBirth")))
+                        .DMA(updateNonEmptyField((EditText) updateLayout.findViewWithTag("DMA")))
+                        .city(updateNonEmptyField((EditText) updateLayout.findViewWithTag("City")))
+                        .state(updateNonEmptyField((EditText) updateLayout.findViewWithTag("State")))
+                        .zipCode(updateNonEmptyField((EditText) updateLayout.findViewWithTag("ZipCode")))
+                        .country(updateNonEmptyField((EditText) updateLayout.findViewWithTag("Country")))
+                        .latitude(updateNonEmptyFieldDouble((EditText) updateLayout.findViewWithTag("Latitude")))
+                        .longitude(updateNonEmptyFieldDouble((EditText) updateLayout.findViewWithTag("Longitude")))
+                        .ipAddress(updateNonEmptyField((EditText) updateLayout.findViewWithTag("IPAddress")));
+//                        .locale(new Locale(updateNonEmptyField((EditText) updateLayout.findViewWithTag("Locale"))));
+                UserManager.getInstance().updateUser(requestBuilder.build(), new UserManager.OnUserUpdatedListener() {
+                    @Override
+                    public void onUpdated(SMPUser user, Set<String> deltas, SessionMError error) {
+                        handleUserCallback(user, deltas, error);
+                    }
+                });
             }
         });
 
         AlertDialog dialog = builder.create();
+
 
         dialog.setView(dialogLayout);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -265,83 +156,33 @@ public class UserDetailsActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void popUpUpdateUserTagsDialog() {
-        LayoutInflater inflater = getLayoutInflater();
-        final View dialogLayout = inflater.inflate(R.layout.dialog_update_user_tags, null);
-
-        final List<EditText> tagsViews = new ArrayList<>();
-        final TableLayout newTagsTable = (TableLayout) dialogLayout.findViewById(R.id.update_tags_table_layout);
-
-        final EditText addTagEditView = (EditText) dialogLayout.findViewById(R.id.update_tags_add_tag_edittext);
-        final EditText ttlEditView = (EditText) dialogLayout.findViewById(R.id.update_tags_ttl_edittext);
-
-        tagsViews.add(addTagEditView);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-
-        builder.setNeutralButton("Add Tag", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-
-        builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                List<String> tags = new ArrayList<>();
-                for (EditText editText : tagsViews) {
-                    tags.add(editText.getText().toString());
-                }
-                if (!ttlEditView.getText().toString().isEmpty()) {
-                    long ttl = Long.parseLong(ttlEditView.getText().toString());
-                    UserTagsManager.getInstance().updateUserTags(tags, ttl);
-                } else
-                    UserTagsManager.getInstance().updateUserTags(tags);
-            }
-        });
-
-        AlertDialog dialog = builder.create();
-
-        dialog.setView(dialogLayout);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-            }
-        });
-
-        dialog.show();
-
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TableRow row = new TableRow(dialogLayout.getContext());
-                TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
-                row.setLayoutParams(lp);
-                EditText editText = new EditText(dialogLayout.getContext());
-                editText.setHint("New Tag");
-                row.addView(editText);
-                tagsViews.add(editText);
-                newTagsTable.addView(row, 0);
-            }
-        });
+    private void handleUserCallback(SMPUser user, Set<String> deltas, SessionMError error) {
+        if (error != null)
+            Utils.createAlertDialog(this, error);
+        else {
+            refreshUI(user);
+        }
     }
 
-    private String updateNonEmptyField(EditText editText) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                super.onBackPressed();
+                break;
+        }
+        return true;
+    }
+
+    public static String updateNonEmptyField(EditText editText) {
         if (!editText.getText().toString().isEmpty())
             return editText.getText().toString();
         return null;
     }
 
-    private double updateNonEmptyFieldDouble(EditText editText) {
+    public static Double updateNonEmptyFieldDouble(EditText editText) {
         if (!editText.getText().toString().isEmpty())
             return Double.parseDouble(editText.getText().toString());
-        return 0;
+        return null;
     }
 }

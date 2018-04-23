@@ -6,14 +6,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.transaction.TransactionsManager;
-
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {

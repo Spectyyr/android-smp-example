@@ -7,12 +7,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityListener;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.core.api.provider.AuthenticationProvider;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
+import com.sessionm.identity.api.provider.SessionMOauthTokenProvider;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
 import com.sessionm.smp_auth.UserDetailsActivity;
@@ -35,10 +36,8 @@ public class SessionMTokenActivity extends BaseActivity implements
     private TextView mStatusTextView;
     private TextView mDetailTextView;
 
-    private IdentityManager identityManager;
-    private UserManager userManager;
-    private IdentityListener identityListener;
-    private UserListener userListener;
+    private SessionMOauthTokenProvider _sessionMOauthTokenProvider;
+    private UserManager _userManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,8 +45,8 @@ public class SessionMTokenActivity extends BaseActivity implements
         setContentView(R.layout.activity_sessionm_token);
 
         // Views
-        mStatusTextView = (TextView) findViewById(R.id.status);
-        mDetailTextView = (TextView) findViewById(R.id.detail);
+        mStatusTextView = findViewById(R.id.status);
+        mDetailTextView = findViewById(R.id.detail);
 
         // Buttons
         findViewById(R.id.authenticate_with_sample_token_button).setOnClickListener(this);
@@ -61,56 +60,54 @@ public class SessionMTokenActivity extends BaseActivity implements
             }
         });
 
-        identityManager = IdentityManager.getInstance();
-        userManager = UserManager.getInstance();
-
-        identityListener = new IdentityListener() {
+        _sessionMOauthTokenProvider = new SessionMOauthTokenProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthTokenProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
             @Override
-            public void onAuthStateUpdated(IdentityManager.AuthState authState) {
-                hideProgressDialog();
-            }
+            public void onUpdated(SessionMError sessionMError) {
 
-            @Override
-            public void onFailure(SessionMError sessionMError) {
-                hideProgressDialog();
-                Toast.makeText(SessionMTokenActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        };
-
-        userListener = new UserListener() {
-            @Override
-            public void onUserUpdated(SMPUser smpUser, Set<String> set) {
-                if (smpUser != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                updateUI(smpUser);
-            }
-
-            @Override
-            public void onFailure(SessionMError sessionMError) {
-                Toast.makeText(SessionMTokenActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
+        });
+        _userManager = UserManager.getInstance();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        identityManager.setListener(identityListener);
-        userManager.setListener(userListener);
     }
 
     private void authenticateWithToken(String token) {
         showProgressDialog();
-        identityManager.authenticateCoalitionWithToken(token);
+        _sessionMOauthTokenProvider.authenticateWithToken(token, "sessionm_oauth", new SessionMOauthProvider.SessionMOauthProviderListener() {
+            @Override
+            public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                hideProgressDialog();
+                if (sessionMError != null) {
+                    Toast.makeText(SessionMTokenActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                    @Override
+                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                        if (sessionMError != null) {
+                            Toast.makeText(SessionMTokenActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            if (smpUser != null) {
+                                // User is signed in
+                                Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
+                            } else {
+                                // User is signed out
+                                Log.d(TAG, "onAuthStateChanged:signed_out");
+                            }
+                            updateUI(smpUser);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void signOut() {
-        identityManager.logOutUser();
+        _sessionMOauthTokenProvider.logoutUser(null);
         updateUI(null);
     }
 

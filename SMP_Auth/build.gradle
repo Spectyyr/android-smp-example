@@ -38,10 +38,10 @@ configurations.all {
 }
 
 dependencies {
-    compile "com.sessionm.sdk:sessionm-sdk:${rootProject.sessionMSdkVersion}"
-    compile "com.sessionm.sdk:sessionm-sdk-webauth:${rootProject.sessionMSdkVersion}"
+    compile "com.sessionm.android:sessionm-identity:${rootProject.sessionMSdkVersion}"
+    compile "com.sessionm.android:sessionm-webauth:${rootProject.sessionMSdkVersion}"
     compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
-    compile 'com.squareup.okio:okio:1.13.0'
+    compile 'com.squareup.okio:okio:1.14.0'
     compile "com.google.code.gson:gson:${rootProject.gsonVersion}"
     compile "com.android.support:design:${rootProject.supportLibVersion}"
     compile "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"

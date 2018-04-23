@@ -8,11 +8,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.core.api.provider.AuthenticationProvider;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
 import com.sessionm.smp_auth.UserDetailsActivity;
@@ -31,9 +32,8 @@ public class WebAuthActivity extends BaseActivity implements
     private TextView mStatusTextView;
     private TextView mDetailTextView;
 
-    private IdentityManager identityManager;
-    private UserManager userManager;
-    private UserListener userListener;
+    private SessionMOauthProvider _sessionMOauthProvider;
+    private UserManager _userManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,8 +41,8 @@ public class WebAuthActivity extends BaseActivity implements
         setContentView(R.layout.activity_sessionm_web_auth);
 
         // Views
-        mStatusTextView = (TextView) findViewById(R.id.status);
-        mDetailTextView = (TextView) findViewById(R.id.detail);
+        mStatusTextView = findViewById(R.id.status);
+        mDetailTextView = findViewById(R.id.detail);
 
         // Buttons
         findViewById(R.id.authenticate_with_custom_tab).setOnClickListener(this);
@@ -51,49 +51,60 @@ public class WebAuthActivity extends BaseActivity implements
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.single_sign_out_button).setOnClickListener(this);
 
-        identityManager = IdentityManager.getInstance();
-        userManager = UserManager.getInstance();
-
-        userListener = new UserListener() {
+        _sessionMOauthProvider = new SessionMOauthProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
             @Override
-            public void onUserUpdated(SMPUser smpUser, Set<String> set) {
-                if (smpUser != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                updateUI(smpUser);
-            }
+            public void onUpdated(SessionMError sessionMError) {
 
-            @Override
-            public void onFailure(SessionMError sessionMError) {
-                Toast.makeText(WebAuthActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        };
+        });
+        _userManager = UserManager.getInstance();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        userManager.setListener(userListener);
     }
 
     private void authenticateWithWeb() {
         showProgressDialog();
-        IdentityManager.getInstance().startWebAuthorization(this, IdentityManager.WebAuthResponseType.AccessToken);
+        _sessionMOauthProvider.startWebAuthorization(this, SessionMOauthProvider.WebAuthResponseType.AccessToken, new SessionMOauthProvider.SessionMOauthProviderListener() {
+            @Override
+            public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                hideProgressDialog();
+                if (sessionMError != null) {
+                    Toast.makeText(WebAuthActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                    @Override
+                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                        if (sessionMError != null) {
+                            Toast.makeText(WebAuthActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            if (smpUser != null) {
+                                // User is signed in
+                                Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
+                            } else {
+                                // User is signed out
+                                Log.d(TAG, "onAuthStateChanged:signed_out");
+                            }
+                            updateUI(smpUser);
+                        }
+                    }
+                });
+            }
+        });
     }
 
 
-
     private void signOut() {
-        identityManager.logOutUser();
+        _sessionMOauthProvider.logoutUser(null);
         updateUI(null);
     }
 
     private void singleSignOut() {
-        identityManager.logOutUser();
+        _sessionMOauthProvider.logoutUser(null);
         String url = String.format(Locale.US, "https://login-demo.stg-sessionm.com/8c06e928d3082681e1dc40e39bdfac25686f65b9/logout?redirect_uri=sessionmsinglesignout2://test");
         Intent logOutIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(logOutIntent);
