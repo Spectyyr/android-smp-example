@@ -1,4 +1,3 @@
 include ':SMP_Campaigns', ':SMP_Rewards', ':SMP_Transactions', ':SMP_Inbox', ':SMP_Kotlin',
         ':SMP_PushNotification', ':SMP_Places', ':SMP_Receipt', ':SMP_LoyaltyCard',
-        ':SMP_Referrals', ':SMP_FCM', ':SMP_Geofence', 'SMP_Contents', ':SMP_Auth',
-        ':SMP_Events', ':SMP_Offers'
+        ':SMP_Referrals', ':SMP_FCM', ':SMP_Geofence', ':SMP_Auth', ':SMP_Events', ':SMP_Offers'

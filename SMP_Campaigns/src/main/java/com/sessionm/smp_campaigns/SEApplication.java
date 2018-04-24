@@ -6,10 +6,12 @@ package com.sessionm.smp_campaigns;
 
 import android.app.Application;
 
-public class SEApplication extends Application{
+import com.sessionm.core.api.SessionM;
+
+public class SEApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        SessionM.getInstance().startWithConfigFile(this);
+        SessionM.start(this);
     }
 }

@@ -15,8 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.campaign.data.FeedMessage;
+import com.sessionm.campaign.api.CampaignsManager;
+import com.sessionm.campaign.api.data.FeedMessage;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -55,9 +55,9 @@ public class CampaignsRecAdapter extends RecyclerView.Adapter<CampaignsRecAdapte
         holder.periodTextView.setText(item.getStartTime() + " - " + item.getEndTime());
 
         //There is no need to draw the description if it was not set
-        if (!TextUtils.isEmpty(item.getDescription())) {
+        if (!TextUtils.isEmpty(item.getDetails())) {
             //Returns the Message description, String
-            holder.descriptionTextView.setText(item.getDescription());
+            holder.descriptionTextView.setText(item.getDetails());
             holder.descriptionTextView.setVisibility(View.VISIBLE);
         } else {
             holder.descriptionTextView.setVisibility(View.GONE);
@@ -119,12 +119,12 @@ public class CampaignsRecAdapter extends RecyclerView.Adapter<CampaignsRecAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                item.notifyTapped();
+                //item.notifyTapped();
                 showDetails(item);
             }
         });
 
-        item.notifySeen();
+//        item.notifySeen();
     }
 
     @Override
@@ -139,7 +139,7 @@ public class CampaignsRecAdapter extends RecyclerView.Adapter<CampaignsRecAdapte
 
     //TODO Needs to handle more events
     private void showDetails(FeedMessage data) {
-        SessionM.getInstance().getCampaignsManager().executeMessageAction(data.getMessageID());
+        CampaignsManager.getInstance().executeMessageAction(data.getMessageID());
         FeedMessage.MessageActionType actionType = data.getActionType();
         if (!actionType.equals(FeedMessage.MessageActionType.FULL_SCREEN)) {
             _fragment.onItemTapped(actionType, data.getActionURL());

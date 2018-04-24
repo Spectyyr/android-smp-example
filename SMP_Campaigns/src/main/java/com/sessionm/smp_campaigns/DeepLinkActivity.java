@@ -13,7 +13,7 @@ public class DeepLinkActivity extends AppCompatActivity {
 
         String url = getIntent().getStringExtra("url");
 
-        TextView textView = (TextView) findViewById(R.id.deep_link_textview);
+        TextView textView = findViewById(R.id.deep_link_textview);
         textView.setText(url);
     }
 }

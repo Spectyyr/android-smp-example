@@ -81,7 +81,7 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
         SessionM.setAuthenticationProvider(_sessionMOauthTokenProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
             @Override
             public void onUpdated(SessionMError sessionMError) {
-               
+
             }
         });
         _userManager = UserManager.getInstance();

@@ -1,6 +1,6 @@
 /*
-* Copyright (c) 2016 SessionM. All rights reserved.
-*/
+ * Copyright (c) 2016 SessionM. All rights reserved.
+ */
 package com.sessionm.smp_transactions;
 
 import android.os.Bundle;
@@ -15,11 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.transaction.TransactionsListener;
-import com.sessionm.api.transaction.TransactionsManager;
-import com.sessionm.api.transaction.data.Transaction;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.transaction.api.TransactionsManager;
+import com.sessionm.transaction.api.data.Transaction;
 
 import java.util.List;
 
@@ -29,7 +27,7 @@ public class TransactionsFragment extends Fragment implements SwipeRefreshLayout
     private TransactionsRecAdapter _transactionsRecAdapter;
     private RecyclerView _recyclerView;
 
-    TransactionsManager _transactionsManager = SessionM.getInstance().getTransactionsManager();
+    TransactionsManager _transactionsManager = TransactionsManager.getInstance();
     private boolean noTransactions;
 
     @Override
@@ -37,15 +35,15 @@ public class TransactionsFragment extends Fragment implements SwipeRefreshLayout
         View rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _recyclerView = (RecyclerView) rootView.findViewById(R.id.transactions_feed_list);
+        _recyclerView = rootView.findViewById(R.id.transactions_feed_list);
         _recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         _recyclerView.setLayoutManager(llm);
-        _transactionsRecAdapter = new TransactionsRecAdapter(this);
+        _transactionsRecAdapter = new TransactionsRecAdapter();
         _recyclerView.setAdapter(_transactionsRecAdapter);
 
         return rootView;
@@ -58,31 +56,9 @@ public class TransactionsFragment extends Fragment implements SwipeRefreshLayout
         fetchAllTransactions();
     }
 
-    TransactionsListener _transactionListener = new TransactionsListener() {
-        @Override
-        public void onTransactionsFetched(List<Transaction> transactions, boolean hasMore) {
-            if (_swipeRefreshLayout.isRefreshing()) {
-                _swipeRefreshLayout.setRefreshing(false);
-            }
-            _transactionsRecAdapter.addTransactions(transactions, noTransactions);
-            noTransactions = false;
-            if (hasMore)
-                _transactionsManager.fetchMoreTransactions();
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            if (_swipeRefreshLayout.isRefreshing()) {
-                _swipeRefreshLayout.setRefreshing(false);
-            }
-            Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
     @Override
     public void onResume() {
         super.onResume();
-        _transactionsManager.setListener(_transactionListener);
     }
 
     @Override
@@ -97,6 +73,21 @@ public class TransactionsFragment extends Fragment implements SwipeRefreshLayout
 
     private void fetchAllTransactions() {
         noTransactions = true;
-        _transactionsManager.fetchTransactions(null, null, 50);
+        _transactionsManager.fetchTransactions(null, null, 50, new TransactionsManager.OnTransactionsFetchedListener() {
+            @Override
+            public void onFetched(List<Transaction> list, boolean b, SessionMError sessionMError) {
+                if (_swipeRefreshLayout.isRefreshing()) {
+                    _swipeRefreshLayout.setRefreshing(false);
+                }
+                if (sessionMError != null) {
+                    Toast.makeText(getActivity(), "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    _transactionsRecAdapter.addTransactions(list, noTransactions);
+                    noTransactions = false;
+                    if (b)
+                        _transactionsManager.fetchMoreTransactions();
+                }
+            }
+        });
     }
 }
