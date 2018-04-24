@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.inbox.data.InboxMessage;
+import com.sessionm.inbox.api.InboxManager;
+import com.sessionm.inbox.api.data.InboxMessage;
 
 public class InboxDetailActivity extends AppCompatActivity {
 
@@ -15,7 +15,7 @@ public class InboxDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inbox_detail);
 
         int index = getIntent().getExtras().getInt("index");
-        InboxMessage inboxMessage = SessionM.getInstance().getInboxManager().getInboxMessages().get(index);
+        InboxMessage inboxMessage = InboxManager.getInstance().getInboxMessages().get(index);
 
         TextView subjectText = findViewById(R.id.inbox_detail_subject);
         TextView bodyText = findViewById(R.id.inbox_detail_body);

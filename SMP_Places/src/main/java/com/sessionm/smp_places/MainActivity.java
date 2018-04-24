@@ -18,16 +18,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.place.PlacesListener;
-import com.sessionm.api.place.PlacesManager;
-import com.sessionm.api.place.data.CheckinResult;
-import com.sessionm.api.place.data.Place;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
+import com.sessionm.place.api.PlacesManager;
+import com.sessionm.place.api.data.CheckinResult;
+import com.sessionm.place.api.data.Place;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,10 +41,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TextView userBalanceTextView;
     private ToggleButton showMarkerToggle;
     private GoogleMap mMap;
-    private SessionM sessionM = SessionM.getInstance();
-    private PlacesManager placesManager;
+    private PlacesManager _placesManager = PlacesManager.getInstance();
     Map<String, Place> placesMap = new HashMap<>();
-
+    private SessionMOauthEmailProvider _sessionMOauthEmailProvider;
+    private UserManager _userManager;
     List<Marker> markers = new ArrayList<>();
 
     @Override
@@ -53,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        placesManager = sessionM.getPlacesManager();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -62,14 +60,45 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
 
+        _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, null);
+        _userManager = UserManager.getInstance();
+
         userBalanceTextView = findViewById(R.id.user_balance_textview);
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (UserManager.getInstance().getCurrentUser() == null)
-                    IdentityManager.getInstance().authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
+                    _sessionMOauthEmailProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (sessionMError != null) {
+                                Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                                    @Override
+                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                                        if (sessionMError != null) {
+                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (smpUser != null) {
+                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                                            } else
+                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 else
-                    IdentityManager.getInstance().logOutUser();
+                    _sessionMOauthEmailProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))
+                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                        }
+                    });
             }
         });
 
@@ -84,58 +113,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    PlacesListener _placesListener = new PlacesListener() {
-        @Override
-        public void onPlacesFetched(List<Place> list) {
-            mMap.clear();
-            markers.clear();
-            placesMap.clear();
-            for (Place place : list) {
-                LatLng latLng = new LatLng(place.getLat(), place.getLng());
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(place.getName())
-                        .snippet(place.getID()));
-                markers.add(marker);
-                placesMap.put(place.getID(), place);
-            }
-            showMarkerToggle.setChecked(true);
-        }
-
-        @Override
-        public void onCheckedIn(CheckinResult checkinResult) {
-            Toast.makeText(MainActivity.this, "Succuss! Can check in again at: " + checkinResult.getCanCheckinAgainAt(), Toast.LENGTH_LONG).show();
-            if (checkinResult.getMessage() != null)
-                sessionM.presentActivity(SessionM.ActivityType.PORTAL, checkinResult.getMessage().getActionURL());
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-            Toast.makeText(MainActivity.this, "Failed! " + sessionMError.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    };
-
     @Override
     protected void onResume() {
         super.onResume();
-        placesManager.setListener(_placesListener);
-        UserManager.getInstance().setListener(_userListener);
     }
-
-    UserListener _userListener = new UserListener() {
-        @Override
-        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
-            if (smpUser != null) {
-                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-            } else
-                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-
-        }
-    };
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -156,7 +137,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
                 public boolean onMyLocationButtonClick() {
-                    placesManager.fetchPlaces(mMap.getMyLocation());
+                    _placesManager.fetchPlaces(mMap.getMyLocation(), new PlacesManager.OnPlacesFetchedListener() {
+                        @Override
+                        public void onFetched(List<Place> list, SessionMError sessionMError) {
+                            if (sessionMError != null) {
+                                Toast.makeText(MainActivity.this, "Failed! " + sessionMError.getMessage(), Toast.LENGTH_LONG).show();
+                            } else {
+                                mMap.clear();
+                                markers.clear();
+                                placesMap.clear();
+                                for (Place place : list) {
+                                    LatLng latLng = new LatLng(place.getLat(), place.getLng());
+                                    Marker marker = mMap.addMarker(new MarkerOptions()
+                                            .position(latLng)
+                                            .title(place.getName())
+                                            .snippet(place.getID()));
+                                    markers.add(marker);
+                                    placesMap.put(place.getID(), place);
+                                }
+                                showMarkerToggle.setChecked(true);
+                            }
+                        }
+                    });
                     return false;
                 }
             });
@@ -165,7 +167,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onInfoWindowClick(Marker marker) {
                     Place currentPlace = placesMap.get(marker.getSnippet());
                     if (currentPlace.getCheckinStatus().equals(Place.CheckinStatus.CHECKABLE))
-                        placesManager.checkIn(currentPlace);
+                        _placesManager.checkIn(currentPlace, new PlacesManager.OnCheckedInListener() {
+                            @Override
+                            public void onCheckedIn(CheckinResult checkinResult, SessionMError sessionMError) {
+                                if (sessionMError != null) {
+                                    Toast.makeText(MainActivity.this, "Failed! " + sessionMError.getMessage(), Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Succuss! Can check in again at: " + checkinResult.getCanCheckinAgainAt(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
                     else
                         Toast.makeText(MainActivity.this, "Unable to check in! " + currentPlace.getCheckinStatus(), Toast.LENGTH_LONG).show();
                 }

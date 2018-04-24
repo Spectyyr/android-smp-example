@@ -17,8 +17,7 @@ package com.sessionm.smp_inbox;
 
 import android.app.Application;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMActivityLifecycleCallbacks;
+import com.sessionm.core.api.SessionM;
 
 public class SMApplication extends Application {
 
@@ -27,12 +26,10 @@ public class SMApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         if (instance == null) {
             instance = this;
         }
-
-        SessionM.getInstance().startWithConfigFile(this);
+        SessionM.start(this);
     }
 
     public static SMApplication getInstance() {
