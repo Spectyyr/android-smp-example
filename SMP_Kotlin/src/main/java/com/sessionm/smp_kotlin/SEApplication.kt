@@ -6,8 +6,6 @@ package com.sessionm.smp_kotlin
 
 import android.app.Application
 
-import com.sessionm.api.SessionM
-
 class SEApplication : Application() {
     override fun onCreate() {
         super.onCreate()

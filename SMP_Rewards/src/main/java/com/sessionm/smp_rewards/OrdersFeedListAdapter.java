@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.sessionm.api.reward.data.order.Order;
+import com.sessionm.reward.api.data.order.Order;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class OrdersFeedListAdapter extends RecyclerView.Adapter<OrdersFeedListAd
 
     private List<Order> _orders;
 
-    public OrdersFeedListAdapter(OrdersFragment fragment, List<Order> orders) {
+    public OrdersFeedListAdapter(List<Order> orders) {
         _orders = orders;
     }
 
@@ -41,7 +41,7 @@ public class OrdersFeedListAdapter extends RecyclerView.Adapter<OrdersFeedListAd
         holder.pointsTextView.setText("Points: " + order.getPoints());
         holder.statusTextView.setText("Status: " + order.getStatus());
         holder.createdAtTextView.setText("Created Time: " + order.getCreatedAt());
-        holder.descriptionTextView.setText("Description: " + order.getDescription());
+        holder.descriptionTextView.setText("Description: " + order.getDetails());
     }
 
     @Override
@@ -65,13 +65,13 @@ public class OrdersFeedListAdapter extends RecyclerView.Adapter<OrdersFeedListAd
 
         public OrdersViewHolder(View v) {
             super(v);
-            idTextView = (TextView) v.findViewById(R.id.order_id);
-            nameTextView = (TextView) v.findViewById(R.id.order_name);
-            quantityTextView = (TextView) v.findViewById(R.id.order_quantity);
-            pointsTextView = (TextView) v.findViewById(R.id.order_points);
-            statusTextView = (TextView) v.findViewById(R.id.order_status);
-            createdAtTextView = (TextView) v.findViewById(R.id.order_created_time);
-            descriptionTextView = (TextView) v.findViewById(R.id.order_description);
+            idTextView = v.findViewById(R.id.order_id);
+            nameTextView = v.findViewById(R.id.order_name);
+            quantityTextView = v.findViewById(R.id.order_quantity);
+            pointsTextView = v.findViewById(R.id.order_points);
+            statusTextView = v.findViewById(R.id.order_status);
+            createdAtTextView = v.findViewById(R.id.order_created_time);
+            descriptionTextView = v.findViewById(R.id.order_description);
         }
     }
 }

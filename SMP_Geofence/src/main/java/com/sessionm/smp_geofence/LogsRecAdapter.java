@@ -58,9 +58,9 @@ public class LogsRecAdapter extends RecyclerView.Adapter<LogsRecAdapter.LogsView
 
         public LogsViewHolder(View v) {
             super(v);
-            timestamp = (TextView) v.findViewById(R.id.timestamp);
-            name = (TextView) v.findViewById(R.id.name);
-            message = (TextView) v.findViewById(R.id.message);
+            timestamp = v.findViewById(R.id.timestamp);
+            name = v.findViewById(R.id.name);
+            message = v.findViewById(R.id.message);
         }
     }
 }

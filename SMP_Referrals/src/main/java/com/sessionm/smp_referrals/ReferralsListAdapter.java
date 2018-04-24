@@ -10,18 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.sessionm.api.referral.data.Referral;
+import com.sessionm.referral.api.data.Referral;
 
 import java.util.List;
 
 //Adapter class to draw Transaction List
 public class ReferralsListAdapter extends RecyclerView.Adapter<ReferralsListAdapter.ReferralsViewHolder> {
 
-    private final ReferralsFragment _fragment;
     private final List<Referral> _referrals;
 
-    public ReferralsListAdapter(ReferralsFragment fragment, List<Referral> referrals) {
-        _fragment = fragment;
+    public ReferralsListAdapter(List<Referral> referrals) {
         _referrals = referrals;
     }
 
@@ -71,15 +69,15 @@ public class ReferralsListAdapter extends RecyclerView.Adapter<ReferralsListAdap
 
         public ReferralsViewHolder(View v) {
             super(v);
-            idTextView = (TextView) v.findViewById(R.id.referral_id);
-            textView_status = (TextView) v.findViewById(R.id.referral_status);
-            textView_pending_time = (TextView) v.findViewById(R.id.referral_pending_time);
-            textView_referee = (TextView) v.findViewById(R.id.referral_referee);
-            textView_email = (TextView) v.findViewById(R.id.referral_email);
-            textView_number = (TextView) v.findViewById(R.id.referral_number);
-            textView_origin = (TextView) v.findViewById(R.id.referral_origin);
-            textView_source = (TextView) v.findViewById(R.id.referral_source);
-            textView_client_data = (TextView) v.findViewById(R.id.referral_client_data);
+            idTextView = v.findViewById(R.id.referral_id);
+            textView_status = v.findViewById(R.id.referral_status);
+            textView_pending_time = v.findViewById(R.id.referral_pending_time);
+            textView_referee = v.findViewById(R.id.referral_referee);
+            textView_email = v.findViewById(R.id.referral_email);
+            textView_number = v.findViewById(R.id.referral_number);
+            textView_origin = v.findViewById(R.id.referral_origin);
+            textView_source = v.findViewById(R.id.referral_source);
+            textView_client_data = v.findViewById(R.id.referral_client_data);
         }
     }
 }

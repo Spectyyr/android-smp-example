@@ -72,9 +72,9 @@ public class MenuAdapter extends SwipeMenuAdapter<MenuAdapter.DefaultViewHolder>
         DefaultViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            subjectTextView = (TextView) itemView.findViewById(R.id.subject_textview);
-            timestampTextView = (TextView) itemView.findViewById(R.id.timestamp_textview);
-            bodyTextView = (TextView) itemView.findViewById(R.id.body_textview);
+            subjectTextView = itemView.findViewById(R.id.subject_textview);
+            timestampTextView = itemView.findViewById(R.id.timestamp_textview);
+            bodyTextView = itemView.findViewById(R.id.body_textview);
         }
 
         void setOnItemClickListener(OnItemClickListener onItemClickListener) {

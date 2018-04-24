@@ -17,4 +17,7 @@
     <string name="permission_rationale_write_external">Access to the write file is required to demonstrate this feature.</string>
     <string name="write_external_permission_denied">This sample requires write file permission to enable the upload receipt feature. Please try again and grant access to write file.\nIf the permission has been permanently denied, it can be enabled from the System Settings.</string>
     <string name="permission_required_toast">Write file permission is required for this demo.</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="ok">OK</string>
 </resources>

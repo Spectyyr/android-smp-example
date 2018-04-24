@@ -1,11 +1,12 @@
 /*
-* Copyright (c) 2016 SessionM. All rights reserved.
-*/
+ * Copyright (c) 2018 SessionM. All rights reserved.
+ */
 
 package com.sessionm.smp_receipt;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -18,13 +19,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.receipt.ReceiptsListener;
-import com.sessionm.api.receipt.ReceiptsManager;
-import com.sessionm.api.receipt.data.Receipt;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.receipt.api.ReceiptsListener;
+import com.sessionm.receipt.api.ReceiptsManager;
+import com.sessionm.receipt.api.data.Receipt;
+import com.sessionm.receipt.api.data.ReceiptResult;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -34,29 +36,25 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private SwipeRefreshLayout _swipeRefreshLayout;
     private ReceiptsRecAdapter _listAdapter;
-    List<Receipt> _receipts;
     private RecyclerView _recyclerView;
 
     private int position = 0;
 
-    ReceiptsManager _receiptManager = SessionM.getInstance().getReceiptsManager();
+    ReceiptsManager _receiptManager = ReceiptsManager.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_receipts, container, false);
+        View rootView = inflater.inflate(R.layout.receipt_fragment, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _receipts = new ArrayList<>(_receiptManager.getReceipts());
-
-        _recyclerView = (RecyclerView) rootView.findViewById(R.id.receipts_feed_list);
-        _recyclerView.setHasFixedSize(true);
+        _recyclerView = rootView.findViewById(R.id.receipts_feed_list);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         _recyclerView.setLayoutManager(llm);
-        _listAdapter = new ReceiptsRecAdapter(this, _receipts);
+        _listAdapter = new ReceiptsRecAdapter(new ArrayList<>(_receiptManager.getReceipts()));
         _recyclerView.setAdapter(_listAdapter);
 
         return rootView;
@@ -75,7 +73,7 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         @Override
         public void onReceiptsFetched(List<Receipt> receipts) {
-            refreshListUI(receipts);
+            refreshList(receipts);
         }
 
         @Override
@@ -86,7 +84,7 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
         @Override
         public void onFailure(SessionMError error) {
             _swipeRefreshLayout.setRefreshing(false);
-            refreshListUI(new ArrayList<Receipt>());
+            refreshList(new ArrayList<Receipt>());
             Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
@@ -107,15 +105,9 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
         _receiptManager.fetchReceipts(100, 1);
     }
 
-    private void refreshListUI(List<Receipt> receipts) {
+    public void refreshList(List<Receipt> receipts) {
         _swipeRefreshLayout.setRefreshing(false);
-        if (ReceiptsFragment.this._receipts == null) {
-            ReceiptsFragment.this._receipts = new ArrayList<>();
-        } else {
-            ReceiptsFragment.this._receipts.clear();
-        }
-        ReceiptsFragment.this._receipts.addAll(receipts);
-        _listAdapter.notifyDataSetChanged();
+        _listAdapter.replaceData(receipts);
     }
 
     public void popUpImageDialog(final List<String> urls) {
@@ -128,8 +120,8 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
         });
         AlertDialog dialog = builder.create();
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View dialogLayout = inflater.inflate(R.layout.dialog_image, null);
-        final ImageView imageView = (ImageView) dialogLayout.findViewById(R.id.dialog_imageview);
+        View dialogLayout = inflater.inflate(R.layout.receipt_image_dialog, null);
+        final ImageView imageView = dialogLayout.findViewById(R.id.dialog_imageview);
         Picasso.with(getActivity())
                 .load(urls.get(0))
                 .resize(1280, 800)
@@ -166,5 +158,122 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
         });
 
         dialog.show();
+    }
+
+    public class ReceiptsRecAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private List<Receipt> _items;
+
+        public ReceiptsRecAdapter(List<Receipt> items) {
+            setList(items);
+        }
+
+        public void replaceData(List<Receipt> items) {
+            setList(items);
+            notifyDataSetChanged();
+        }
+
+        private void setList(List<Receipt> items) {
+            _items = items;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public int getItemCount() {
+            return _items.size();
+        }
+
+        public Receipt getItem(int i) {
+            return _items.get(i);
+        }
+
+        @Override
+        public ReceiptsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            final View itemView = LayoutInflater.
+                    from(parent.getContext()).
+                    inflate(R.layout.receipt_item, parent, false);
+
+            return new ReceiptsViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+            ReceiptsViewHolder holder = (ReceiptsViewHolder) viewHolder;
+            final Receipt receipt = getItem(position);
+
+            holder.textViewName.setText("ID: " + receipt.getID());
+            holder.textViewStatus.setText("Status: " + receipt.getStatus().toString());
+            holder.textViewCreateTime.setText("Created Time: " + receipt.getCreatedTime());
+            holder.textViewUpdateTime.setText("Updated Time: " + receipt.getUpdatedTime());
+            holder.textViewImageCount.setText("Image Count: " + receipt.getImageCount());
+            if (receipt.getStatus().equals(Receipt.ReceiptStatus.VALID)) {
+                String resultsString = "";
+                for (ReceiptResult receiptResult : receipt.getResults()) {
+                    resultsString += "\n" + receiptResult.toString();
+                }
+                holder.textViewValidPurchaseDate.setVisibility(View.VISIBLE);
+                holder.textViewValidStoreName.setVisibility(View.VISIBLE);
+                holder.textViewValidResults.setVisibility(View.VISIBLE);
+                holder.textViewInvalidCode.setVisibility(View.GONE);
+                holder.textViewInvalidReason.setVisibility(View.GONE);
+                holder.textViewValidPurchaseDate.setText("Purchase Date: " + receipt.getReceiptDate());
+                holder.textViewValidStoreName.setText("Store Name: " + receipt.getStoreName());
+                holder.textViewValidResults.setText("Results: " + resultsString);
+            } else if (receipt.getStatus().equals(Receipt.ReceiptStatus.INVALID)) {
+                holder.textViewInvalidCode.setVisibility(View.VISIBLE);
+                holder.textViewInvalidReason.setVisibility(View.VISIBLE);
+                holder.textViewValidPurchaseDate.setVisibility(View.GONE);
+                holder.textViewValidStoreName.setVisibility(View.GONE);
+                holder.textViewValidResults.setVisibility(View.GONE);
+                holder.textViewInvalidCode.setText("Invalid Code: " + receipt.getInvalidCode());
+                holder.textViewInvalidReason.setText("Invalid Reason: " + receipt.getInvalidReason());
+            } else {
+                holder.textViewInvalidCode.setVisibility(View.GONE);
+                holder.textViewInvalidReason.setVisibility(View.GONE);
+                holder.textViewValidPurchaseDate.setVisibility(View.GONE);
+                holder.textViewValidStoreName.setVisibility(View.GONE);
+                holder.textViewValidResults.setVisibility(View.GONE);
+            }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (receipt.getImageCount() > 0 && receipt.getImageURLs().size() > 0) {
+                        List<String> urls = receipt.getImageURLs();
+                        popUpImageDialog(urls);
+                    }
+                }
+            });
+        }
+
+        public class ReceiptsViewHolder extends RecyclerView.ViewHolder {
+            TextView textViewName;
+            TextView textViewStatus;
+            TextView textViewInvalidCode;
+            TextView textViewInvalidReason;
+            TextView textViewCreateTime;
+            TextView textViewUpdateTime;
+            TextView textViewImageCount;
+            TextView textViewValidPurchaseDate;
+            TextView textViewValidStoreName;
+            TextView textViewValidResults;
+
+            public ReceiptsViewHolder(View v) {
+                super(v);
+                textViewName = v.findViewById(R.id.receipt_name);
+                textViewStatus = v.findViewById(R.id.receipt_status);
+                textViewInvalidCode = v.findViewById(R.id.receipt_invalid_code);
+                textViewInvalidReason = v.findViewById(R.id.receipt_invalid_reason);
+                textViewCreateTime = v.findViewById(R.id.receipt_create_time);
+                textViewUpdateTime = v.findViewById(R.id.receipt_update_time);
+                textViewImageCount = v.findViewById(R.id.receipt_image_count);
+                textViewValidPurchaseDate = v.findViewById(R.id.receipt_valid_purchase_date);
+                textViewValidStoreName = v.findViewById(R.id.receipt_valid_store);
+                textViewValidResults = v.findViewById(R.id.receipt_valid_results);
+            }
+        }
     }
 }

@@ -40,13 +40,13 @@ public class LoyaltyFragment extends Fragment implements SwipeRefreshLayout.OnRe
         View rootView = inflater.inflate(R.layout.fragment_loyalty, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
         _loyaltyManager = SessionM.getInstance().getLoyaltyCardsManager();
         _cards = new ArrayList<>(_loyaltyManager.getLoyaltyCards());
 
-        _recyclerView = (RecyclerView) rootView.findViewById(R.id.card_list);
+        _recyclerView = rootView.findViewById(R.id.card_list);
         _recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);

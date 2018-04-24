@@ -96,15 +96,15 @@ public class TransactionsRecAdapter extends RecyclerView.Adapter<TransactionsRec
 
         public TransactionsViewHolder(View v) {
             super(v);
-            balanceTextView = (TextView) v.findViewById(R.id.transaction_balance);
-            dateTextView = (TextView) v.findViewById(R.id.transaction_date);
-            descriptionTextView = (TextView) v.findViewById(R.id.transaction_description);
-            pointsTextView = (TextView) v.findViewById(R.id.transaction_points);
-            recordIDTextView = (TextView) v.findViewById(R.id.transaction_record_id);
-            transactionTextView = (TextView) v.findViewById(R.id.transaction_transaction);
-            sourceTextView = (TextView) v.findViewById(R.id.transaction_source);
-            typeTextView = (TextView) v.findViewById(R.id.transaction_type);
-            recordModelIDTextView = (TextView) v.findViewById(R.id.record_model_id);
+            balanceTextView = v.findViewById(R.id.transaction_balance);
+            dateTextView = v.findViewById(R.id.transaction_date);
+            descriptionTextView = v.findViewById(R.id.transaction_description);
+            pointsTextView = v.findViewById(R.id.transaction_points);
+            recordIDTextView = v.findViewById(R.id.transaction_record_id);
+            transactionTextView = v.findViewById(R.id.transaction_transaction);
+            sourceTextView = v.findViewById(R.id.transaction_source);
+            typeTextView = v.findViewById(R.id.transaction_type);
+            recordModelIDTextView = v.findViewById(R.id.record_model_id);
         }
     }
 }

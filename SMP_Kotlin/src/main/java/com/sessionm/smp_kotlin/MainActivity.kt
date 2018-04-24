@@ -7,13 +7,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.widget.TextView
-import com.sessionm.api.SessionMError
-import com.sessionm.api.campaign.CampaignsManager
-import com.sessionm.api.campaign.data.FeedMessage
-import com.sessionm.api.identity.IdentityManager
-import com.sessionm.api.identity.UserListener
-import com.sessionm.api.identity.UserManager
-import com.sessionm.api.identity.data.SMPUser
 
 class MainActivity : AppCompatActivity(), CampaignsFragment.OnDeepLinkTappedListener {
     companion object {

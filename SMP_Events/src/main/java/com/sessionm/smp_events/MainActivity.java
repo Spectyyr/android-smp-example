@@ -105,16 +105,16 @@ public class MainActivity extends AppCompatActivity {
 
         actionBar();
 
-        _eventName = (TextView) findViewById(R.id.event);             // Name of event to Send
+        _eventName = findViewById(R.id.event);             // Name of event to Send
 
-        _tabs = (TabLayout) findViewById(R.id.tabs);
-        _pager = (ViewPager)findViewById(R.id.pager);
+        _tabs = findViewById(R.id.tabs);
+        _pager = findViewById(R.id.pager);
 
         _adapter = new BehaviorPagerAdapter(getSupportFragmentManager());
         _pager.setAdapter(_adapter);
         _tabs.setupWithViewPager(_pager);
 
-        _pb = (ImageButton) findViewById(R.id.progressBar);
+        _pb = findViewById(R.id.progressBar);
     }
 
     @Override
@@ -224,10 +224,10 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void actionBar() {
-        Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
+        Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
 
-        authenticateButton = (Button)findViewById(R.id.authenticate_button);
+        authenticateButton = findViewById(R.id.authenticate_button);
         authenticateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        userTextView = (TextView)findViewById(R.id.user_textview);
-        userBalanceTextView = (TextView) findViewById(R.id.user_balance_textview);
+        userTextView = findViewById(R.id.user_textview);
+        userBalanceTextView = findViewById(R.id.user_balance_textview);
     }
 }

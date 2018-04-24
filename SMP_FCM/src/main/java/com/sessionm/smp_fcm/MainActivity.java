@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
 
         sessionM = SessionM.getInstance();
 
-        Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
+        Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
 
-        userBalanceTextView = (TextView) findViewById(R.id.user_balance_textview);
+        userBalanceTextView = findViewById(R.id.user_balance_textview);
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        useBundleExtrasButton = (ToggleButton) findViewById(R.id.use_bundle_extras_toggle);
+        useBundleExtrasButton = findViewById(R.id.use_bundle_extras_toggle);
         useBundleExtrasButton.setChecked(sessionM.getMessageManager().isUseBundleExtrasEnabled());
         useBundleExtrasButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

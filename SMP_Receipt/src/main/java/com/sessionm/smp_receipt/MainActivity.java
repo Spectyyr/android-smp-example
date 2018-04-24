@@ -17,36 +17,38 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.receipt.ReceiptsManager;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
+import com.sessionm.receipt.api.ReceiptsManager;
+import com.sessionm.smp_receipt.upload.ReceiptUploadActivity;
+import com.sessionm.smp_receipt.upload.ReceiptUploadingService;
 
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String SAMPLE_USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA5LTI3IDE1OjMwOjU1ICswMDAwIiwiZXhwIjoiMjAxNy0xMC0xMSAxNTozMDo1NSArMDAwMCIsImRhdGEiOnsiaWQiOiJkYTYxZGNkYS1hMzk4LTExZTctODcxZi05ZjZkNTQzYmUwNDAifX0.iBrHv9-INszE-SSL9rsuNnLDv7DBBaIUuqM6XDUvecxzap2CuoN4v3juXPvw-dZWuzbiHY2H3TPJJlRcI5_fZPxH2FjDqGA1S5nwEwEYVn9D1oMvnXUB6jLIq3ev4omE7ZUj5zVytsn_rKdryllfHro_8g5TneiOUoFBa_1N_RcC9AK_8640xbYPtZaNWhxsJiCwTsKWaLSYQ6RQv_xo1M4reL56dbjJ16Y-50HUy6Pxax6biKVvpjNRDizrkY0bka07lHMLAHMZD5-D3OYnxpxyg9aVX2kJd36iZuwsKaXVMtrCzwmzzGuhQD1PUUhC43wkNUbYw9z2d94v0FDxvQ";
-
     private static final int WRITE_EXTERNAL_PERMISSION_REQUEST_CODE = 1;
-    private TextView userBalanceTextView;
-    private FloatingActionButton newUploadButton;
+    private static final String TEST_RECEIPT_CAMPAIGN_ID = "138";
+    private FloatingActionButton _newUploadButton;
 
-    private SessionM sessionM = SessionM.getInstance();
+    private static final String SAMPLE_USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA5LTI3IDE1OjMwOjU1ICswMDAwIiwiZXhwIjoiMjAxNy0xMC0xMSAxNTozMDo1NSArMDAwMCIsImRhdGEiOnsiaWQiOiJkYTYxZGNkYS1hMzk4LTExZTctODcxZi05ZjZkNTQzYmUwNDAifX0.iBrHv9-INszE-SSL9rsuNnLDv7DBBaIUuqM6XDUvecxzap2CuoN4v3juXPvw-dZWuzbiHY2H3TPJJlRcI5_fZPxH2FjDqGA1S5nwEwEYVn9D1oMvnXUB6jLIq3ev4omE7ZUj5zVytsn_rKdryllfHro_8g5TneiOUoFBa_1N_RcC9AK_8640xbYPtZaNWhxsJiCwTsKWaLSYQ6RQv_xo1M4reL56dbjJ16Y-50HUy6Pxax6biKVvpjNRDizrkY0bka07lHMLAHMZD5-D3OYnxpxyg9aVX2kJd36iZuwsKaXVMtrCzwmzzGuhQD1PUUhC43wkNUbYw9z2d94v0FDxvQ";
+    private TextView userBalanceTextView;
+    private SessionMOauthEmailProvider _sessionMOauthEmailProvider;
+    private UserManager _userManager;
+    private FloatingActionButton referAFriendButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
+        setContentView(R.layout.receipt_activity);
+        Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
-
-        newUploadButton = (FloatingActionButton) findViewById(R.id.action_upload_receipt);
-        newUploadButton.setOnClickListener(new View.OnClickListener() {
+        _newUploadButton = findViewById(R.id.action_upload_receipt);
+        _newUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -60,14 +62,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        userBalanceTextView = (TextView) findViewById(R.id.user_balance_textview);
+        _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, null);
+        _userManager = UserManager.getInstance();
+
+        userBalanceTextView = findViewById(R.id.user_balance_textview);
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (UserManager.getInstance().getCurrentUser() == null)
-                    IdentityManager.getInstance().authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
+                    _sessionMOauthEmailProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (sessionMError != null) {
+                                Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                                    @Override
+                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                                        if (sessionMError != null) {
+                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (smpUser != null) {
+                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                                            } else
+                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 else
-                    IdentityManager.getInstance().logOutUser();
+                    _sessionMOauthEmailProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))
+                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                        }
+                    });
             }
         });
     }
@@ -75,28 +108,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        UserManager.getInstance().setListener(_userListener);
+        ReceiptsManager.getInstance().fetchReceipts(100, 1);
     }
-
-    UserListener _userListener = new UserListener() {
-        @Override
-        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
-            if (smpUser != null) {
-                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-            } else
-                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-            ReceiptsManager.getInstance().fetchReceipts(100, 1);
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-
-        }
-    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == SessionM.RECEIPT_UPLOAD_RESULT_CODE) {
+        if (requestCode == 1) {
             if (resultCode == RESULT_OK)
                 Toast.makeText(this, "Receipt uploaded!", Toast.LENGTH_SHORT).show();
             else if (resultCode == RESULT_CANCELED) {
@@ -109,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkHasIncompleteReceipts() {
-        ReceiptsManager receiptsManager = SessionM.getInstance().getReceiptsManager();
+        ReceiptsManager receiptsManager = ReceiptsManager.getInstance();
         if (receiptsManager.hasIncompleteReceipts()) {
             popUpUploadIncompleteReceiptsDialog();
         } else {
@@ -118,22 +135,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startUploadReceipt() {
-//        sessionM.getReceiptsManager().setUploadReceiptActivityColors(null, null, null, "#A3BE5F", null);
-//        sessionM.getReceiptsManager().startUploadReceiptActivity(this, "14821", null, null);
-        Intent startIntent = new Intent(MainActivity.this, ReceiptUploadingService.class);
+        Intent startIntent = new Intent(this, ReceiptUploadingService.class);
         startService(startIntent);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("welcome", true);
+        bundle.putString("campaign_id", TEST_RECEIPT_CAMPAIGN_ID);
+        Intent uploadIntent = new Intent(this, ReceiptUploadActivity.class);
+        uploadIntent.putExtras(bundle);
+        this.startActivity(uploadIntent);
     }
 
     protected void popUpUploadIncompleteReceiptsDialog() {
 
         LayoutInflater inflater = getLayoutInflater();
-        View dialogLayout = inflater.inflate(R.layout.dialog_upload_incomplete_receipts, null);
+        View dialogLayout = inflater.inflate(R.layout.receipt_upload_incomplete_dialog, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sessionM.getReceiptsManager().uploadIncompleteReceipt(null, false);
+                ReceiptsManager.getInstance().uploadIncompleteReceipt(null, false);
             }
         }).setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override

@@ -62,10 +62,10 @@ public class RetailerListAdapter extends BaseAdapter {
                 inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.feed_item_retailer, null);
             holder = new ViewHolder();
-            holder.name = (TextView) convertView.findViewById(R.id.retailer);
-            holder.card = (TextView) convertView.findViewById(R.id.card);
-            holder.icon = (ImageView) convertView.findViewById(R.id.retailer_icon);
-            holder.image = (ImageView) convertView.findViewById(R.id.image);
+            holder.name = convertView.findViewById(R.id.retailer);
+            holder.card = convertView.findViewById(R.id.card);
+            holder.icon = convertView.findViewById(R.id.retailer_icon);
+            holder.image = convertView.findViewById(R.id.image);
 
             convertView.setTag(holder);
         } else {

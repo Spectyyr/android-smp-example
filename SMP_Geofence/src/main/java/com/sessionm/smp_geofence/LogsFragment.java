@@ -28,7 +28,7 @@ public class LogsFragment extends Fragment {
 
         final List<GeofenceLog> items = new ArrayList<>();
 
-        _recyclerView = (RecyclerView) v.findViewById(R.id.logs_recylerview);
+        _recyclerView = v.findViewById(R.id.logs_recylerview);
         _recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);

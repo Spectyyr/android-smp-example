@@ -10,16 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.referral.ReferralsManager;
-import com.sessionm.api.referral.data.Referral;
-import com.sessionm.api.referral.data.ReferralRequest;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.core.api.provider.AuthenticationProvider;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
+import com.sessionm.referral.api.ReferralsManager;
+import com.sessionm.referral.api.data.Referral;
+import com.sessionm.referral.api.data.ReferralRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,22 +30,19 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
     private static final String SAMPLE_USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA5LTI3IDE1OjMwOjU1ICswMDAwIiwiZXhwIjoiMjAxNy0xMC0xMSAxNTozMDo1NSArMDAwMCIsImRhdGEiOnsiaWQiOiJkYTYxZGNkYS1hMzk4LTExZTctODcxZi05ZjZkNTQzYmUwNDAifX0.iBrHv9-INszE-SSL9rsuNnLDv7DBBaIUuqM6XDUvecxzap2CuoN4v3juXPvw-dZWuzbiHY2H3TPJJlRcI5_fZPxH2FjDqGA1S5nwEwEYVn9D1oMvnXUB6jLIq3ev4omE7ZUj5zVytsn_rKdryllfHro_8g5TneiOUoFBa_1N_RcC9AK_8640xbYPtZaNWhxsJiCwTsKWaLSYQ6RQv_xo1M4reL56dbjJ16Y-50HUy6Pxax6biKVvpjNRDizrkY0bka07lHMLAHMZD5-D3OYnxpxyg9aVX2kJd36iZuwsKaXVMtrCzwmzzGuhQD1PUUhC43wkNUbYw9z2d94v0FDxvQ";
-
     private TextView userBalanceTextView;
+    private SessionMOauthEmailProvider _sessionMOauthEmailProvider;
+    private UserManager _userManager;
     private FloatingActionButton referAFriendButton;
-
-    private SessionM sessionM = SessionM.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
+        Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
-
-
-        referAFriendButton = (FloatingActionButton) findViewById(R.id.action_refer_a_friend);
+        referAFriendButton = findViewById(R.id.action_refer_a_friend);
         referAFriendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,62 +50,76 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        userBalanceTextView = (TextView) findViewById(R.id.user_balance_textview);
+        _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
+            @Override
+            public void onUpdated(SessionMError sessionMError) {
+
+            }
+        });
+        _userManager = UserManager.getInstance();
+
+        userBalanceTextView = findViewById(R.id.user_balance_textview);
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (UserManager.getInstance().getCurrentUser() == null)
-                    IdentityManager.getInstance().authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
+                    _sessionMOauthEmailProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (sessionMError != null) {
+                                Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                                    @Override
+                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                                        if (sessionMError != null) {
+                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (smpUser != null) {
+                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                                            } else
+                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 else
-                    IdentityManager.getInstance().logOutUser();
+                    _sessionMOauthEmailProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))
+                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                        }
+                    });
             }
         });
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        UserManager.getInstance().setListener(_userListener);
-    }
-
-    UserListener _userListener = new UserListener() {
-        @Override
-        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
-            if (smpUser != null) {
-                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-            } else
-                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-            ReferralsManager.getInstance().fetchReferrals();
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-
-        }
-    };
 
     public void popUpCreateReferralDialog() {
         LayoutInflater inflater = getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_create_referral, null);
 
-        final EditText refereeEdittext = (EditText) dialogLayout.findViewById(R.id.dialog_referral_referee);
-        final EditText emailEdittext = (EditText) dialogLayout.findViewById(R.id.dialog_referral_email);
-        final EditText phoneNumberEdittext = (EditText) dialogLayout.findViewById(R.id.dialog_referral_phone_number);
-        final EditText originEdittext = (EditText) dialogLayout.findViewById(R.id.dialog_referral_origin);
-        final EditText sourceEdittext = (EditText) dialogLayout.findViewById(R.id.dialog_referral_source);
-        final EditText clientDataEdittext = (EditText) dialogLayout.findViewById(R.id.dialog_referral_client_data);
+        final EditText refereeEdittext = dialogLayout.findViewById(R.id.dialog_referral_referee);
+        final EditText emailEdittext = dialogLayout.findViewById(R.id.dialog_referral_email);
+        final EditText phoneNumberEdittext = dialogLayout.findViewById(R.id.dialog_referral_phone_number);
+        final EditText originEdittext = dialogLayout.findViewById(R.id.dialog_referral_origin);
+        final EditText sourceEdittext = dialogLayout.findViewById(R.id.dialog_referral_source);
+        final EditText clientDataEdittext = dialogLayout.findViewById(R.id.dialog_referral_client_data);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setNeutralButton("Create Random", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                SessionM.getInstance().getReferralsManager().sendReferrals(createRandomReferralRequest());
+                ReferralsManager.getInstance().sendReferrals(createRandomReferralRequest());
             }
         });
         builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                SessionM.getInstance().getReferralsManager().sendReferrals(
+                ReferralsManager.getInstance().sendReferrals(
                         createReferralRequest(refereeEdittext.getText().toString(),
                                 emailEdittext.getText().toString(),
                                 phoneNumberEdittext.getText().toString(),

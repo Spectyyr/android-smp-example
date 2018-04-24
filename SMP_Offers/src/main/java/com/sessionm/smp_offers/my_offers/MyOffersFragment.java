@@ -40,10 +40,10 @@ public class MyOffersFragment extends Fragment implements SwipeRefreshLayout.OnR
         View rootView = inflater.inflate(R.layout.my_offers_fragment, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _recyclerView = (RecyclerView) rootView.findViewById(R.id.offers_list);
+        _recyclerView = rootView.findViewById(R.id.offers_list);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         _recyclerView.setLayoutManager(llm);

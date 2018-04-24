@@ -1,6 +1,6 @@
 /*
-* Copyright (c) 2016 SessionM. All rights reserved.
-*/
+ * Copyright (c) 2016 SessionM. All rights reserved.
+ */
 package com.sessionm.smp_referrals;
 
 import android.os.Bundle;
@@ -14,12 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.referral.ReferralsListener;
-import com.sessionm.api.referral.ReferralsManager;
-import com.sessionm.api.referral.data.Referral;
-import com.sessionm.api.referral.data.ReferralError;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.referral.api.ReferralsManager;
+import com.sessionm.referral.api.data.Referral;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,62 +33,50 @@ public class ReferralsFragment extends Fragment implements SwipeRefreshLayout.On
         View rootView = inflater.inflate(R.layout.fragment_referrals, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.referral_swipelayout);
+        _swipeRefreshLayout = rootView.findViewById(R.id.referral_swipelayout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _referralsManager = SessionM.getInstance().getReferralsManager();
+        _referralsManager = ReferralsManager.getInstance();
         _referrals = new ArrayList<>(_referralsManager.getReferrals());
 
-        _recyclerView = (RecyclerView) rootView.findViewById(R.id.referrals_list);
+        _recyclerView = rootView.findViewById(R.id.referrals_list);
         _recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         _recyclerView.setLayoutManager(llm);
-        _referralsListAdapter = new ReferralsListAdapter(this, _referrals);
+        _referralsListAdapter = new ReferralsListAdapter(_referrals);
         _recyclerView.setAdapter(_referralsListAdapter);
 
         return rootView;
     }
 
-    ReferralsListener _referralsListener = new ReferralsListener() {
-        @Override
-        public void onReferralsFetched(List<Referral> referrals) {
-            refreshList(referrals);
-        }
-
-        @Override
-        public void onReferralsSent(List<Referral> list, List<ReferralError> list1, SessionMError sessionMError) {
-            Toast.makeText(getActivity(), "Success!", Toast.LENGTH_SHORT).show();
-            _referralsManager.fetchReferrals();
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            _swipeRefreshLayout.setRefreshing(false);
-            Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
-            refreshList(_referralsManager.getReferrals());
-        }
-    };
-
     @Override
     public void onResume() {
         super.onResume();
-        _referralsManager.setListener(_referralsListener);
-        _referralsManager.fetchReferrals();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
+        fetchReferrals();
     }
 
     @Override
     public void onRefresh() {
-        _referralsManager.fetchReferrals();
+        fetchReferrals();
+    }
+
+    private void fetchReferrals() {
+        _referralsManager.fetchReferrals(new ReferralsManager.OnReferralsFetchedListener() {
+            @Override
+            public void onFetched(List<Referral> list, SessionMError sessionMError) {
+                if (sessionMError != null) {
+                    Toast.makeText(getActivity(), sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                refreshList(list);
+            }
+        });
     }
 
     private void refreshList(List<Referral> referrals) {
         _swipeRefreshLayout.setRefreshing(false);
+        if (referrals == null)
+            return;
         if (_referrals == null) {
             _referrals = new ArrayList<>();
         } else {
@@ -100,8 +85,6 @@ public class ReferralsFragment extends Fragment implements SwipeRefreshLayout.On
         _referrals.addAll(referrals);
         _referralsListAdapter.notifyDataSetChanged();
     }
-
-
 }
 
 

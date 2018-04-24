@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sessionm.api.reward.data.offer.Offer;
+import com.sessionm.reward.api.data.offer.Offer;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public class RewardsRecAdapter extends RecyclerView.Adapter<RewardsRecAdapter.Re
         String out = String.format("%s - %s", startTime != null ? startTime : "", endTime != null ? endTime : "");
         holder.subHeaderTextView.setText(out);
         holder.statusTextView.setText(offer.getStatus().toString());
-        holder.descriptionTextView.setText(offer.getDescription() != null ? offer.getDescription() : "");
+        holder.descriptionTextView.setText(offer.getDetails() != null ? offer.getDetails() : "");
         holder.valueTextView.setText("" + offer.getPoints());
         Picasso.with(_fragment.getContext()).load(offer.getLogoURL()).into(holder.feedImageView);
 
@@ -87,12 +87,12 @@ public class RewardsRecAdapter extends RecyclerView.Adapter<RewardsRecAdapter.Re
 
         public RewardsViewHolder(View v) {
             super(v);
-            headerTextView = (TextView) v.findViewById(R.id.reward_header_text);
-            subHeaderTextView = (TextView) v.findViewById(R.id.reward_subheader_text);
-            statusTextView = (TextView) v.findViewById(R.id.reward_status_text);
-            descriptionTextView = (TextView) v.findViewById(R.id.reward_detail_text);
-            valueTextView = (TextView) v.findViewById(R.id.reward_value_text);
-            feedImageView = (ImageView) v.findViewById(R.id.reward_main_image);
+            headerTextView = v.findViewById(R.id.reward_header_text);
+            subHeaderTextView = v.findViewById(R.id.reward_subheader_text);
+            statusTextView = v.findViewById(R.id.reward_status_text);
+            descriptionTextView = v.findViewById(R.id.reward_detail_text);
+            valueTextView = v.findViewById(R.id.reward_value_text);
+            feedImageView = v.findViewById(R.id.reward_main_image);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.sessionm.smp_receipt;
+package com.sessionm.smp_receipt.upload;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -13,15 +13,19 @@ import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.receipt.ReceiptsListener;
-import com.sessionm.api.receipt.data.Receipt;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.receipt.api.ReceiptsListener;
+import com.sessionm.receipt.api.ReceiptsManager;
+import com.sessionm.receipt.api.data.Receipt;
 
 import java.util.List;
 
 public class ReceiptUploadingService extends Service {
+
+    private static final String TAG = "SessionM.RcptUpSvc";
+
     public static final int FOREGROUND_NOTIFICATION_ID = 11;
     public static final int RESULT_NOTIFICATION_ID = 22;
 
@@ -33,7 +37,8 @@ public class ReceiptUploadingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        SessionM.getInstance().getReceiptsManager().setListener(_receiptListener);
+        ReceiptsManager.getInstance().setListener(_receiptListener);
+        //sendLocalNotification(null);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -82,7 +87,7 @@ public class ReceiptUploadingService extends Service {
             applicationInfo = pm.getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
             appIconResId = applicationInfo.icon;
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            Log.e(TAG, "issue", e);
         }
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), appIconResId);
 

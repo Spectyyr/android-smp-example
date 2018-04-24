@@ -3,19 +3,16 @@ package com.sessionm.smp_transactions;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.TransitionManager;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sessionm.core.api.SessionM;
 import com.sessionm.core.api.SessionMError;
-import com.sessionm.core.api.provider.AuthenticationProvider;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
-import com.sessionm.transaction.api.TransactionsManager;
 
 import java.util.Set;
 
@@ -35,12 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(actionBar);
 
         _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
-            @Override
-            public void onUpdated(SessionMError sessionMError) {
-
-            }
-        });
+        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, null);
         _userManager = UserManager.getInstance();
 
         userBalanceTextView = findViewById(R.id.user_balance_textview);

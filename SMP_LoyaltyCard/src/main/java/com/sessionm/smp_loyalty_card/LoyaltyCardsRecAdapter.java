@@ -94,11 +94,11 @@ public class LoyaltyCardsRecAdapter extends RecyclerView.Adapter<LoyaltyCardsRec
 
         public LoyaltyCardsViewHolder(View v) {
             super(v);
-            cardNumber = (TextView) v.findViewById(R.id.card_number);
-            retailerName = (TextView) v.findViewById(R.id.retailer_name);
-            cardID = (TextView) v.findViewById(R.id.card_id);
-            icon = (ImageView) v.findViewById(R.id.retailer_icon);
-            linked = (CheckBox) v.findViewById(R.id.linked_chb);
+            cardNumber = v.findViewById(R.id.card_number);
+            retailerName = v.findViewById(R.id.retailer_name);
+            cardID = v.findViewById(R.id.card_id);
+            icon = v.findViewById(R.id.retailer_icon);
+            linked = v.findViewById(R.id.linked_chb);
         }
     }
 }

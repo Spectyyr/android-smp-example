@@ -47,13 +47,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
+        Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
 
-        viewPager = (ViewPager) findViewById(R.id.main_pager);
+        viewPager = findViewById(R.id.main_pager);
         viewPager.setAdapter(new SMPagerAdapter(getSupportFragmentManager()));
 
-        userBalanceTextView = (TextView) findViewById(R.id.user_balance_textview);
+        userBalanceTextView = findViewById(R.id.user_balance_textview);
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        geofenceToggleButton = (ToggleButton) findViewById(R.id.geofence_toggle);
+        geofenceToggleButton = findViewById(R.id.geofence_toggle);
         final GeofenceManager geofenceManager = GeofenceManager.getInstance(this);
         boolean geofenceServiceIsStarted = geofenceManager.isStarted();
         //TODO: always start geofence again
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final ToggleButton tabsToggleButton = (ToggleButton) findViewById(R.id.tabs_toggle);
+        final ToggleButton tabsToggleButton = findViewById(R.id.tabs_toggle);
         int currentPage = viewPager.getCurrentItem();
         if (currentPage == 0) {
             tabsToggleButton.setChecked(false);

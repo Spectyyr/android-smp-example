@@ -45,15 +45,15 @@ public class PurchaseEventActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_events_purchase);
 
-        _eventsListTextView = (TextView) findViewById(R.id.eventsListTextView);
+        _eventsListTextView = findViewById(R.id.eventsListTextView);
 
-        _name = (EditText) findViewById(R.id.nameText);
-        _quantity = (EditText) findViewById(R.id.qtyText);
-        _amount = (EditText) findViewById(R.id.amountText);
-        _store = (EditText) findViewById(R.id.storeText);
+        _name = findViewById(R.id.nameText);
+        _quantity = findViewById(R.id.qtyText);
+        _amount = findViewById(R.id.amountText);
+        _store = findViewById(R.id.storeText);
 
-        _tabs = (TabLayout) findViewById(R.id.tabs);
-        _pager = (ViewPager)findViewById(R.id.pager);
+        _tabs = findViewById(R.id.tabs);
+        _pager = findViewById(R.id.pager);
 
         _adapter = new BehaviorPagerAdapter(getSupportFragmentManager());
         _pager.setAdapter(_adapter);

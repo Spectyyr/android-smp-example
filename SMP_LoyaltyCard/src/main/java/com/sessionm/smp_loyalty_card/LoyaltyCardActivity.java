@@ -49,9 +49,9 @@ public class LoyaltyCardActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_loyalty_card);
 
-        _searchView = (EditText)findViewById(R.id.search);
-        _listView = (ListView) findViewById(R.id.retailer_list);
-        _clearSearch = (ImageButton)findViewById(R.id.clear_search);
+        _searchView = findViewById(R.id.search);
+        _listView = findViewById(R.id.retailer_list);
+        _clearSearch = findViewById(R.id.clear_search);
         _loyaltyManager = SessionM.getInstance().getLoyaltyCardsManager();
         _retailers = new ArrayList<>(_loyaltyManager.getRetailers());
         _listAdapter = new RetailerListAdapter(this, _retailers);
@@ -61,7 +61,7 @@ public class LoyaltyCardActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 _pickedRetailer = (Retailer) _listAdapter.getItem(position);
-                TextView rt = (TextView) findViewById(R.id.retailer_text);
+                TextView rt = findViewById(R.id.retailer_text);
                 rt.setText(_pickedRetailer.getCard());
                 return;
             }
@@ -83,8 +83,8 @@ public class LoyaltyCardActivity extends AppCompatActivity {
             @Override public void afterTextChanged(Editable s) { }
         });
 
-        final EditText et = (EditText) findViewById(R.id.card_number);
-        Button link = (Button) findViewById(R.id.link);
+        final EditText et = findViewById(R.id.card_number);
+        Button link = findViewById(R.id.link);
         link.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

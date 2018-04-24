@@ -16,14 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.reward.RewardsListener;
-import com.sessionm.api.reward.RewardsManager;
-import com.sessionm.api.reward.data.offer.Offer;
-import com.sessionm.api.reward.data.order.Order;
-import com.sessionm.api.reward.data.skill.SkillChallenge;
-import com.sessionm.api.reward.data.skill.SkillQuestion;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.reward.api.RewardsManager;
+import com.sessionm.reward.api.data.offer.Offer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,18 +31,17 @@ public class RewardsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private RewardsRecAdapter _rewardsRecAdapter;
     private RecyclerView _recyclerView;
 
-    private RewardsManager _rewardsManager = SessionM.getInstance().getRewardsManager();
+    private RewardsManager _rewardsManager = RewardsManager.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_rewards, container, false);
         ViewCompat.setElevation(rootView, 50);
 
-        _swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        _swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _recyclerView = (RecyclerView) rootView.findViewById(R.id.rewards_feed_list);
-        _rewardsManager.setListener(_rewardsListener);
+        _recyclerView = rootView.findViewById(R.id.rewards_feed_list);
         _offers = new ArrayList<>(_rewardsManager.getOffers());
         _recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -65,49 +59,9 @@ public class RewardsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         _rewardsManager.fetchOffers();
     }
 
-    RewardsListener _rewardsListener = new RewardsListener() {
-        @Override
-        public void onOffersFetched(List<Offer> offers) {
-            _swipeRefreshLayout.setRefreshing(false);
-            _offers.clear();
-            if (offers == null) {
-                offers = new ArrayList<>();
-            }
-            _offers.addAll(offers);
-            _rewardsRecAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void onOrderPlaced(Order order) {
-
-        }
-
-        @Override
-        public void onOrdersFetched(List<Order> list) {
-
-        }
-
-        @Override
-        public void onSkillQuestionFetched(SkillQuestion skillQuestion) {
-
-        }
-
-        @Override
-        public void onSkillQuestionAnswered(SkillChallenge skillChallenge) {
-
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            _swipeRefreshLayout.setRefreshing(false);
-            Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
     @Override
     public void onResume() {
         super.onResume();
-        _rewardsManager.setListener(_rewardsListener);
     }
 
     @Override
@@ -117,6 +71,21 @@ public class RewardsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Override
     public void onRefresh() {
-        _rewardsManager.fetchOffers();
+        _rewardsManager.fetchOffers(new RewardsManager.OnOffersFetchedListener() {
+            @Override
+            public void onOffersFetched(List<Offer> offers, SessionMError sessionMError) {
+                _swipeRefreshLayout.setRefreshing(false);
+                if (sessionMError != null)
+                    Toast.makeText(getActivity(), "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                else {
+                    _offers.clear();
+                    if (offers == null) {
+                        offers = new ArrayList<>();
+                    }
+                    _offers.addAll(offers);
+                    _rewardsRecAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 }

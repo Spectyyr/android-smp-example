@@ -16,8 +16,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.VideoView
 
-import com.sessionm.api.SessionM
-import com.sessionm.api.campaign.data.FeedMessage
 import com.squareup.picasso.Picasso
 
 //Adapter class to draw the Promotions Message List and handle Feed Message events

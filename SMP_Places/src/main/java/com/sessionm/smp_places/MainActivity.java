@@ -59,10 +59,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
+        Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
 
-        userBalanceTextView = (TextView) findViewById(R.id.user_balance_textview);
+        userBalanceTextView = findViewById(R.id.user_balance_textview);
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        showMarkerToggle = (ToggleButton) findViewById(R.id.show_marker_toggle);
+        showMarkerToggle = findViewById(R.id.show_marker_toggle);
         showMarkerToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

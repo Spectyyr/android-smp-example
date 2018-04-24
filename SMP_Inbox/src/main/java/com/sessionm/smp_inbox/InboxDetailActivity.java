@@ -17,8 +17,8 @@ public class InboxDetailActivity extends AppCompatActivity {
         int index = getIntent().getExtras().getInt("index");
         InboxMessage inboxMessage = SessionM.getInstance().getInboxManager().getInboxMessages().get(index);
 
-        TextView subjectText = (TextView) findViewById(R.id.inbox_detail_subject);
-        TextView bodyText = (TextView) findViewById(R.id.inbox_detail_body);
+        TextView subjectText = findViewById(R.id.inbox_detail_subject);
+        TextView bodyText = findViewById(R.id.inbox_detail_body);
 
         subjectText.setText(inboxMessage.getSubject());
         bodyText.setText(inboxMessage.getBody());

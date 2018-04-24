@@ -91,7 +91,7 @@ public class ClaimOffer {
         }
 
         private void countDown(View dialogLayout) {
-            _countDown = (TextView) dialogLayout.findViewById(R.id.countdown);
+            _countDown = dialogLayout.findViewById(R.id.countdown);
             _start = new Date();
             _timer = new Timer();
             _timer.scheduleAtFixedRate(new TimerTask() {

@@ -69,7 +69,7 @@ public class BehaviorPagerAdapter extends android.support.v4.app.FragmentPagerAd
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.behavior_fragment, container, false);
-            _list = (TextView) v.findViewById(R.id.behavior_list);
+            _list = v.findViewById(R.id.behavior_list);
 
             return v;
         }
@@ -87,7 +87,7 @@ public class BehaviorPagerAdapter extends android.support.v4.app.FragmentPagerAd
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.event_fragment, container, false);
-            _list = (TextView) v.findViewById(R.id.event_list);
+            _list = v.findViewById(R.id.event_list);
 
             return v;
         }

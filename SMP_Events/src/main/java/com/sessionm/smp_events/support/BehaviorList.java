@@ -25,7 +25,7 @@ public class BehaviorList {
 
     private final EventsResponse _behaviorResponse;
 
-    enum ByType { Event, Behavior };
+    enum ByType { Event, Behavior }
 
     public BehaviorList(EventsResponse response) {
         _behaviorResponse = response;

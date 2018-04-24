@@ -56,10 +56,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar actionBar = (Toolbar) findViewById(R.id.custom_action_bar);
+        Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
 
-        userBalanceTextView = (TextView) findViewById(R.id.user_balance_textview);
+        userBalanceTextView = findViewById(R.id.user_balance_textview);
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,11 +71,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
         mContext = this;
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
         messages = new ArrayList<>();
-        mSwipeMenuRecyclerView = (SwipeMenuRecyclerView) findViewById(R.id.recycler_view);
+        mSwipeMenuRecyclerView = findViewById(R.id.recycler_view);
         mSwipeMenuRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSwipeMenuRecyclerView.setHasFixedSize(true);
         mSwipeMenuRecyclerView.addItemDecoration(new ListViewDecoration());
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mMenuAdapter.setOnItemClickListener(onItemClickListener);
         mSwipeMenuRecyclerView.setAdapter(mMenuAdapter);
 
-        FloatingActionButton createNewMessageButton = (FloatingActionButton) findViewById(R.id.create_new_message_button);
+        FloatingActionButton createNewMessageButton = findViewById(R.id.create_new_message_button);
         createNewMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

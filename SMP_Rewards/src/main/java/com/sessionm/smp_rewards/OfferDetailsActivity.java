@@ -20,19 +20,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.data.SMSVerification;
-import com.sessionm.api.identity.sms.SMSVerificationListener;
-import com.sessionm.api.identity.sms.SMSVerificationManager;
-import com.sessionm.api.reward.RewardsListener;
-import com.sessionm.api.reward.RewardsManager;
-import com.sessionm.api.reward.data.offer.Offer;
-import com.sessionm.api.reward.data.order.Address;
-import com.sessionm.api.reward.data.order.Order;
-import com.sessionm.api.reward.data.order.OrderRequest;
-import com.sessionm.api.reward.data.skill.SkillChallenge;
-import com.sessionm.api.reward.data.skill.SkillQuestion;
+
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.identity.api.data.SMSVerification;
+import com.sessionm.identity.api.sms.SMSVerificationManager;
+import com.sessionm.reward.api.RewardsManager;
+import com.sessionm.reward.api.data.offer.Offer;
+import com.sessionm.reward.api.data.order.Address;
+import com.sessionm.reward.api.data.order.Order;
+import com.sessionm.reward.api.data.order.OrderRequest;
+import com.sessionm.reward.api.data.skill.SkillChallenge;
+import com.sessionm.reward.api.data.skill.SkillQuestion;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -51,14 +49,14 @@ public class OfferDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_offer_details);
 
         Intent getOfferIntent = getIntent();
-        ImageView imageView = (ImageView) findViewById(R.id.offer_detail_image);
-        TextView header = (TextView) findViewById(R.id.offer_detail_header);
-        WebView subheader = (WebView) findViewById(R.id.offer_detail_subheader);
-        TextView desc = (TextView) findViewById(R.id.offer_detail_description);
-        Button placeOrderButton = (Button) findViewById(R.id.place_order_button);
+        ImageView imageView = findViewById(R.id.offer_detail_image);
+        TextView header = findViewById(R.id.offer_detail_header);
+        WebView subheader = findViewById(R.id.offer_detail_subheader);
+        TextView desc = findViewById(R.id.offer_detail_description);
+        Button placeOrderButton = findViewById(R.id.place_order_button);
         _progressDialog = new ProgressDialog(this);
 
-        _rewardsManager = SessionM.getInstance().getRewardsManager();
+        _rewardsManager = RewardsManager.getInstance();
         List<Offer> offers = new ArrayList<>(_rewardsManager.getOffers());
         final String offerID = getOfferIntent.getStringExtra("offer_id");
         for (int i = 0; i < offers.size(); i++) {
@@ -96,103 +94,30 @@ public class OfferDetailsActivity extends AppCompatActivity {
         placeOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SMSVerificationManager.getInstance().fetchSMSVerification();
+                SMSVerificationManager.getInstance().fetchSMSVerification(new SMSVerificationManager.OnSMSVerificationFetchedListener() {
+                    @Override
+                    public void onFetched(SMSVerification smsVerification, SessionMError sessionMError) {
+                        _progressDialog.dismiss();
+                        if (sessionMError != null)
+                            Toast.makeText(OfferDetailsActivity.this, "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                        else {
+                            if (smsVerification.isValid()) {
+                                if (_currentOffer.isSkillChallengeRequired()) {
+                                    fetchSkillQuestion();
+                                } else {
+                                    OrderRequest request = makeOrderRequest(null, _currentOffer.getID(), 1);
+                                    placeOrder(request);
+                                }
+                                _progressDialog.show();
+                            } else {
+                                popUpSMSVerificationDialog("send_code");
+                            }
+                        }
+                    }
+                });
                 _progressDialog.show();
             }
         });
-    }
-
-    private RewardsListener _rewardsListener = new RewardsListener() {
-        @Override
-        public void onOffersFetched(List<Offer> list) {
-
-        }
-
-        @Override
-        public void onOrderPlaced(Order order) {
-            _progressDialog.dismiss();
-            Toast.makeText(getApplicationContext(), "Success: " + order.getID(), Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onOrdersFetched(List<Order> list) {
-
-        }
-
-        @Override
-        public void onSkillQuestionFetched(SkillQuestion skillQuestion) {
-            _progressDialog.dismiss();
-            popUpSkillChallengeDialog(skillQuestion.getID(), skillQuestion.getQuestion());
-        }
-
-        @Override
-        public void onSkillQuestionAnswered(SkillChallenge skillChallenge) {
-            OrderRequest request = makeOrderRequest(skillChallenge.getID(), _currentOffer.getID(), 1);
-            _rewardsManager.placeOrder(request);
-            _progressDialog.show();
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            _progressDialog.dismiss();
-            Toast.makeText(getApplicationContext(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    SMSVerificationListener _smsListener = new SMSVerificationListener() {
-
-        @Override
-        public void onSMSVerificationMessageSent(SMSVerification smsVerification) {
-            _progressDialog.dismiss();
-            popUpSMSVerificationDialog("verify_code");
-        }
-
-        @Override
-        public void onSMSVerificationCodeChecked(SMSVerification smsVerification) {
-            Toast.makeText(OfferDetailsActivity.this, smsVerification.toString(), Toast.LENGTH_SHORT).show();
-            if (_currentOffer.isSkillChallengeRequired()) {
-                _rewardsManager.fetchSkillQuestion();
-            } else {
-                OrderRequest request = makeOrderRequest(null, _currentOffer.getID(), 1);
-                _rewardsManager.placeOrder(request);
-            }
-            _progressDialog.show();
-        }
-
-        @Override
-        public void onSMSVerificationFetched(SMSVerification smsVerification) {
-            _progressDialog.dismiss();
-            if (smsVerification.isValid()) {
-                if (_currentOffer.isSkillChallengeRequired()) {
-                    _rewardsManager.fetchSkillQuestion();
-                } else {
-                    OrderRequest request = makeOrderRequest(null, _currentOffer.getID(), 1);
-                    _rewardsManager.placeOrder(request);
-                }
-                _progressDialog.show();
-            } else {
-                popUpSMSVerificationDialog("send_code");
-            }
-
-        }
-
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-            Toast.makeText(OfferDetailsActivity.this, "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        _rewardsManager.setListener(_rewardsListener);
-        SMSVerificationManager.getInstance().setListener(_smsListener);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     private OrderRequest makeOrderRequest(String challengeID, String offerID, int quantity) {
@@ -214,12 +139,40 @@ public class OfferDetailsActivity extends AppCompatActivity {
                 .build();
     }
 
+    private void placeOrder(OrderRequest request) {
+        _rewardsManager.placeOrder(request, new RewardsManager.OnOrderPlacedListener() {
+            @Override
+            public void onOrderPlaced(Order order, SessionMError sessionMError) {
+                _progressDialog.dismiss();
+                if (sessionMError != null) {
+                    Toast.makeText(OfferDetailsActivity.this, "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Success: " + order.getID(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void fetchSkillQuestion() {
+        _rewardsManager.fetchSkillQuestion(new RewardsManager.OnSkillQuestionFetchedListener() {
+            @Override
+            public void onQuestionFetched(SkillQuestion skillQuestion, SessionMError sessionMError) {
+                _progressDialog.dismiss();
+                if (sessionMError != null) {
+                    Toast.makeText(OfferDetailsActivity.this, "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    popUpSkillChallengeDialog(skillQuestion.getID(), skillQuestion.getQuestion());
+                }
+            }
+        });
+    }
+
     protected void popUpSMSVerificationDialog(final String type) {
 
         LayoutInflater inflater = getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_sms_validation, null);
-        TextView descriptionTextView = (TextView) dialogLayout.findViewById(R.id.sms_validation_description);
-        final EditText inputEditText = (EditText) dialogLayout.findViewById(R.id.sms_validation_edittext);
+        TextView descriptionTextView = dialogLayout.findViewById(R.id.sms_validation_description);
+        final EditText inputEditText = dialogLayout.findViewById(R.id.sms_validation_edittext);
 
         if (type.equals("send_code")) {
             descriptionTextView.setText("Please enter your phone number.");
@@ -235,10 +188,36 @@ public class OfferDetailsActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 if (type.equals("send_code")) {
                     String phone = inputEditText.getText().toString();
-                    SMSVerificationManager.getInstance().sendSMSVerificationMessage(phone);
+                    SMSVerificationManager.getInstance().sendSMSVerificationMessage(phone, new SMSVerificationManager.OnSMSVerificationMessageSentListener() {
+                        @Override
+                        public void onMessageSent(SMSVerification smsVerification, SessionMError sessionMError) {
+                            _progressDialog.dismiss();
+                            if (sessionMError != null)
+                                Toast.makeText(OfferDetailsActivity.this, "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                            else {
+                                popUpSMSVerificationDialog("verify_code");
+                            }
+                        }
+                    });
                 } else if (type.equals("verify_code")) {
                     String code = inputEditText.getText().toString();
-                    SMSVerificationManager.getInstance().checkSMSVerificationCode(code);
+                    SMSVerificationManager.getInstance().checkSMSVerificationCode(code, new SMSVerificationManager.OnSMSVerificationCodeCheckedListener() {
+                        @Override
+                        public void onCodeChecked(SMSVerification smsVerification, SessionMError sessionMError) {
+                            if (sessionMError != null)
+                                Toast.makeText(OfferDetailsActivity.this, "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                            else {
+                                Toast.makeText(OfferDetailsActivity.this, smsVerification.toString(), Toast.LENGTH_SHORT).show();
+                                if (_currentOffer.isSkillChallengeRequired()) {
+                                    fetchSkillQuestion();
+                                } else {
+                                    OrderRequest request = makeOrderRequest(null, _currentOffer.getID(), 1);
+                                    placeOrder(request);
+                                }
+                                _progressDialog.show();
+                            }
+                        }
+                    });
                 }
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -257,8 +236,8 @@ public class OfferDetailsActivity extends AppCompatActivity {
 
         LayoutInflater inflater = getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_skill_challenge, null);
-        TextView questionTextView = (TextView) dialogLayout.findViewById(R.id.skill_challenge_question);
-        final EditText answerEditText = (EditText) dialogLayout.findViewById(R.id.skill_challenge_answer_edittext);
+        TextView questionTextView = dialogLayout.findViewById(R.id.skill_challenge_question);
+        final EditText answerEditText = dialogLayout.findViewById(R.id.skill_challenge_answer_edittext);
         questionTextView.setText(question);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -267,7 +246,18 @@ public class OfferDetailsActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String answer = answerEditText.getText().toString();
                 if (!answer.isEmpty())
-                    _rewardsManager.answerSkillQuestion(_currentOffer.getID(), questionID, answer);
+                    _rewardsManager.answerSkillQuestion(_currentOffer.getID(), questionID, answer, new RewardsManager.OnSkillQuestionAnsweredListener() {
+                        @Override
+                        public void onAnswered(SkillChallenge skillChallenge, SessionMError sessionMError) {
+                            if (sessionMError != null)
+                                Toast.makeText(OfferDetailsActivity.this, "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                            else {
+                                OrderRequest request = makeOrderRequest(skillChallenge.getID(), _currentOffer.getID(), 1);
+                                placeOrder(request);
+                                _progressDialog.show();
+                            }
+                        }
+                    });
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override

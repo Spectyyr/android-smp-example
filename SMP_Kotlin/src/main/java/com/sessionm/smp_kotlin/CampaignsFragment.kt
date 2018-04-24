@@ -15,10 +15,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.sessionm.api.SessionM
-import com.sessionm.api.SessionMError
-import com.sessionm.api.campaign.CampaignsListener
-import com.sessionm.api.campaign.data.FeedMessage
 import java.util.*
 
 /**

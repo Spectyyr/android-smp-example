@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        userBalance = (TextView) findViewById(R.id.user_balance);
-        authenticate = (Button) findViewById(R.id.authenticate);
+        userBalance = findViewById(R.id.user_balance);
+        authenticate = findViewById(R.id.authenticate);
         authenticate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
             }
         });
 
-        _tabs = (TabLayout) findViewById(R.id.tabs);
-        _pager = (ViewPager)findViewById(R.id.pager);
+        _tabs = findViewById(R.id.tabs);
+        _pager = findViewById(R.id.pager);
         _pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
