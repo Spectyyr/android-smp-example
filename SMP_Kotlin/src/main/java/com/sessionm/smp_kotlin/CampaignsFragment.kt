@@ -15,6 +15,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.sessionm.campaign.api.CampaignsManager
+import com.sessionm.campaign.api.data.FeedMessage
 import java.util.*
 
 /**
@@ -30,37 +32,18 @@ class CampaignsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var onDeepLinkTappedListener: OnDeepLinkTappedListener
 
-    private val _campaignsManager = SessionM.getInstance().campaignsManager
-
-    private var _campaignsListener: CampaignsListener = object : CampaignsListener {
-        override fun onFeedMessagesFetched(list: List<FeedMessage>) {
-            _swipeRefreshLayout!!.isRefreshing = false
-            if (_messages == null) {
-                _messages = ArrayList()
-            } else {
-                _messages!!.clear()
-            }
-            _messages!!.addAll(list)
-            _campaignsRecAdapter!!.notifyDataSetChanged()
-        }
-
-        override fun onFailure(error: SessionMError) {
-            _swipeRefreshLayout!!.isRefreshing = false
-            Toast.makeText(activity, "Failed: " + error.message, Toast.LENGTH_SHORT).show()
-        }
-    }
+    private val _campaignsManager = CampaignsManager.getInstance()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_campaigns, container, false)
         ViewCompat.setElevation(rootView, 50f)
 
-        _swipeRefreshLayout = rootView.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_layout) as SwipeRefreshLayout
+        _swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout)
         _swipeRefreshLayout!!.setOnRefreshListener(this)
 
-        _campaignsManager.listener = _campaignsListener
         _messages = ArrayList(_campaignsManager.feedMessages)
 
-        _recyclerView = rootView.findViewById<RecyclerView>(R.id.message_feed_list) as RecyclerView
+        _recyclerView = rootView.findViewById(R.id.message_feed_list)
         _recyclerView!!.setHasFixedSize(true)
         val llm = LinearLayoutManager(context)
         llm.orientation = LinearLayoutManager.VERTICAL
@@ -77,11 +60,27 @@ class CampaignsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onResume() {
         super.onResume()
-        _campaignsManager.listener = _campaignsListener
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 
     override fun onRefresh() {
-        _campaignsManager.fetchFeedMessages()
+        _campaignsManager.fetchFeedMessages { list, sessionMError ->
+            _swipeRefreshLayout!!.isRefreshing = false
+            if (sessionMError != null)
+                Toast.makeText(activity, "Failed: " + sessionMError.message, Toast.LENGTH_SHORT).show()
+            else {
+                if (_messages == null) {
+                    _messages = ArrayList()
+                } else {
+                    _messages!!.clear()
+                }
+                _messages!!.addAll(list)
+                _campaignsRecAdapter!!.notifyDataSetChanged()
+            }
+        }
     }
 
     fun onItemTapped(actionType: FeedMessage.MessageActionType, actionURL: String) {
@@ -93,13 +92,18 @@ class CampaignsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         fun onDeepLinkTapped(actionType: FeedMessage.MessageActionType, actionURL: String)
     }
 
-    override fun onAttach(context: Context) {
+    override fun onAttach(context: Context?) {
         super.onAttach(context)
+
         try {
             onDeepLinkTappedListener = context as OnDeepLinkTappedListener
         } catch (e: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement OnDeepLinkTappedListener")
+            throw ClassCastException(context!!.toString() + " must implement OnDeepLinkTappedListener")
         }
 
+    }
+
+    companion object {
+        private val TAG = "FeedListActivity"
     }
 }

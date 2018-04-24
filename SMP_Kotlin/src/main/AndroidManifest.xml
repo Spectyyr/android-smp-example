@@ -25,13 +25,6 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.sessionm.api.ConnectionReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE">
-                </action>
-            </intent-filter>
-        </receiver>
-
         <activity android:name=".DeepLinkActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

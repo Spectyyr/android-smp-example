@@ -5,10 +5,11 @@
 package com.sessionm.smp_kotlin
 
 import android.app.Application
+import com.sessionm.core.api.SessionM
 
 class SEApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        SessionM.getInstance().startWithConfigFile(this)
+        SessionM.start(this)
     }
 }

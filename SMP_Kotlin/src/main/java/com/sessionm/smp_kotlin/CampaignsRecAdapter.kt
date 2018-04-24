@@ -4,8 +4,6 @@
 
 package com.sessionm.smp_kotlin
 
-import android.annotation.SuppressLint
-import android.media.MediaPlayer
 import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
@@ -15,7 +13,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.VideoView
-
+import com.sessionm.campaign.api.CampaignsManager
+import com.sessionm.campaign.api.data.FeedMessage
 import com.squareup.picasso.Picasso
 
 //Adapter class to draw the Promotions Message List and handle Feed Message events
@@ -27,7 +26,6 @@ class CampaignsRecAdapter(private val _fragment: CampaignsFragment, private val 
         return CampaignsViewHolder(itemView)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: CampaignsViewHolder, position: Int) {
         val item = _messages[position]
 
@@ -95,11 +93,11 @@ class CampaignsRecAdapter(private val _fragment: CampaignsFragment, private val 
         }
 
         holder.itemView.setOnClickListener {
-            item.notifyTapped()
+            //item.notifyTapped();
             showDetails(item)
         }
 
-        item.notifySeen()
+        //        item.notifySeen();
     }
 
     override fun getItemId(position: Int): Long {
@@ -112,7 +110,7 @@ class CampaignsRecAdapter(private val _fragment: CampaignsFragment, private val 
 
     //TODO Needs to handle more events
     private fun showDetails(data: FeedMessage) {
-        SessionM.getInstance().campaignsManager.executeMessageAction(data.messageID)
+        CampaignsManager.getInstance().executeMessageAction(data.messageID)
         val actionType = data.actionType
         if (actionType != FeedMessage.MessageActionType.FULL_SCREEN) {
             _fragment.onItemTapped(actionType, data.actionURL)
@@ -120,14 +118,24 @@ class CampaignsRecAdapter(private val _fragment: CampaignsFragment, private val 
     }
 
     class CampaignsViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        internal var iconImageView: ImageView = v.findViewById<ImageView>(R.id.promotion_icon_image) as ImageView
-        internal var headerTextView: TextView = v.findViewById<TextView>(R.id.promotion_header_text) as TextView
-        internal var subHeaderTextView: TextView = v.findViewById<TextView>(R.id.promotion_subheader_text) as TextView
-        internal var periodTextView: TextView = v.findViewById<TextView>(R.id.promotion_period_text) as TextView
-        internal var descriptionTextView: TextView = v.findViewById<TextView>(R.id.promotion_detail_text) as TextView
-        internal var valueTextView: TextView = v.findViewById<TextView>(R.id.promotion_value_text) as TextView
-        internal var feedImageView: ImageView = v.findViewById<ImageView>(R.id.promotion_main_image) as ImageView
-        internal var videoView: VideoView = v.findViewById<VideoView>(R.id.promotion_main_video) as VideoView
+        internal var iconImageView: ImageView
+        internal var headerTextView: TextView
+        internal var subHeaderTextView: TextView
+        internal var periodTextView: TextView
+        internal var descriptionTextView: TextView
+        internal var valueTextView: TextView
+        internal var feedImageView: ImageView
+        internal var videoView: VideoView
 
+        init {
+            iconImageView = v.findViewById(R.id.promotion_icon_image)
+            headerTextView = v.findViewById(R.id.promotion_header_text)
+            subHeaderTextView = v.findViewById(R.id.promotion_subheader_text)
+            periodTextView = v.findViewById(R.id.promotion_period_text)
+            descriptionTextView = v.findViewById(R.id.promotion_detail_text)
+            valueTextView = v.findViewById(R.id.promotion_value_text)
+            feedImageView = v.findViewById(R.id.promotion_main_image)
+            videoView = v.findViewById(R.id.promotion_main_video)
+        }
     }
 }
