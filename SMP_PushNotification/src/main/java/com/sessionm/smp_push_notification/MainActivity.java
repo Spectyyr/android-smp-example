@@ -11,19 +11,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.message.MessagesListener;
-import com.sessionm.api.message.notification.data.NotificationMessage;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.event.api.EventsManager;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
+import com.sessionm.message.api.MessagesListener;
+import com.sessionm.message.api.MessagesManager;
+import com.sessionm.message.api.data.NotificationMessage;
 
 import java.util.Set;
 
-import static com.sessionm.api.message.notification.data.NotificationMessage.ActionType.DEEP_LINK;
-import static com.sessionm.api.message.notification.data.NotificationMessage.ActionType.EXTERNAL_LINK;
+import static com.sessionm.message.api.data.NotificationMessage.ActionType.DEEP_LINK;
+import static com.sessionm.message.api.data.NotificationMessage.ActionType.EXTERNAL_LINK;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,42 +34,71 @@ public class MainActivity extends AppCompatActivity {
     private TextView userBalanceTextView;
     private ToggleButton useBundleExtrasButton;
     private NotificationMessage pushMessage;
-    private SessionM sessionM;
+    private SessionMOauthEmailProvider _sessionMOauthEmailProvider;
+    private MessagesManager _messageManager = MessagesManager.getInstance();
+    private UserManager _userManager = UserManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sessionM = SessionM.getInstance();
-
         Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
+        _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, null);
 
         userBalanceTextView = findViewById(R.id.user_balance_textview);
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (UserManager.getInstance().getCurrentUser() == null)
-                    IdentityManager.getInstance().authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
+                if (_userManager.getCurrentUser() == null)
+                    _sessionMOauthEmailProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (sessionMError != null) {
+                                Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                                    @Override
+                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                                        if (sessionMError != null) {
+                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (smpUser != null) {
+                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                                            } else
+                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 else
-                    IdentityManager.getInstance().logOutUser();
+                    _sessionMOauthEmailProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))
+                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                        }
+                    });
             }
         });
 
         useBundleExtrasButton = findViewById(R.id.use_bundle_extras_toggle);
-        useBundleExtrasButton.setChecked(sessionM.getMessageManager().isUseBundleExtrasEnabled());
+        useBundleExtrasButton.setChecked(_messageManager.isUseBundleExtrasEnabled());
         useBundleExtrasButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                sessionM.getMessageManager().setUseBundleExtrasEnabled(isChecked);
+                _messageManager.setUseBundleExtrasEnabled(isChecked);
             }
         });
 
         //Only needed when use bundle extras enabled.
-        if (sessionM.getMessageManager().isUseBundleExtrasEnabled()) {
+        if (_messageManager.isUseBundleExtrasEnabled()) {
             Bundle extras = getIntent().getExtras();
-            pushMessage = sessionM.getMessageManager().getPendingNotification(extras);
+            pushMessage = _messageManager.getPendingNotification(extras);
             setUpPushMessaging();
         }
         //Handle deep link, if needed
@@ -80,32 +111,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //User has to be authenticated in order to receive a push
-    UserListener _userListener = new UserListener() {
-        @Override
-        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
-            if (smpUser != null) {
-                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-            } else
-                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-
-        }
-    };
-
     public void TriggerOpenAppPush(View view) {
-        sessionM.logAction("push_open_property");
+        EventsManager.getInstance().postEvent(new EventsManager.SimpleEventBuilder("push_open_property").build());
     }
 
     public void TriggerDeepLinkPush(View view) {
-        sessionM.logAction("push_notification_deep_link");
+        EventsManager.getInstance().postEvent(new EventsManager.SimpleEventBuilder("push_notification_deep_link").build());
     }
 
     public void TriggerExternalLinkPush(View view) {
-        sessionM.logAction("push_notification_external_link");
+        EventsManager.getInstance().postEvent(new EventsManager.SimpleEventBuilder("push_notification_external_link").build());
     }
 
     private void handleDeepLinkString(String url) {
@@ -122,13 +137,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (pushMessage != null) {
-            sessionM.getMessageManager().executePendingNotificationFromPush(pushMessage);
+            _messageManager.executePendingNotificationFromPush(pushMessage);
         }
-        UserManager.getInstance().setListener(_userListener);
     }
 
     private void setUpPushMessaging() {
-        SessionM.getInstance().getMessageManager().setListener(new MessagesListener() {
+        _messageManager.setListener(new MessagesListener() {
             @Override
             public void onNotificationMessage(NotificationMessage notificationMessage) {
                 handleMessageAction(notificationMessage);

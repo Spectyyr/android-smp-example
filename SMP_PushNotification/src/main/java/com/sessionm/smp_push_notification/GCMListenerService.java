@@ -14,11 +14,11 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
-import com.sessionm.api.message.notification.data.NotificationMessage;
+import com.sessionm.message.api.data.NotificationMessage;
 
 import static android.app.NotificationManager.IMPORTANCE_DEFAULT;
 
-public class GCMListenerService extends com.sessionm.api.message.notification.service.GCMListenerService {
+public class GCMListenerService extends com.sessionm.message.service.GCMListenerService {
     public static final int NOTIFICATION_ID = 1;
 
     /**
