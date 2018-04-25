@@ -36,12 +36,7 @@ public class MainActivity extends AppCompatActivity implements CampaignsFragment
         setSupportActionBar(actionBar);
 
         _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
-            @Override
-            public void onUpdated(SessionMError sessionMError) {
-
-            }
-        });
+        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, null);
         _userManager = UserManager.getInstance();
 
         userBalanceTextView = findViewById(R.id.user_balance_textview);

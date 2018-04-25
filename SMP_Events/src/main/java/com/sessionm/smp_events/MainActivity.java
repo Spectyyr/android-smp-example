@@ -12,20 +12,20 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.events.EventsListener;
-import com.sessionm.api.events.EventsManager;
-import com.sessionm.api.events.data.EventPostedResponse;
-import com.sessionm.api.events.data.EventsResponse;
-import com.sessionm.api.events.data.ProgressFetchedResponse;
-import com.sessionm.api.events.data.builders.activity.ActivityEventBuilder;
-import com.sessionm.api.events.data.builders.activity.ActivityItemBuilder;
-import com.sessionm.api.events.data.events.activity.ActivityEvent;
-import com.sessionm.api.identity.IdentityListener;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.event.api.EventsListener;
+import com.sessionm.event.api.EventsManager;
+import com.sessionm.event.api.data.EventPostedResponse;
+import com.sessionm.event.api.data.EventsResponse;
+import com.sessionm.event.api.data.ProgressFetchedResponse;
+import com.sessionm.event.api.data.builders.activity.ActivityEventBuilder;
+import com.sessionm.event.api.data.builders.activity.ActivityItemBuilder;
+import com.sessionm.event.api.data.events.activity.ActivityEvent;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.smp_events.support.BehaviorList;
 import com.sessionm.smp_events.support.BehaviorPagerAdapter;
 
@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
     private EventsManager _eventManager = EventsManager.getInstance();
     private UserManager _userManager = UserManager.getInstance();
-    private IdentityManager _identityManager = IdentityManager.getInstance();
 
     private SMPUser _smpUser;
 
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private BehaviorList _behaviorList;
     private BehaviorPagerAdapter _adapter;
     private ImageButton _pb;
+    private SessionMOauthEmailProvider _sessionMOauthEmailProvider;
 
     public void doFetchProgress(View view) {
 
@@ -115,18 +115,17 @@ public class MainActivity extends AppCompatActivity {
         _tabs.setupWithViewPager(_pager);
 
         _pb = findViewById(R.id.progressBar);
+        _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, null);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        _identityManager.setListener(_identityListener);
-        _userManager.setListener(_userListener);
         _eventManager.setListener(_eventsListener);
 
         if (_smpUser == null) {
-            _identityManager.authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
         } else {
             _eventManager.fetchBehaviorProgress();
         }
@@ -154,49 +153,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    IdentityListener _identityListener = new IdentityListener() {
-        @Override
-        public void onAuthStateUpdated(IdentityManager.AuthState authState) {
-            if (authState != IdentityManager.AuthState.Authenticated) {
-                _smpUser = null;
-                showUser();
-                Toast.makeText(MainActivity.this, "State: " + authState, Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
-        }
-    };
-
-    // Class to listen to User events from UserManager
-    UserListener _userListener = new UserListener() {
-        @Override
-        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
-            _smpUser = smpUser;
-            if (smpUser != null) {
-                if (set.size() > 0) {
-
-                    //
-                    // Fetch the list of Behaviors (Status) for the current User
-                    //
-
-                    _eventManager.fetchBehaviorProgress();
-                }
-            } else {
-                authenticateButton.setText("Sign In");
-            }
-            showUser();
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            _smpUser = null;
-            Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
-        }
-    };
-
     // Listen for the EventsManager callbacks
     private EventsListener _eventsListener = new EventsListener() {
         public EventsResponse _response;
@@ -211,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onEventPosted(EventPostedResponse response) {
             _response = response;
-             _behaviorList = new BehaviorList(_response);
+            _behaviorList = new BehaviorList(_response);
             _adapter.setBehaviors(_behaviorList);
         }
 
@@ -231,11 +187,51 @@ public class MainActivity extends AppCompatActivity {
         authenticateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (_smpUser == null) {
-                    _identityManager.authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
-                } else {
-                    _identityManager.logOutUser();
-                }
+                if (UserManager.getInstance().getCurrentUser() == null)
+                    _sessionMOauthEmailProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (sessionMError != null) {
+                                Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                                    @Override
+                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                                        if (sessionMError != null) {
+                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                                            _smpUser = null;
+                                        } else {
+                                            _smpUser = smpUser;
+                                            if (smpUser != null) {
+                                                if (set.size() > 0) {
+
+                                                    //
+                                                    // Fetch the list of Behaviors (Status) for the current User
+                                                    //
+
+                                                    _eventManager.fetchBehaviorProgress();
+                                                }
+                                            } else {
+                                                authenticateButton.setText("Sign In");
+                                            }
+                                            showUser();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                else
+                    _sessionMOauthEmailProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated)) {
+                                _smpUser = null;
+                                showUser();
+                            }
+                        }
+                    });
+
             }
         });
 

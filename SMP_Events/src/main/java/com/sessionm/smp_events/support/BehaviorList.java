@@ -6,13 +6,13 @@ package com.sessionm.smp_events.support;
 
 import android.widget.TextView;
 
-import com.sessionm.api.common.data.behavior.Behavior;
-import com.sessionm.api.common.data.behavior.CompositeBehavior;
-import com.sessionm.api.common.data.behavior.CountBehavior;
-import com.sessionm.api.common.data.behavior.Goal;
-import com.sessionm.api.common.data.behavior.Group;
-import com.sessionm.api.common.data.behavior.UniqueBehavior;
-import com.sessionm.api.events.data.EventsResponse;
+import com.sessionm.core.api.common.data.behavior.Behavior;
+import com.sessionm.core.api.common.data.behavior.CompositeBehavior;
+import com.sessionm.core.api.common.data.behavior.CountBehavior;
+import com.sessionm.core.api.common.data.behavior.Goal;
+import com.sessionm.core.api.common.data.behavior.Group;
+import com.sessionm.core.api.common.data.behavior.UniqueBehavior;
+import com.sessionm.event.api.data.EventsResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;

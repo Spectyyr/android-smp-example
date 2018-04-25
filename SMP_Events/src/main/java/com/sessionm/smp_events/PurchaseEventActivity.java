@@ -11,15 +11,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.events.EventsListener;
-import com.sessionm.api.events.EventsManager;
-import com.sessionm.api.events.data.EventPostedResponse;
-import com.sessionm.api.events.data.ProgressFetchedResponse;
-import com.sessionm.api.events.data.builders.purchase.PurchaseEventBuilder;
-import com.sessionm.api.events.data.builders.purchase.PurchaseEventItemBuilder;
-import com.sessionm.api.events.data.events.base.EventItem;
-import com.sessionm.api.events.data.events.purchase.PurchaseEventItem;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.event.api.EventsListener;
+import com.sessionm.event.api.EventsManager;
+import com.sessionm.event.api.data.EventPostedResponse;
+import com.sessionm.event.api.data.ProgressFetchedResponse;
+import com.sessionm.event.api.data.builders.purchase.PurchaseEventBuilder;
+import com.sessionm.event.api.data.builders.purchase.PurchaseEventItemBuilder;
+import com.sessionm.event.api.data.events.base.EventItem;
+import com.sessionm.event.api.data.events.purchase.PurchaseEventItem;
 import com.sessionm.smp_events.support.BehaviorList;
 import com.sessionm.smp_events.support.BehaviorPagerAdapter;
 
