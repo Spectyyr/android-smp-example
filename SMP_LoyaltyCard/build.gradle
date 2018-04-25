@@ -21,7 +21,8 @@ android {
 
 dependencies {
     //SessionM Dependencies
-    compile "com.sessionm.android:sessionm:${rootProject.sessionMSdkVersion}"
+    compile "com.sessionm.android:sessionm-loyaltycard:${rootProject.sessionMSdkVersion}"
+    compile "com.sessionm.android:sessionm-identity:${rootProject.sessionMSdkVersion}"
     compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile "com.google.code.gson:gson:${rootProject.gsonVersion}"

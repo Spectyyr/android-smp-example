@@ -7,13 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.IdentityManager;
-import com.sessionm.api.identity.UserListener;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.loyaltycard.LoyaltyCardsManager;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
+import com.sessionm.loyaltycard.api.LoyaltyCardsManager;
 
 import java.util.Set;
 
@@ -23,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView userBalanceTextView;
     private FloatingActionButton linkCardButton;
+    private SessionMOauthEmailProvider _sessionMOauthEmailProvider;
+    private UserManager _userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
+
+        _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, null);
+        _userManager = UserManager.getInstance();
 
         linkCardButton = findViewById(R.id.action_link_card);
         linkCardButton.setOnClickListener(new View.OnClickListener() {
@@ -44,33 +52,39 @@ public class MainActivity extends AppCompatActivity {
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (UserManager.getInstance().getCurrentUser() == null)
-                    IdentityManager.getInstance().authenticateCoalitionWithToken(SAMPLE_USER_TOKEN);
+                if (_userManager.getCurrentUser() == null)
+                    _sessionMOauthEmailProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (sessionMError != null) {
+                                Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                                    @Override
+                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                                        if (sessionMError != null) {
+                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (smpUser != null) {
+                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                                            } else
+                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 else
-                    IdentityManager.getInstance().logOutUser();
+                    _sessionMOauthEmailProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
+                        @Override
+                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))
+                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                        }
+                    });
+                LoyaltyCardsManager.getInstance().fetchLinkedCards();
             }
         });
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        UserManager.getInstance().setListener(_userListener);
-    }
-
-    UserListener _userListener = new UserListener() {
-        @Override
-        public void onUserUpdated(SMPUser smpUser, Set<String> set) {
-            if (smpUser != null) {
-                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-            } else
-                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-            LoyaltyCardsManager.getInstance().fetchLinkedCards();
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-
-        }
-    };
 }

@@ -19,13 +19,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.loyaltycard.LoyaltyCardsListener;
-import com.sessionm.api.loyaltycard.LoyaltyCardsManager;
-import com.sessionm.api.loyaltycard.data.LoyaltyCard;
-import com.sessionm.api.loyaltycard.data.LoyaltyCardTransaction;
-import com.sessionm.api.loyaltycard.data.Retailer;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.loyaltycard.api.LoyaltyCardsManager;
+import com.sessionm.loyaltycard.api.data.Retailer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +31,7 @@ public class LoyaltyCardActivity extends AppCompatActivity {
     private static final String TAG = "SessionM.LoyalActiv";
 
     private ListView _listView;
-    private LoyaltyCardsManager _loyaltyManager;
+    private LoyaltyCardsManager _loyaltyManager = LoyaltyCardsManager.getInstance();
     private List<Retailer> _retailers;
     private EditText _searchView;
     private RetailerListAdapter _listAdapter;
@@ -52,7 +48,6 @@ public class LoyaltyCardActivity extends AppCompatActivity {
         _searchView = findViewById(R.id.search);
         _listView = findViewById(R.id.retailer_list);
         _clearSearch = findViewById(R.id.clear_search);
-        _loyaltyManager = SessionM.getInstance().getLoyaltyCardsManager();
         _retailers = new ArrayList<>(_loyaltyManager.getRetailers());
         _listAdapter = new RetailerListAdapter(this, _retailers);
         _listView.setAdapter(_listAdapter);
@@ -79,8 +74,14 @@ public class LoyaltyCardActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 _listAdapter.filter(s.toString());
             }
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-            @Override public void afterTextChanged(Editable s) { }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         final EditText et = findViewById(R.id.card_number);
@@ -107,7 +108,18 @@ public class LoyaltyCardActivity extends AppCompatActivity {
     }
 
     private void linkCard(String cardNumber, String retailerId) {
-        _loyaltyManager.linkLoyaltyCard(cardNumber, retailerId);
+        _loyaltyManager.linkLoyaltyCard(cardNumber, retailerId, new LoyaltyCardsManager.OnLoyaltyCardLinkedListener() {
+            @Override
+            public void onLinked(String s, SessionMError sessionMError) {
+                _progressDialog.dismiss();
+                if (sessionMError != null) {
+                    Toast.makeText(LoyaltyCardActivity.this, sessionMError.getMessage(), Toast.LENGTH_LONG).show();
+                } else {
+                    Log.d(TAG, String.format("Card: %s", s));
+                    Toast.makeText(LoyaltyCardActivity.this, String.format("Linked Card: %s", s), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -118,51 +130,27 @@ public class LoyaltyCardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _loyaltyManager.setListener(_loyaltyListener);
-        _loyaltyManager.fetchRetailers();
+        _loyaltyManager.fetchRetailers(new LoyaltyCardsManager.OnRetailersFetchedListener() {
+            @Override
+            public void onFetched(List<Retailer> retailers, SessionMError sessionMError) {
+                _progressDialog.dismiss();
+                if (sessionMError != null) {
+                    Toast.makeText(LoyaltyCardActivity.this, sessionMError.getMessage(), Toast.LENGTH_LONG).show();
+                } else {
+                    _retailers.clear();
+                    if (retailers == null) {
+                        retailers = new ArrayList<>();
+                    }
+                    _retailers.addAll(retailers);
+                    if (_listAdapter == null) {
+                        _listAdapter = new RetailerListAdapter(LoyaltyCardActivity.this, _retailers);
+                        _listView.setAdapter(_listAdapter);
+                    } else {
+                        _listAdapter.setRetailers(_retailers);
+                    }
+                    _listAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
-
-    private LoyaltyCardsListener _loyaltyListener = new LoyaltyCardsListener() {
-        @Override
-        public void onRetailersFetched(List<Retailer> retailers) {
-            _retailers.clear();
-            if (retailers == null) {
-                retailers = new ArrayList<>();
-            }
-            _retailers.addAll(retailers);
-            if (_listAdapter == null) {
-                _listAdapter = new RetailerListAdapter(LoyaltyCardActivity.this, _retailers);
-                _listView.setAdapter(_listAdapter);
-            } else {
-                _listAdapter.setRetailers(_retailers);
-            }
-            _listAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void onLoyaltyCardLinked(String cardNumber) {
-            _progressDialog.dismiss();
-            Log.d(TAG, String.format("Card: %s", cardNumber));
-            Toast.makeText(LoyaltyCardActivity.this, String.format("Linked Card: %s", cardNumber), Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onLoyaltyCardUnlinked() {
-            Log.d(TAG, String.format("Card Unlinked"));
-        }
-
-        @Override
-        public void onLoyaltyCardsFetched(List<LoyaltyCard> cards) {
-        }
-
-        @Override
-        public void onLoyaltyCardTransactionsFetched(List<LoyaltyCardTransaction> list) {
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            _progressDialog.dismiss();
-            Toast.makeText(LoyaltyCardActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    };
 }

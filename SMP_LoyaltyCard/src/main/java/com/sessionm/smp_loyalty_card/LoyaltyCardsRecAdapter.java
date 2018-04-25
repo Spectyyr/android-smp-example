@@ -15,8 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.loyaltycard.data.LoyaltyCard;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.loyaltycard.api.LoyaltyCardsManager;
+import com.sessionm.loyaltycard.api.data.LoyaltyCard;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -61,7 +62,12 @@ public class LoyaltyCardsRecAdapter extends RecyclerView.Adapter<LoyaltyCardsRec
                         .setTitle("Unlink Loyalty Card");
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SessionM.getInstance().getLoyaltyCardsManager().unlinkLoyaltyCard(card.getID());
+                        LoyaltyCardsManager.getInstance().unlinkLoyaltyCard(card.getID(), new LoyaltyCardsManager.OnLoyaltyCardUnlinkedListener() {
+                            @Override
+                            public void onUnlinked(SessionMError sessionMError) {
+                                _fragment.fetchLinkedCards();
+                            }
+                        });
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

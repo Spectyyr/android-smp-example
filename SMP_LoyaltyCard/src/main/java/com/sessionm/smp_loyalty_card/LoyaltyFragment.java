@@ -16,13 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.loyaltycard.LoyaltyCardsListener;
-import com.sessionm.api.loyaltycard.LoyaltyCardsManager;
-import com.sessionm.api.loyaltycard.data.LoyaltyCard;
-import com.sessionm.api.loyaltycard.data.LoyaltyCardTransaction;
-import com.sessionm.api.loyaltycard.data.Retailer;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.loyaltycard.api.LoyaltyCardsManager;
+import com.sessionm.loyaltycard.api.data.LoyaltyCard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +27,7 @@ public class LoyaltyFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     private SwipeRefreshLayout _swipeRefreshLayout;
     private List<LoyaltyCard> _cards;
-    private LoyaltyCardsManager _loyaltyManager;
+    private LoyaltyCardsManager _loyaltyManager = LoyaltyCardsManager.getInstance();
     private LoyaltyCardsRecAdapter _listAdapter;
     private RecyclerView _recyclerView;
 
@@ -43,7 +39,6 @@ public class LoyaltyFragment extends Fragment implements SwipeRefreshLayout.OnRe
         _swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _loyaltyManager = SessionM.getInstance().getLoyaltyCardsManager();
         _cards = new ArrayList<>(_loyaltyManager.getLoyaltyCards());
 
         _recyclerView = rootView.findViewById(R.id.card_list);
@@ -62,46 +57,24 @@ public class LoyaltyFragment extends Fragment implements SwipeRefreshLayout.OnRe
         super.onViewCreated(view, savedInstanceState);
     }
 
-    LoyaltyCardsListener _loyaltyListener = new LoyaltyCardsListener() {
-        @Override
-        public void onRetailersFetched(List<Retailer> retailers) {
-        }
-
-        @Override
-        public void onLoyaltyCardLinked(String cardNumber) {
-        }
-
-        @Override
-        public void onLoyaltyCardUnlinked() {
-            fetchLinkedCards();
-        }
-
-        @Override
-        public void onLoyaltyCardTransactionsFetched(List<LoyaltyCardTransaction> list) {
-
-        }
-
-        @Override
-        public void onLoyaltyCardsFetched(List<LoyaltyCard> cards) {
-            refreshList(cards);
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-            Toast.makeText(getActivity(), sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-            refreshList(_loyaltyManager.getLoyaltyCards());
-        }
-    };
-
     @Override
     public void onResume() {
         super.onResume();
         fetchLinkedCards();
     }
 
-    private void fetchLinkedCards() {
-        _loyaltyManager.setListener(_loyaltyListener);
-        _loyaltyManager.fetchLinkedCards();
+    public void fetchLinkedCards() {
+        _loyaltyManager.fetchLinkedCards(new LoyaltyCardsManager.OnLoyaltyCardsFetchedListener() {
+            @Override
+            public void onFetched(List<LoyaltyCard> list, SessionMError sessionMError) {
+                if (sessionMError != null) {
+                    Toast.makeText(getActivity(), sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                    refreshList(_loyaltyManager.getLoyaltyCards());
+                } else {
+                    refreshList(list);
+                }
+            }
+        });
     }
 
     @Override

@@ -13,7 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sessionm.api.loyaltycard.data.Retailer;
+import com.sessionm.loyaltycard.api.data.Retailer;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

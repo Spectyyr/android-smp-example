@@ -6,8 +6,8 @@ package com.sessionm.smp_geofence;
 
 import android.app.Application;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.message.MessagesManager;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.message.api.MessagesManager;
 
 public class SEApplication extends Application {
 
@@ -15,7 +15,7 @@ public class SEApplication extends Application {
     public void onCreate() {
         super.onCreate();
         //Creates SessionM activity lifecycle callbacks to handle activities lifecycle
-        SessionM.getInstance().startWithConfigFile(this);
+        SessionM.start(this);
         //Enables SessionM to receive push notifications, generates and sends a token to the server so the device can receive push notifications
         if (!MessagesManager.getInstance().isPushNotificationEnabled())
             MessagesManager.getInstance().setPushNotificationEnabled(true);

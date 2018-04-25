@@ -1,6 +1,6 @@
 package com.sessionm.smp_geofence;
 
-import com.sessionm.api.geofence.data.GeofenceEvent;
+import com.sessionm.geofence.api.data.GeofenceEvent;
 
 import java.util.List;
 

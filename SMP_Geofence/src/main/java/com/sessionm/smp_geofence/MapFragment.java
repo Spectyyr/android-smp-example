@@ -18,7 +18,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.sessionm.api.geofence.data.GeofenceEvent;
+import com.sessionm.geofence.api.data.GeofenceEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
