@@ -57,10 +57,6 @@ class MainActivity : AppCompatActivity(), CampaignsFragment.OnDeepLinkTappedList
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onDeepLinkTapped(actionType: FeedMessage.MessageActionType, actionURL: String) {
         val uri = Uri.parse(actionURL)
         val intent = Intent(Intent.ACTION_VIEW, uri)

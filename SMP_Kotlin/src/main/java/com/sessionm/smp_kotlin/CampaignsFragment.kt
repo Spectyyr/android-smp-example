@@ -58,14 +58,6 @@ class CampaignsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         _campaignsManager.fetchFeedMessages()
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-    }
-
     override fun onRefresh() {
         _campaignsManager.fetchFeedMessages { list, sessionMError ->
             _swipeRefreshLayout!!.isRefreshing = false
