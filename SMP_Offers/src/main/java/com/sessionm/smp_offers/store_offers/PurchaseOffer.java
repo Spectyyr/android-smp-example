@@ -12,16 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.identity.UserManager;
-import com.sessionm.api.identity.data.SMPUser;
-import com.sessionm.api.offers.OffersListener;
-import com.sessionm.api.offers.OffersManager;
-import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResponse;
-import com.sessionm.api.offers.data.results.purchase.OfferPurchasedResponse;
-import com.sessionm.api.offers.data.results.store.StoreOfferItem;
-import com.sessionm.api.offers.data.results.store.StoreOffersFetchedResponse;
-import com.sessionm.api.offers.data.results.user.UserOffersFetchedResponse;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.identity.api.UserManager;
+import com.sessionm.identity.api.data.SMPUser;
+import com.sessionm.offer.api.OffersManager;
+import com.sessionm.offer.api.data.purchase.OfferPurchasedResponse;
+import com.sessionm.offer.api.data.store.StoreOfferItem;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
@@ -52,7 +48,7 @@ public class PurchaseOffer {
 
         Picasso.with(_activity).load(Uri.parse(_item.getMedia().get(0).getURI())).into((ImageView) dialogLayout.findViewById(R.id.imageView));
         ((TextView) dialogLayout.findViewById(R.id.title)).setText(item.getName());
-        ((TextView) dialogLayout.findViewById(R.id.purchase_terms)).setText(item.getDescription() + "\n\n\n" + item.getTerms());
+        ((TextView) dialogLayout.findViewById(R.id.purchase_terms)).setText(item.getDetails() + "\n\n\n" + item.getTerms());
 
         ((TextView) dialogLayout.findViewById(R.id.purchase_range))
                 .setText(String.format("This offer is available %s through %s",
@@ -78,8 +74,17 @@ public class PurchaseOffer {
                     @Override
                     public void onClick(View v) {
                         Log.d("TAG", "" + dialog.getClass().toString());
-                        OffersManager.getInstance().setListener(_purchaseListener);
-                        OffersManager.getInstance().purchaseOffer(item.getOfferID(), 1);
+                        OffersManager.getInstance().purchaseOffer(item.getOfferID(), 1, new OffersManager.OnOfferPurchased() {
+                            @Override
+                            public void onPurchased(OfferPurchasedResponse offerPurchasedResponse, SessionMError sessionMError) {
+                                if (sessionMError != null) {
+                                    Toast.makeText(_activity, "Failure: '" + sessionMError.getCode() + "' " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(_activity, "Success: '" + offerPurchasedResponse.getUserOffer().getUserOfferID() + "' Name: '" + offerPurchasedResponse.getUserOffer().getName(), Toast.LENGTH_SHORT).show();
+                                    _callback.updatePoints(offerPurchasedResponse.getPointsRemaining());
+                                }
+                            }
+                        });
                     }
                 });
             }
@@ -87,30 +92,4 @@ public class PurchaseOffer {
 
         dialog.show();
     }
-
-    OffersListener _purchaseListener = new OffersListener() {
-        @Override
-        public void onUserOfferClaimed(UserOfferClaimedResponse claimedResponse) {
-        }
-
-        @Override
-        public void onUserOffersFetched(UserOffersFetchedResponse userOffers) {
-        }
-
-        @Override
-        public void onStoreOffersFetched(StoreOffersFetchedResponse storeOffersFetchedResponse) {
-
-        }
-
-        @Override
-        public void onOfferPurchased(OfferPurchasedResponse purchase) {
-            Toast.makeText(_activity, "Success: '" + purchase.getUserOffer().getUserOfferID() + "' Name: '" + purchase.getUserOffer().getName(), Toast.LENGTH_SHORT).show();
-            _callback.updatePoints(purchase.getPointsRemaining());
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            Toast.makeText(_activity, "Failure: '" + error.getCode() + "' " + error.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
 }

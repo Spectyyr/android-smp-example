@@ -6,14 +6,14 @@ package com.sessionm.smp_offers;
 
 import android.app.Application;
 
-import com.sessionm.api.SessionM;
+import com.sessionm.core.api.SessionM;
 
-public class SEApplication extends Application{
+public class SEApplication extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        SessionM.getInstance().startWithConfigFile(this);
+        SessionM.start(this);
     }
 }

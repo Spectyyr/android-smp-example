@@ -1,6 +1,6 @@
 /*
-* Copyright (c) 2016 SessionM. All rights reserved.
-*/
+ * Copyright (c) 2016 SessionM. All rights reserved.
+ */
 package com.sessionm.smp_offers.store_offers;
 
 import android.content.Context;
@@ -15,13 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.offers.OffersListener;
-import com.sessionm.api.offers.OffersManager;
-import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResponse;
-import com.sessionm.api.offers.data.results.purchase.OfferPurchasedResponse;
-import com.sessionm.api.offers.data.results.store.StoreOffersFetchedResponse;
-import com.sessionm.api.offers.data.results.user.UserOffersFetchedResponse;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.offer.api.OffersManager;
+import com.sessionm.offer.api.data.store.StoreOffersFetchedResponse;
 import com.sessionm.smp_offers.R;
 
 public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -32,14 +28,8 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
         void updatePoints(int points);
     }
 
-    private final OffersManager offerManager = OffersManager.getInstance();
+    private final OffersManager _offerManager = OffersManager.getInstance();
 
-    public void fetchOffers() {
-        _swipeRefreshLayout.setRefreshing(true);
-
-        offerManager.setListener(offersListener);
-        offerManager.fetchStoreOffers();
-    }
 
     private SwipeRefreshLayout _swipeRefreshLayout;
     private StoreOffersRecAdapter _offersRecAdapter;
@@ -77,35 +67,22 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
         fetchOffers();
     }
 
-    OffersListener offersListener = new OffersListener() {
-        @Override
-        public void onOfferPurchased(OfferPurchasedResponse offerPurchaseResult) {
-        }
+    public void fetchOffers() {
+        _swipeRefreshLayout.setRefreshing(true);
 
-        @Override
-        public void onUserOfferClaimed(UserOfferClaimedResponse userOfferClaimedResult) {
-        }
-
-        @Override
-        public void onUserOffersFetched(UserOffersFetchedResponse userOffersResult) {
-        }
-
-        @Override
-        public void onStoreOffersFetched(StoreOffersFetchedResponse storeOffersFetchedResponse) {
-            if (_swipeRefreshLayout.isRefreshing()) {
-                _swipeRefreshLayout.setRefreshing(false);
+        _offerManager.fetchStoreOffers(new OffersManager.OnStoreOffersFetched() {
+            @Override
+            public void onFetched(StoreOffersFetchedResponse storeOffersFetchedResponse, SessionMError sessionMError) {
+                if (_swipeRefreshLayout.isRefreshing()) {
+                    _swipeRefreshLayout.setRefreshing(false);
+                }
+                if (sessionMError != null) {
+                    Toast.makeText(StoreOffersFragment.this.getContext(), "Failure: '" + sessionMError.getCode() + "' " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    _offersRecAdapter.setOffers(storeOffersFetchedResponse.getOffers());
+                }
             }
-            _offersRecAdapter.setOffers(storeOffersFetchedResponse.getOffers());
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-            if (_swipeRefreshLayout.isRefreshing()) {
-                _swipeRefreshLayout.setRefreshing(false);
-            }
-            Toast.makeText(StoreOffersFragment.this.getContext(), "Failure: '" + sessionMError.getCode() + "' " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
+        });
+    }
 }
 

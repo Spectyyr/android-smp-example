@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (UserManager.getInstance().getCurrentUser() == null)
+                if (_userManager.getCurrentUser() == null)
                     _sessionMOauthEmailProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
                         @Override
                         public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {

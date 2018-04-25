@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sessionm.api.offers.data.results.store.StoreOfferItem;
+import com.sessionm.offer.api.data.store.StoreOfferItem;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 

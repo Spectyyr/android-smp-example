@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sessionm.api.offers.data.results.user.UserOfferItem;
+import com.sessionm.offer.api.data.user.UserOfferItem;
 import com.sessionm.smp_offers.R;
 import com.squareup.picasso.Picasso;
 
@@ -42,7 +42,7 @@ class MyOffersRecAdapter extends RecyclerView.Adapter<MyOffersRecAdapter.OffersV
         final UserOfferItem offer = _offers.get(position);
 
         holder.name.setText(offer.getName());
-        holder.expires.setText(offer.getExpirationDate());
+        holder.expires.setText(offer.getExpirationDate().toString());
 
         Picasso.with(holder.itemView.getContext()).load(Uri.parse(offer.getMedia().get(0).getURI())).into(holder.media);
 

@@ -11,25 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.offers.OffersListener;
-import com.sessionm.api.offers.OffersManager;
-import com.sessionm.api.offers.data.results.claim.UserOfferClaimedResponse;
-import com.sessionm.api.offers.data.results.purchase.OfferPurchasedResponse;
-import com.sessionm.api.offers.data.results.store.StoreOffersFetchedResponse;
-import com.sessionm.api.offers.data.results.user.UserOffersFetchedResponse;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.offer.api.OffersManager;
+import com.sessionm.offer.api.data.user.UserOffersFetchedResponse;
 import com.sessionm.smp_offers.R;
 
 public class MyOffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private final OffersManager offerManager = OffersManager.getInstance();
 
-    public void fetchOffers() {
-        if (_swipeRefreshLayout != null) { _swipeRefreshLayout.setRefreshing(true); }
-
-        offerManager.setListener(offersListener);
-        offerManager.fetchUserOffers();
-    }
 
     private SwipeRefreshLayout _swipeRefreshLayout;
     private MyOffersRecAdapter _offersRecAdapter;
@@ -55,32 +45,27 @@ public class MyOffersFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     @Override
-    public void onRefresh() { fetchOffers(); }
+    public void onRefresh() {
+        fetchOffers();
+    }
 
-    OffersListener offersListener = new OffersListener() {
-        @Override public void onOfferPurchased(OfferPurchasedResponse offerPurchaseResult) {}
-        @Override public void onUserOfferClaimed(UserOfferClaimedResponse userOfferClaimedResult) {}
+    public void fetchOffers() {
+        if (_swipeRefreshLayout != null) {
+            _swipeRefreshLayout.setRefreshing(true);
+        }
 
-        @Override
-        public void onUserOffersFetched(UserOffersFetchedResponse userOffersResult) {
-            if (_swipeRefreshLayout.isRefreshing()) {
-                _swipeRefreshLayout.setRefreshing(false);
+        offerManager.fetchUserOffers(new OffersManager.OnUserOffersFetched() {
+            @Override
+            public void onFetched(UserOffersFetchedResponse userOffersFetchedResponse, SessionMError sessionMError) {
+                if (_swipeRefreshLayout.isRefreshing()) {
+                    _swipeRefreshLayout.setRefreshing(false);
+                }
+                if (sessionMError != null) {
+                    Toast.makeText(MyOffersFragment.this.getContext(), "Failure: '" + sessionMError.getCode() + "' " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    _offersRecAdapter.setOffers(userOffersFetchedResponse.getUserOffers());
+                }
             }
-            _offersRecAdapter.setOffers(userOffersResult.getUserOffers());
-        }
-
-        @Override
-        public void onStoreOffersFetched(StoreOffersFetchedResponse storeOffersFetchedResponse) {
-
-        }
-
-        @Override
-        public void onFailure(SessionMError sessionMError) {
-            if (_swipeRefreshLayout.isRefreshing()) {
-                _swipeRefreshLayout.setRefreshing(false);
-            }
-            Toast.makeText(MyOffersFragment.this.getContext(), "Failure: '" + sessionMError.getCode() + "' " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
+        });
+    }
 }
