@@ -21,21 +21,21 @@ android {
 
 dependencies {
     //SessionM Dependencies
-    compile "com.sessionm.android:sessionm-geofence:${rootProject.sessionMSdkVersion}"
-    compile "com.sessionm.android:sessionm-identity:${rootProject.sessionMSdkVersion}"
-    compile "com.sessionm.android:sessionm-message:${rootProject.sessionMSdkVersion}"
-    compile "com.sessionm.android:sessionm-event:${rootProject.sessionMSdkVersion}"
-    compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
-    compile "com.google.code.gson:gson:${rootProject.gsonVersion}"
+    implementation "com.sessionm.android:sessionm-geofence:${rootProject.sessionMSdkVersion}"
+    implementation "com.sessionm.android:sessionm-identity:${rootProject.sessionMSdkVersion}"
+    implementation "com.sessionm.android:sessionm-message:${rootProject.sessionMSdkVersion}"
+    implementation "com.sessionm.android:sessionm-event:${rootProject.sessionMSdkVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
+    implementation "com.google.code.gson:gson:${rootProject.gsonVersion}"
 
-    compile "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
-    compile "com.android.support:design:${rootProject.supportLibVersion}"
-    compile "com.android.support:cardview-v7:${rootProject.supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
+    implementation "com.android.support:design:${rootProject.supportLibVersion}"
+    implementation "com.android.support:cardview-v7:${rootProject.supportLibVersion}"
 
-    compile "com.google.android.gms:play-services-maps:${rootProject.playServicesVersion}"
-    compile "com.google.android.gms:play-services-location:${rootProject.playServicesVersion}"
-    compile "com.google.android.gms:play-services-gcm:${rootProject.playServicesVersion}"
+    implementation "com.google.android.gms:play-services-maps:${rootProject.playServicesVersion}"
+    implementation "com.google.android.gms:play-services-location:${rootProject.playServicesVersion}"
+    implementation "com.google.android.gms:play-services-gcm:${rootProject.playServicesVersion}"
 
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'io.reactivex:rxjava:1.1.6'
+    implementation 'io.reactivex:rxandroid:1.2.1'
+    implementation 'io.reactivex:rxjava:1.1.6'
 }

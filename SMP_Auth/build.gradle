@@ -38,14 +38,14 @@ configurations.all {
 }
 
 dependencies {
-    compile "com.sessionm.android:sessionm-identity:${rootProject.sessionMSdkVersion}"
-    compile "com.sessionm.android:sessionm-webauth:${rootProject.sessionMSdkVersion}"
-    compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
-    compile 'com.squareup.okio:okio:1.14.0'
-    compile "com.google.code.gson:gson:${rootProject.gsonVersion}"
-    compile "com.android.support:design:${rootProject.supportLibVersion}"
-    compile "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
-    compile 'com.facebook.android:facebook-android-sdk:4.27.0'
+    implementation "com.sessionm.android:sessionm-identity:${rootProject.sessionMSdkVersion}"
+    implementation "com.sessionm.android:sessionm-webauth:${rootProject.sessionMSdkVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
+    implementation 'com.squareup.okio:okio:1.14.0'
+    implementation "com.google.code.gson:gson:${rootProject.gsonVersion}"
+    implementation "com.android.support:design:${rootProject.supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
+    implementation 'com.facebook.android:facebook-android-sdk:4.27.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

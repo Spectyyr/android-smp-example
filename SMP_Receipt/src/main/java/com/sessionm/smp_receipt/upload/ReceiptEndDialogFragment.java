@@ -46,11 +46,11 @@ public class ReceiptEndDialogFragment extends DialogFragment {
         final boolean isSuccess = getArguments().getBoolean(isSuccessKey);
         String errorMessage = getArguments().getString(errorKey);
         final String campaignID = getArguments().getString(campaignIDKey);
-        String title = getString(com.sessionm.R.string.thank_you);
-        String description = getString(com.sessionm.R.string.your_receipt_has_been_uploaded);
+        String title = getString(com.sessionm.receipt.R.string.thank_you);
+        String description = getString(com.sessionm.receipt.R.string.your_receipt_has_been_uploaded);
 
         if (!isSuccess) {
-            title = getActivity().getString(com.sessionm.R.string.we_are_sorry);
+            title = getActivity().getString(com.sessionm.receipt.R.string.we_are_sorry);
             description = errorMessage;
         }
 
@@ -63,7 +63,7 @@ public class ReceiptEndDialogFragment extends DialogFragment {
         Button submitButton = dialog.findViewById(R.id.receipt_upload_end_ok_button);
         getActivity().setResult(Activity.RESULT_OK);
         if (!isSuccess) {
-            submitButton.setText(getString(com.sessionm.R.string.try_again_later));
+            submitButton.setText(getString(com.sessionm.receipt.R.string.try_again_later));
             Intent returnIntent = new Intent();
             returnIntent.putExtra("result", "Upload failed.");
             getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);

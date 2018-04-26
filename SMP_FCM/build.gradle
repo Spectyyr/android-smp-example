@@ -21,17 +21,17 @@ android {
 
 dependencies {
     //SessionM Dependencies
-    compile "com.sessionm.android:sessionm-message:${rootProject.sessionMSdkVersion}"
-    compile "com.sessionm.android:sessionm-identity:${rootProject.sessionMSdkVersion}"
-    compile "com.sessionm.android:sessionm-event:${rootProject.sessionMSdkVersion}"
-    compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
-    compile "com.google.code.gson:gson:${rootProject.gsonVersion}"
+    implementation "com.sessionm.android:sessionm-message:${rootProject.sessionMSdkVersion}"
+    implementation "com.sessionm.android:sessionm-identity:${rootProject.sessionMSdkVersion}"
+    implementation "com.sessionm.android:sessionm-event:${rootProject.sessionMSdkVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
+    implementation "com.google.code.gson:gson:${rootProject.gsonVersion}"
 
-    compile "com.google.android.gms:play-services-gcm:${rootProject.playServicesVersion}"
-    compile "com.google.firebase:firebase-core:${rootProject.playServicesVersion}"
-    compile "com.google.firebase:firebase-messaging:${rootProject.playServicesVersion}"
+    implementation "com.google.android.gms:play-services-gcm:${rootProject.playServicesVersion}"
+    implementation "com.google.firebase:firebase-core:${rootProject.playServicesVersion}"
+    implementation "com.google.firebase:firebase-messaging:${rootProject.playServicesVersion}"
 
-    compile "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
 }
 apply plugin: 'com.google.gms.google-services'
 

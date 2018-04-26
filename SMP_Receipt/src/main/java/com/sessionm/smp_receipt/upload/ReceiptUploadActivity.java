@@ -149,11 +149,11 @@ public class ReceiptUploadActivity extends Activity {
         @Override
         public void onProgress(Receipt receipt) {
             if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.setMessage(getString(com.sessionm.R.string.uploading) + receipt.getImageURLs().size() + "/" + receipt.getImageCount());
+                progressDialog.setMessage(getString(com.sessionm.receipt.R.string.uploading) + receipt.getImageURLs().size() + "/" + receipt.getImageCount());
             }
             if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, getString(com.sessionm.R.string.uploading) + receipt.getImageURLs().size());
-                Log.d(TAG, getString(com.sessionm.R.string.uploading) + "Memory: " + Utils.getAllocatedMemory());
+                Log.d(TAG, getString(com.sessionm.receipt.R.string.uploading) + receipt.getImageURLs().size());
+                Log.d(TAG, getString(com.sessionm.receipt.R.string.uploading) + "Memory: " + Utils.getAllocatedMemory());
             }
         }
 
@@ -294,7 +294,7 @@ public class ReceiptUploadActivity extends Activity {
     private void sendReceiptWithProgressDialog(String uploadUrl) {
         progressDialog = new ProgressDialog(this);
         progressDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        progressDialog.setMessage(getString(com.sessionm.R.string.uploading) + 0 + "/" + uris.size());
+        progressDialog.setMessage(getString(com.sessionm.receipt.R.string.uploading) + 0 + "/" + uris.size());
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
@@ -302,9 +302,9 @@ public class ReceiptUploadActivity extends Activity {
         List<Bitmap> bitmapList = new ArrayList<>();
         bitmapList.add(bitmap);
         if (ReceiptsManager.getInstance().uploadReceiptImages(uris, campaignID, placementID, null, false) == null) {
-            updateProgressDialogWithResult(false, getString(com.sessionm.R.string.no_network_connection));
+            updateProgressDialogWithResult(false, getString(com.sessionm.receipt.R.string.no_network_connection));
         } else if (!shouldSetListener) {
-            updateProgressDialogWithResult(true, getString(com.sessionm.R.string.uploading));
+            updateProgressDialogWithResult(true, getString(com.sessionm.receipt.R.string.uploading));
         }
         if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, "Memory uploading image: " + Utils.getAllocatedMemory());

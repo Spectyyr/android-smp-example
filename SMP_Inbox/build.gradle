@@ -26,16 +26,16 @@ repositories {
 
 dependencies {
     //SessionM Dependencies
-    compile "com.sessionm.android:sessionm-inbox:${rootProject.sessionMSdkVersion}"
-    compile "com.sessionm.android:sessionm-identity:${rootProject.sessionMSdkVersion}"
-    compile "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
-    compile "com.google.code.gson:gson:${rootProject.gsonVersion}"
+    implementation "com.sessionm.android:sessionm-inbox:${rootProject.sessionMSdkVersion}"
+    implementation "com.sessionm.android:sessionm-identity:${rootProject.sessionMSdkVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
+    implementation "com.google.code.gson:gson:${rootProject.gsonVersion}"
 
-    compile 'com.yanzhenjie:recyclerview-swipe:1.0.2'
+    implementation 'com.yanzhenjie:recyclerview-swipe:1.0.2'
 
-    compile "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
-    compile "com.android.support:design:${rootProject.supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
+    implementation "com.android.support:design:${rootProject.supportLibVersion}"
 
     //Optional: Generate random English word for new Inbox message
-    compile 'com.github.maximeroussy:invitrode:1.0.10'
+    implementation 'com.github.maximeroussy:invitrode:1.0.10'
 }
