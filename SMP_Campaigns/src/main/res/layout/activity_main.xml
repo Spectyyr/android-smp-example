@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sessionm.smp_kotlin.MainActivity">
+    tools:context=".MainActivity">
 
     <include
         android:id="@+id/custom_action_bar"
@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/campaigns_fragment"
-        android:name="com.sessionm.smp_kotlin.CampaignsFragment"
+        android:name="com.sessionm.smp_campaigns.CampaignsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/custom_action_bar"

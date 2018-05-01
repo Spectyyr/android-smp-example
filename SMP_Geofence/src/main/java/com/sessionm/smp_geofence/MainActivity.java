@@ -22,7 +22,7 @@ import com.sessionm.geofence.api.data.GeofenceEvent;
 import com.sessionm.geofence.api.data.TriggeredEvent;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
-import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final String SAMPLE_USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOiIyMDE3LTA5LTI3IDE1OjMwOjU1ICswMDAwIiwiZXhwIjoiMjAxNy0xMC0xMSAxNTozMDo1NSArMDAwMCIsImRhdGEiOnsiaWQiOiJkYTYxZGNkYS1hMzk4LTExZTctODcxZi05ZjZkNTQzYmUwNDAifX0.iBrHv9-INszE-SSL9rsuNnLDv7DBBaIUuqM6XDUvecxzap2CuoN4v3juXPvw-dZWuzbiHY2H3TPJJlRcI5_fZPxH2FjDqGA1S5nwEwEYVn9D1oMvnXUB6jLIq3ev4omE7ZUj5zVytsn_rKdryllfHro_8g5TneiOUoFBa_1N_RcC9AK_8640xbYPtZaNWhxsJiCwTsKWaLSYQ6RQv_xo1M4reL56dbjJ16Y-50HUy6Pxax6biKVvpjNRDizrkY0bka07lHMLAHMZD5-D3OYnxpxyg9aVX2kJd36iZuwsKaXVMtrCzwmzzGuhQD1PUUhC43wkNUbYw9z2d94v0FDxvQ";
     private TextView userBalanceTextView;
-    private SessionMOauthEmailProvider _sessionMOauthEmailProvider;
+    private SessionMOauthProvider _sessionMOauthProvider;
     private UserManager _userManager = UserManager.getInstance();
 
     ViewPager viewPager;
@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
-        _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, null);
+        _sessionMOauthProvider = new SessionMOauthProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthProvider, null);
 
         viewPager = findViewById(R.id.main_pager);
         viewPager.setAdapter(new SMPagerAdapter(getSupportFragmentManager()));
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (_userManager.getCurrentUser() == null)
-                    _sessionMOauthEmailProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
+                    _sessionMOauthProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
                         @Override
                         public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                             if (sessionMError != null) {
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 else
-                    _sessionMOauthEmailProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
+                    _sessionMOauthProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
                         @Override
                         public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                             if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))

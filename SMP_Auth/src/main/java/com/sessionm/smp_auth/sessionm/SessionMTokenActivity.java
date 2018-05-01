@@ -13,7 +13,6 @@ import com.sessionm.core.api.provider.AuthenticationProvider;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
-import com.sessionm.identity.api.provider.SessionMOauthTokenProvider;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
 import com.sessionm.smp_auth.UserDetailsActivity;
@@ -36,7 +35,7 @@ public class SessionMTokenActivity extends BaseActivity implements
     private TextView mStatusTextView;
     private TextView mDetailTextView;
 
-    private SessionMOauthTokenProvider _sessionMOauthTokenProvider;
+    private SessionMOauthProvider _sessionMOauthProvider;
     private UserManager _userManager;
 
     @Override
@@ -60,8 +59,8 @@ public class SessionMTokenActivity extends BaseActivity implements
             }
         });
 
-        _sessionMOauthTokenProvider = new SessionMOauthTokenProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthTokenProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
+        _sessionMOauthProvider = new SessionMOauthProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
             @Override
             public void onUpdated(SessionMError sessionMError) {
 
@@ -77,7 +76,7 @@ public class SessionMTokenActivity extends BaseActivity implements
 
     private void authenticateWithToken(String token) {
         showProgressDialog();
-        _sessionMOauthTokenProvider.authenticateWithToken(token, "sessionm_oauth", new SessionMOauthProvider.SessionMOauthProviderListener() {
+        _sessionMOauthProvider.authenticateUserWithToken(token, "sessionm_oauth", new SessionMOauthProvider.SessionMOauthProviderListener() {
             @Override
             public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                 hideProgressDialog();
@@ -107,7 +106,7 @@ public class SessionMTokenActivity extends BaseActivity implements
     }
 
     private void signOut() {
-        _sessionMOauthTokenProvider.logoutUser(null);
+        _sessionMOauthProvider.logoutUser(null);
         updateUI(null);
     }
 

@@ -10,13 +10,12 @@ import android.widget.Toast
 import com.sessionm.campaign.api.data.FeedMessage
 import com.sessionm.core.api.SessionM
 import com.sessionm.identity.api.UserManager
-import com.sessionm.identity.api.provider.SessionMOauthEmailProvider
 import com.sessionm.identity.api.provider.SessionMOauthProvider
-import kotlinx.android.synthetic.main.activity_main.*
+import com.sessionm.identity.api.provider.SessionMOauthProviderIDP
 
 class MainActivity : AppCompatActivity(), CampaignsFragment.OnDeepLinkTappedListener {
     private var userBalanceTextView: TextView? = null
-    private var _sessionMOauthEmailProvider: SessionMOauthEmailProvider? = null
+    private var _sessionMOauthProvider: SessionMOauthProvider? = null
     private var _userManager: UserManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,14 +25,14 @@ class MainActivity : AppCompatActivity(), CampaignsFragment.OnDeepLinkTappedList
         val actionBar = findViewById<Toolbar>(R.id.custom_action_bar)
         setSupportActionBar(actionBar)
 
-        _sessionMOauthEmailProvider = SessionMOauthEmailProvider()
-        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider) { }
+        _sessionMOauthProvider = SessionMOauthProvider()
+        SessionM.setAuthenticationProvider(_sessionMOauthProvider) { }
         _userManager = UserManager.getInstance()
 
         userBalanceTextView = findViewById(R.id.user_balance_textview)
         userBalanceTextView!!.setOnClickListener {
             if (UserManager.getInstance().currentUser == null)
-                _sessionMOauthEmailProvider!!.authenticateUser("test@sessionm.com", "aaaaaaaa1") { authenticatedState, sessionMError ->
+                _sessionMOauthProvider!!.authenticateUser("test@sessionm.com", "aaaaaaaa1") { authenticatedState, sessionMError ->
                     if (sessionMError != null) {
                         Toast.makeText(this@MainActivity, sessionMError.message, Toast.LENGTH_SHORT).show()
                     } else {
@@ -50,8 +49,8 @@ class MainActivity : AppCompatActivity(), CampaignsFragment.OnDeepLinkTappedList
                     }
                 }
             else
-                _sessionMOauthEmailProvider!!.logoutUser { authenticatedState, sessionMError ->
-                    if (authenticatedState == SessionMOauthProvider.AuthenticatedState.NotAuthenticated)
+                _sessionMOauthProvider!!.logoutUser { authenticatedState, sessionMError ->
+                    if (authenticatedState == SessionMOauthProviderIDP.AuthenticatedState.NotAuthenticated)
                         userBalanceTextView!!.text = getString(R.string.click_here_to_log_in_user)
                 }
         }

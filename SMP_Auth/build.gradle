@@ -45,7 +45,7 @@ dependencies {
     implementation "com.google.code.gson:gson:${rootProject.gsonVersion}"
     implementation "com.android.support:design:${rootProject.supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
-    implementation 'com.facebook.android:facebook-android-sdk:4.27.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.31.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

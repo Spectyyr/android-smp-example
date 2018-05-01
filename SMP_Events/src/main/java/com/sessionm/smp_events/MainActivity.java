@@ -24,7 +24,6 @@ import com.sessionm.event.api.data.builders.activity.ActivityItemBuilder;
 import com.sessionm.event.api.data.events.activity.ActivityEvent;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
-import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.smp_events.support.BehaviorList;
 import com.sessionm.smp_events.support.BehaviorPagerAdapter;
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private BehaviorList _behaviorList;
     private BehaviorPagerAdapter _adapter;
     private ImageButton _pb;
-    private SessionMOauthEmailProvider _sessionMOauthEmailProvider;
+    private SessionMOauthProvider _sessionMOauthProvider;
 
     public void doFetchProgress(View view) {
 
@@ -115,8 +114,8 @@ public class MainActivity extends AppCompatActivity {
         _tabs.setupWithViewPager(_pager);
 
         _pb = findViewById(R.id.progressBar);
-        _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, null);
+        _sessionMOauthProvider = new SessionMOauthProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthProvider, null);
     }
 
     @Override
@@ -188,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (UserManager.getInstance().getCurrentUser() == null)
-                    _sessionMOauthEmailProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
+                    _sessionMOauthProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
                         @Override
                         public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                             if (sessionMError != null) {
@@ -222,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 else
-                    _sessionMOauthEmailProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
+                    _sessionMOauthProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
                         @Override
                         public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                             if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated)) {

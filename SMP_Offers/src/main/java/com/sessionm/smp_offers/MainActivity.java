@@ -14,7 +14,7 @@ import com.sessionm.core.api.SessionM;
 import com.sessionm.core.api.SessionMError;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
-import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
+import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.smp_offers.my_offers.MyOffersFragment;
 import com.sessionm.smp_offers.store_offers.StoreOffersFragment;
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
     private TabLayout _tabs;
     private ViewPager _pager;
     private OffersPagerAdapter _adapter;
-    private SessionMOauthEmailProvider _sessionMOauthEmailProvider;
+    private SessionMOauthProvider _sessionMOauthProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
         setContentView(R.layout.activity_main);
 
         userBalance = findViewById(R.id.user_balance);
-        _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, null);
+        _sessionMOauthProvider = new SessionMOauthProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthProvider, null);
         authenticate = findViewById(R.id.authenticate);
         authenticate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
     }
 
     private void authenticateUser() {
-        _sessionMOauthEmailProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
+        _sessionMOauthProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
             @Override
             public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                 if (sessionMError != null) {
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
     }
 
     private void logoutUser() {
-        _sessionMOauthEmailProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
+        _sessionMOauthProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
             @Override
             public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                 if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated)) {

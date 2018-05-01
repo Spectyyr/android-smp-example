@@ -15,7 +15,6 @@ import com.sessionm.core.api.provider.AuthenticationProvider;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.data.SMPUserCreate;
-import com.sessionm.identity.api.provider.SessionMOauthEmailProvider;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
@@ -37,7 +36,7 @@ public class EmailPasswordActivity extends BaseActivity implements
     private EditText mEmailField;
     private EditText mPasswordField;
 
-    private SessionMOauthEmailProvider _sessionMOauthEmailProvider;
+    private SessionMOauthProvider _sessionMOauthProvider;
     private UserManager _userManager;
 
     @Override
@@ -65,8 +64,8 @@ public class EmailPasswordActivity extends BaseActivity implements
             }
         });
 
-        _sessionMOauthEmailProvider = new SessionMOauthEmailProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthEmailProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
+        _sessionMOauthProvider = new SessionMOauthProvider();
+        SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
             @Override
             public void onUpdated(SessionMError sessionMError) {
 
@@ -89,7 +88,7 @@ public class EmailPasswordActivity extends BaseActivity implements
         showProgressDialog();
 
         SMPUserCreate.Builder builder = new SMPUserCreate.Builder(email, password).lastName("LastName");
-        SessionMError error = _sessionMOauthEmailProvider.createUser(builder.build(), new SessionMOauthProvider.SessionMOauthProviderListener() {
+        SessionMError error = _sessionMOauthProvider.createUser(builder.build(), new SessionMOauthProvider.SessionMOauthProviderListener() {
             @Override
             public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                 hideProgressDialog();
@@ -130,7 +129,7 @@ public class EmailPasswordActivity extends BaseActivity implements
 
         showProgressDialog();
 
-        SessionMError error = _sessionMOauthEmailProvider.authenticateUser(email, password, new SessionMOauthProvider.SessionMOauthProviderListener() {
+        SessionMError error = _sessionMOauthProvider.authenticateUser(email, password, new SessionMOauthProvider.SessionMOauthProviderListener() {
             @Override
             public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                 hideProgressDialog();
@@ -164,7 +163,7 @@ public class EmailPasswordActivity extends BaseActivity implements
     }
 
     private void requestAuthCode() {
-        SessionMError error = _sessionMOauthEmailProvider.getAuthCode(null, new SessionMOauthProvider.AuthCodeCallback() {
+        SessionMError error = _sessionMOauthProvider.getAuthCode(null, new SessionMOauthProvider.AuthCodeCallback() {
             @Override
             public void onAuthCodeRequested(String s, SessionMError sessionMError) {
                 if (sessionMError != null)
@@ -178,7 +177,7 @@ public class EmailPasswordActivity extends BaseActivity implements
     }
 
     private void signOut() {
-        _sessionMOauthEmailProvider.logoutUser(null);
+        _sessionMOauthProvider.logoutUser(null);
         updateUI(null);
     }
 
