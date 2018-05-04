@@ -28,8 +28,8 @@ dependencies {
     implementation "com.google.code.gson:gson:${rootProject.gsonVersion}"
 
     implementation "com.google.android.gms:play-services-gcm:${rootProject.playServicesVersion}"
-    implementation "com.google.firebase:firebase-core:${rootProject.playServicesVersion}"
-    implementation "com.google.firebase:firebase-messaging:${rootProject.playServicesVersion}"
+    implementation "com.google.firebase:firebase-core:${rootProject.firebaseVersion}"
+    implementation "com.google.firebase:firebase-messaging:${rootProject.firebaseVersion}"
 
     implementation "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
 }

@@ -8,7 +8,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
-        classpath 'com.google.gms:google-services:3.1.1'
+        classpath 'com.google.gms:google-services:3.3.0'
         classpath "me.tatarka:gradle-retrolambda:3.7.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
@@ -33,9 +33,10 @@ project.ext.buildToolsVersion = '27.0.3'
 project.ext.minSdkVersion = 17
 project.ext.targetSdkVersion = 27
 
-project.ext.sessionMSdkVersion = '3.0.0-a21'
+project.ext.sessionMSdkVersion = '3.0.0-b1'
 project.ext.supportLibVersion = '27.1.1'
 project.ext.playServicesVersion = '15.0.0'
+project.ext.firebaseVersion = '15.0.2'
 project.ext.okHttpVersion = '3.10.0'
 project.ext.gsonVersion = '2.8.0'
 
