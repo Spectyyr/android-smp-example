@@ -30,6 +30,7 @@ import java.util.Set;
 public class UserDetailsActivity extends AppCompatActivity {
 
     TableLayout _userTable;
+    LinearLayout _updateLayout;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +92,7 @@ public class UserDetailsActivity extends AppCompatActivity {
 
         LayoutInflater inflater = getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_update_user, null);
-        final LinearLayout updateLayout = dialogLayout.findViewById(R.id.update_user_layout);
+        _updateLayout = dialogLayout.findViewById(R.id.update_user_layout);
 
         Map<String, Object> userMap = Utils.getAllGettersValue("com.sessionm.identity.api.data.SMPUser", UserManager.getInstance().getCurrentUser());
         if (userMap != null) {
@@ -102,7 +103,7 @@ public class UserDetailsActivity extends AppCompatActivity {
                 row.setLayoutParams(lp);
                 row.setTag(key);
                 row.setHint(key + ": " + userMap.get(key));
-                updateLayout.addView(row);
+                _updateLayout.addView(row);
             }
         }
 
@@ -117,21 +118,21 @@ public class UserDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 SMPUserUpdate.Builder requestBuilder = new SMPUserUpdate.Builder()
-                        .externalID(updateNonEmptyField((EditText) updateLayout.findViewWithTag("ExternalID")))
-                        .email(updateNonEmptyField((EditText) updateLayout.findViewWithTag("Email")))
-                        .gender(updateNonEmptyField((EditText) updateLayout.findViewWithTag("Gender")))
-                        .firstName(updateNonEmptyField((EditText) updateLayout.findViewWithTag("FirstName")))
-                        .lastName(updateNonEmptyField((EditText) updateLayout.findViewWithTag("LastName")))
-                        .dateOfBirth(updateNonEmptyField((EditText) updateLayout.findViewWithTag("DateOfBirth")))
-                        .DMA(updateNonEmptyField((EditText) updateLayout.findViewWithTag("DMA")))
-                        .city(updateNonEmptyField((EditText) updateLayout.findViewWithTag("City")))
-                        .state(updateNonEmptyField((EditText) updateLayout.findViewWithTag("State")))
-                        .zipCode(updateNonEmptyField((EditText) updateLayout.findViewWithTag("ZipCode")))
-                        .country(updateNonEmptyField((EditText) updateLayout.findViewWithTag("Country")))
-                        .latitude(updateNonEmptyFieldDouble((EditText) updateLayout.findViewWithTag("Latitude")))
-                        .longitude(updateNonEmptyFieldDouble((EditText) updateLayout.findViewWithTag("Longitude")))
-                        .ipAddress(updateNonEmptyField((EditText) updateLayout.findViewWithTag("IPAddress")));
-//                        .locale(new Locale(updateNonEmptyField((EditText) updateLayout.findViewWithTag("Locale"))));
+                        .externalID(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("ExternalID")))
+                        .email(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("Email")))
+                        .gender(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("Gender")))
+                        .firstName(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("FirstName")))
+                        .lastName(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("LastName")))
+                        .dateOfBirth(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("DateOfBirth")))
+                        .DMA(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("DMA")))
+                        .city(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("City")))
+                        .state(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("State")))
+                        .zipCode(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("ZipCode")))
+                        .country(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("Country")))
+                        .latitude(updateNonEmptyFieldDouble((EditText) _updateLayout.findViewWithTag("Latitude")))
+                        .longitude(updateNonEmptyFieldDouble((EditText) _updateLayout.findViewWithTag("Longitude")))
+                        .ipAddress(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("IPAddress")))
+                        .locale(nullableLocale());
                 UserManager.getInstance().updateUser(requestBuilder.build(), new UserManager.OnUserUpdatedListener() {
                     @Override
                     public void onUpdated(SMPUser user, Set<String> deltas, SessionMError error) {
@@ -184,5 +185,13 @@ public class UserDetailsActivity extends AppCompatActivity {
         if (!editText.getText().toString().isEmpty())
             return Double.parseDouble(editText.getText().toString());
         return null;
+    }
+
+    private Locale nullableLocale() {
+        try {
+            return new Locale(updateNonEmptyField((EditText) _updateLayout.findViewWithTag("Locale")));
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 }

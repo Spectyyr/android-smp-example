@@ -1,6 +1,7 @@
 package com.sessionm.smp_auth.facebook;
 
 import android.content.Intent;
+import android.media.FaceDetector;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
+import com.sessionm.smp_auth.UserDetailsActivity;
 
 import java.util.Set;
 
@@ -50,7 +52,12 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
         mDetailTextView = findViewById(R.id.detail);
 
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-
+        findViewById(R.id.logged_in_view_profile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FacebookLoginActivity.this, UserDetailsActivity.class));
+            }
+        });
         callbackManager = CallbackManager.Factory.create();
         loginButton = findViewById(R.id.login_button);
         loginButton.setReadPermissions("email");
@@ -89,6 +96,7 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onStart() {
         super.onStart();
+        fetchUser();
     }
 
     @Override
@@ -113,28 +121,35 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
                 if (sessionMError != null)
                     Toast.makeText(FacebookLoginActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                 else {
-                    _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
-                        @Override
-                        public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
-                            if (sessionMError != null)
-                                Toast.makeText(FacebookLoginActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                            else {
-                                if (smpUser != null) {
-                                    // User is signed in
-                                    Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
-                                } else {
-                                    // User is signed out
-                                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                                }
-                                updateUI(smpUser);
-                            }
-                        }
-                    });
+                    fetchUser();
                 }
             }
         });
         showProgressDialog();
         // [END_EXCLUDE]
+    }
+
+    private void fetchUser() {
+        if (_sessionMOauthProvider.isAuthenticated()) {
+            _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                @Override
+                public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                    if (sessionMError != null) {
+                        Toast.makeText(FacebookLoginActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        if (smpUser != null) {
+                            // User is signed in
+                            Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
+                        } else {
+                            // User is signed out
+                            Log.d(TAG, "onAuthStateChanged:signed_out");
+                        }
+                        updateUI(smpUser);
+                    }
+                }
+            });
+        }
     }
 
     private void signOut() {
@@ -151,12 +166,14 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
 
             findViewById(R.id.login_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.logged_in_view_profile).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.logged_out);
             mDetailTextView.setText(null);
 
             findViewById(R.id.login_button).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+            findViewById(R.id.logged_in_view_profile).setVisibility(View.GONE);
         }
     }
 

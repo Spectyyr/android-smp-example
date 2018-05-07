@@ -77,6 +77,7 @@ public class EmailPasswordActivity extends BaseActivity implements
     @Override
     public void onStart() {
         super.onStart();
+        fetchUser();
     }
 
     private void createAccount(String email, String password) {
@@ -95,24 +96,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                 if (sessionMError != null) {
                     Toast.makeText(EmailPasswordActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
-                    @Override
-                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
-                        if (sessionMError != null) {
-                            Toast.makeText(EmailPasswordActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                        } else {
-
-                            if (smpUser != null) {
-                                // User is signed in
-                                Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
-                            } else {
-                                // User is signed out
-                                Log.d(TAG, "onAuthStateChanged:signed_out");
-                            }
-                            updateUI(smpUser);
-                        }
-                    }
-                });
+                fetchUser();
             }
         });
         if (error != null) {
@@ -136,29 +120,35 @@ public class EmailPasswordActivity extends BaseActivity implements
                 if (sessionMError != null) {
                     Toast.makeText(EmailPasswordActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
-                    @Override
-                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
-                        if (sessionMError != null) {
-                            Toast.makeText(EmailPasswordActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                        } else {
-
-                            if (smpUser != null) {
-                                // User is signed in
-                                Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
-                            } else {
-                                // User is signed out
-                                Log.d(TAG, "onAuthStateChanged:signed_out");
-                            }
-                            updateUI(smpUser);
-                        }
-                    }
-                });
+                fetchUser();
             }
         });
         if (error != null) {
             hideProgressDialog();
             Toast.makeText(EmailPasswordActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void fetchUser() {
+        if (_sessionMOauthProvider.isAuthenticated()) {
+            _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+                @Override
+                public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                    if (sessionMError != null) {
+                        Toast.makeText(EmailPasswordActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        if (smpUser != null) {
+                            // User is signed in
+                            Log.d(TAG, "onAuthStateChanged:signed_in:" + smpUser.getID());
+                        } else {
+                            // User is signed out
+                            Log.d(TAG, "onAuthStateChanged:signed_out");
+                        }
+                        updateUI(smpUser);
+                    }
+                }
+            });
         }
     }
 
