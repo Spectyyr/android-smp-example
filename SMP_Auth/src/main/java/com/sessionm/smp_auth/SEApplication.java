@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 SessionM. All rights reserved.
+ * Copyright (c) 2018 SessionM. All rights reserved.
  */
 
 package com.sessionm.smp_auth;

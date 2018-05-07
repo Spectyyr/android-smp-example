@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.sessionm.campaign.api.data.FeedMessage
 import com.sessionm.core.api.SessionM
+import com.sessionm.core.api.SessionMError
 import com.sessionm.identity.api.UserManager
 import com.sessionm.identity.api.provider.SessionMOauthProvider
 import com.sessionm.identity.api.provider.SessionMOauthProviderIDP
@@ -25,41 +26,66 @@ class MainActivity : AppCompatActivity(), CampaignsFragment.OnDeepLinkTappedList
         val actionBar = findViewById<Toolbar>(R.id.custom_action_bar)
         setSupportActionBar(actionBar)
 
-        _sessionMOauthProvider = SessionMOauthProvider()
-        SessionM.setAuthenticationProvider(_sessionMOauthProvider) { }
         _userManager = UserManager.getInstance()
+        _sessionMOauthProvider = SessionM.getAuthenticationProvider() as SessionMOauthProvider
 
         userBalanceTextView = findViewById(R.id.user_balance_textview)
         userBalanceTextView!!.setOnClickListener {
-            if (UserManager.getInstance().currentUser == null)
-                _sessionMOauthProvider!!.authenticateUser("test@sessionm.com", "aaaaaaaa1") { authenticatedState, sessionMError ->
-                    if (sessionMError != null) {
-                        Toast.makeText(this@MainActivity, sessionMError.message, Toast.LENGTH_SHORT).show()
-                    } else {
-                        _userManager!!.fetchUser { smpUser, set, sessionMError ->
-                            if (sessionMError != null) {
-                                Toast.makeText(this@MainActivity, sessionMError.message, Toast.LENGTH_SHORT).show()
-                            } else {
-                                if (smpUser != null) {
-                                    userBalanceTextView!!.text = smpUser.availablePoints.toString() + "pts"
-                                } else
-                                    userBalanceTextView!!.text = getString(R.string.click_here_to_log_in_user)
-                            }
+            if (UserManager.getInstance().currentUser == null) {
+                _sessionMOauthProvider!!.authenticateUser("test@sessionm.com", "aaaaaaaa1", object : SessionMOauthProviderIDP.SessionMOauthProviderListener {
+                    override fun onAuthorize(authenticatedState: SessionMOauthProviderIDP.AuthenticatedState, sessionMError: SessionMError?) {
+                        if (sessionMError != null) {
+                            Toast.makeText(this@MainActivity, sessionMError.message, Toast.LENGTH_SHORT).show()
+                        } else {
+                            fetchUser()
                         }
                     }
-                }
-            else
-                _sessionMOauthProvider!!.logoutUser { authenticatedState, sessionMError ->
-                    if (authenticatedState == SessionMOauthProviderIDP.AuthenticatedState.NotAuthenticated)
-                        userBalanceTextView!!.text = getString(R.string.click_here_to_log_in_user)
-                }
+                })
+            } else {
+                _sessionMOauthProvider!!.logoutUser(object : SessionMOauthProviderIDP.SessionMOauthProviderListener {
+                    override fun onAuthorize(authenticatedState: SessionMOauthProviderIDP.AuthenticatedState, sessionMError: SessionMError?) {
+                        if (authenticatedState == SessionMOauthProviderIDP.AuthenticatedState.NotAuthenticated) {
+                            userBalanceTextView!!.text = getString(R.string.click_here_to_log_in_user)
+                            refreshUI()
+                        }
+                    }
+                })
+            }
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        refreshUI()
+        if (_sessionMOauthProvider!!.isAuthenticated)
+            fetchUser()
+    }
+
+    private fun fetchUser() {
+        _userManager!!.fetchUser { smpUser, set, sessionMError ->
+            if (sessionMError != null) {
+                Toast.makeText(this@MainActivity, sessionMError.message, Toast.LENGTH_SHORT).show()
+            } else {
+                if (smpUser != null) {
+                    userBalanceTextView!!.text = smpUser.availablePoints.toString() + "pts"
+                } else
+                    userBalanceTextView!!.text = getString(R.string.click_here_to_log_in_user)
+            }
+            refreshUI()
+        }
+    }
+
+    private fun refreshUI() {
+        val f = supportFragmentManager.findFragmentById(R.id.campaigns_fragment) as CampaignsFragment
+        f.onRefresh()
+    }
+
     override fun onDeepLinkTapped(actionType: FeedMessage.MessageActionType, actionURL: String) {
-        val uri = Uri.parse(actionURL)
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        intent.putExtra("url", actionURL)
-        startActivity(intent)
+        if (actionURL != null) {
+            val uri = Uri.parse(actionURL)
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            intent.putExtra("url", actionURL)
+            startActivity(intent)
+        }
     }
 }

@@ -15,6 +15,7 @@ import com.sessionm.core.api.SessionMError;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
+import com.sessionm.identity.api.provider.SessionMOauthProviderIDP;
 
 import java.util.Set;
 
@@ -40,37 +41,28 @@ public class MainActivity extends AppCompatActivity implements CampaignsFragment
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (UserManager.getInstance().getCurrentUser() == null)
-                    _sessionMOauthProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
+                if (UserManager.getInstance().getCurrentUser() == null) {
+                    _sessionMOauthProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProviderIDP.SessionMOauthProviderListener() {
                         @Override
-                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                        public void onAuthorize(SessionMOauthProviderIDP.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                             if (sessionMError != null) {
                                 Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
-                                    @Override
-                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
-                                        if (sessionMError != null) {
-                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            if (smpUser != null) {
-                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-                                            } else
-                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-                                        }
-                                    }
-                                });
+                                fetchUser();
                             }
                         }
                     });
-                else
-                    _sessionMOauthProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
+                } else {
+                    _sessionMOauthProvider.logoutUser(new SessionMOauthProviderIDP.SessionMOauthProviderListener() {
                         @Override
-                        public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
-                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))
+                        public void onAuthorize(SessionMOauthProviderIDP.AuthenticatedState authenticatedState, SessionMError sessionMError) {
+                            if (authenticatedState.equals(SessionMOauthProviderIDP.AuthenticatedState.NotAuthenticated)) {
                                 userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                                refreshUI();
+                            }
                         }
                     });
+                }
             }
         });
     }
@@ -78,6 +70,31 @@ public class MainActivity extends AppCompatActivity implements CampaignsFragment
     @Override
     protected void onResume() {
         super.onResume();
+        refreshUI();
+        if (_sessionMOauthProvider.isAuthenticated())
+            fetchUser();
+    }
+
+    private void fetchUser() {
+        _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+            @Override
+            public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                if (sessionMError != null) {
+                    Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    if (smpUser != null) {
+                        userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                    } else
+                        userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                }
+                refreshUI();
+            }
+        });
+    }
+
+    private void refreshUI() {
+        CampaignsFragment f = (CampaignsFragment) getSupportFragmentManager().findFragmentById(R.id.campaigns_fragment);
+        f.onRefresh();
     }
 
     @Override

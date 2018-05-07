@@ -19,7 +19,6 @@ import com.sessionm.core.api.SessionMError;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
-import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.inbox.api.InboxManager;
 import com.sessionm.inbox.api.data.InboxMessage;
 import com.sessionm.inbox.api.data.NewInboxMessage;
@@ -75,20 +74,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             if (sessionMError != null) {
                                 Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
-                                    @Override
-                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
-                                        if (sessionMError != null) {
-                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            if (smpUser != null) {
-                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-                                            } else
-                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-                                        }
-                                        fetchInboxMessages();
-                                    }
-                                });
+                                fetchUser();
                             }
                         }
                     });
@@ -96,8 +82,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     _sessionMOauthProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
                         @Override
                         public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
-                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))
+                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated)) {
                                 userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                                fetchInboxMessages();
+                            }
                         }
                     });
             }
@@ -149,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         if (sessionMError != null) {
                             Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                         } else {
+                            fetchInboxMessages();
                             Toast.makeText(MainActivity.this, "New message created! \n ID: " + inboxMessage.getID(), Toast.LENGTH_LONG).show();
                         }
                     }
@@ -160,6 +149,25 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onResume() {
         super.onResume();
+        if (_sessionMOauthProvider.isAuthenticated())
+            fetchUser();
+    }
+
+    private void fetchUser() {
+        _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+            @Override
+            public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                if (sessionMError != null) {
+                    Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    if (smpUser != null) {
+                        userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                    } else
+                        userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                }
+                fetchInboxMessages();
+            }
+        });
     }
 
     private SwipeMenuCreator swipeMenuCreator = new SwipeMenuCreator() {
