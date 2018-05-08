@@ -53,7 +53,6 @@ public class ReferralsFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onResume() {
         super.onResume();
-        fetchReferrals();
     }
 
     @Override
@@ -75,12 +74,9 @@ public class ReferralsFragment extends Fragment implements SwipeRefreshLayout.On
 
     private void refreshList(List<Referral> referrals) {
         _swipeRefreshLayout.setRefreshing(false);
-        if (referrals == null)
-            return;
-        if (_referrals == null) {
-            _referrals = new ArrayList<>();
-        } else {
-            _referrals.clear();
+        _referrals.clear();
+        if (referrals == null) {
+            referrals = new ArrayList<>();
         }
         _referrals.addAll(referrals);
         _referralsListAdapter.notifyDataSetChanged();

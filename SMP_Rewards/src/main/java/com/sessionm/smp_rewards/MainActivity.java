@@ -48,19 +48,7 @@ public class MainActivity extends AppCompatActivity {
                             if (sessionMError != null) {
                                 Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
-                                    @Override
-                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
-                                        if (sessionMError != null) {
-                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            if (smpUser != null) {
-                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-                                            } else
-                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-                                        }
-                                    }
-                                });
+                                fetchUser();
                             }
                         }
                     });
@@ -68,8 +56,10 @@ public class MainActivity extends AppCompatActivity {
                     _sessionMOauthProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
                         @Override
                         public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
-                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))
+                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated)) {
                                 userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                                refreshUI();
+                            }
                         }
                     });
             }
@@ -82,5 +72,35 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, OrdersActivity.class));
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshUI();
+        if (_sessionMOauthProvider.isAuthenticated())
+            fetchUser();
+    }
+
+    private void fetchUser() {
+        _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+            @Override
+            public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                if (sessionMError != null) {
+                    Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    if (smpUser != null) {
+                        userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                    } else
+                        userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                }
+                refreshUI();
+            }
+        });
+    }
+
+    private void refreshUI() {
+        RewardsFragment f = (RewardsFragment) getSupportFragmentManager().findFragmentById(R.id.rewards_fragment);
+        f.onRefresh();
     }
 }

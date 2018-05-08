@@ -18,9 +18,9 @@ import com.sessionm.core.api.provider.AuthenticationProvider;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
-import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.referral.api.ReferralsManager;
 import com.sessionm.referral.api.data.Referral;
+import com.sessionm.referral.api.data.ReferralError;
 import com.sessionm.referral.api.data.ReferralRequest;
 
 import java.util.ArrayList;
@@ -70,19 +70,7 @@ public class MainActivity extends AppCompatActivity {
                             if (sessionMError != null) {
                                 Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
-                                    @Override
-                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
-                                        if (sessionMError != null) {
-                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            if (smpUser != null) {
-                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-                                            } else
-                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-                                        }
-                                    }
-                                });
+                                fetchUser();
                             }
                         }
                     });
@@ -90,12 +78,44 @@ public class MainActivity extends AppCompatActivity {
                     _sessionMOauthProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
                         @Override
                         public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
-                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))
+                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated)) {
                                 userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                                refreshUI();
+                            }
                         }
                     });
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshUI();
+        if (_sessionMOauthProvider.isAuthenticated())
+            fetchUser();
+    }
+
+    private void fetchUser() {
+        _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+            @Override
+            public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                if (sessionMError != null) {
+                    Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    if (smpUser != null) {
+                        userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                    } else
+                        userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                }
+                refreshUI();
+            }
+        });
+    }
+
+    private void refreshUI() {
+        ReferralsFragment f = (ReferralsFragment) getSupportFragmentManager().findFragmentById(R.id.referrals_fragment);
+        f.onRefresh();
     }
 
     public void popUpCreateReferralDialog() {
@@ -113,20 +133,46 @@ public class MainActivity extends AppCompatActivity {
         builder.setNeutralButton("Create Random", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ReferralsManager.getInstance().sendReferrals(createRandomReferralRequest());
+                SessionMError sessionMError = ReferralsManager.getInstance().sendReferrals(createRandomReferralRequest(), new ReferralsManager.OnReferralsSentListener() {
+                    @Override
+                    public void onSent(List<Referral> list, List<ReferralError> list1, SessionMError sessionMError) {
+                        if (sessionMError != null) {
+                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "New referral created! ", Toast.LENGTH_SHORT).show();
+                            refreshUI();
+                        }
+                    }
+                });
+                if (sessionMError != null) {
+                    Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
         builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ReferralsManager.getInstance().sendReferrals(
+                SessionMError sessionMError = ReferralsManager.getInstance().sendReferrals(
                         createReferralRequest(refereeEdittext.getText().toString(),
                                 emailEdittext.getText().toString(),
                                 phoneNumberEdittext.getText().toString(),
                                 originEdittext.getText().toString(),
                                 sourceEdittext.getText().toString(),
                                 clientDataEdittext.getText().toString()
-                        ));
+                        ), new ReferralsManager.OnReferralsSentListener() {
+                            @Override
+                            public void onSent(List<Referral> list, List<ReferralError> list1, SessionMError sessionMError) {
+                                if (sessionMError != null) {
+                                    Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(MainActivity.this, "New referral created! ", Toast.LENGTH_SHORT).show();
+                                    refreshUI();
+                                }
+                            }
+                        });
+                if (sessionMError != null) {
+                    Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

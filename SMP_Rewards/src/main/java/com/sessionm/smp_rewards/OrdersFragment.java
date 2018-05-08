@@ -57,7 +57,7 @@ public class OrdersFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        _rewardsManager.fetchOrders();
+        onRefresh();
     }
 
     @Override

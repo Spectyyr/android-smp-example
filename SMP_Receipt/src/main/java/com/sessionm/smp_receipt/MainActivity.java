@@ -22,7 +22,6 @@ import com.sessionm.core.api.SessionMError;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
-import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.receipt.api.ReceiptsManager;
 import com.sessionm.smp_receipt.upload.ReceiptUploadActivity;
 import com.sessionm.smp_receipt.upload.ReceiptUploadingService;
@@ -70,37 +69,29 @@ public class MainActivity extends AppCompatActivity {
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (UserManager.getInstance().getCurrentUser() == null)
+                if (UserManager.getInstance().getCurrentUser() == null) {
                     _sessionMOauthProvider.authenticateUser("test@sessionm.com", "aaaaaaaa1", new SessionMOauthProvider.SessionMOauthProviderListener() {
                         @Override
                         public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
                             if (sessionMError != null) {
                                 Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
-                                    @Override
-                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
-                                        if (sessionMError != null) {
-                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            if (smpUser != null) {
-                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-                                            } else
-                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-                                        }
-                                    }
-                                });
+                                fetchUser();
                             }
                         }
                     });
-                else
+                }
+                else {
                     _sessionMOauthProvider.logoutUser(new SessionMOauthProvider.SessionMOauthProviderListener() {
                         @Override
                         public void onAuthorize(SessionMOauthProvider.AuthenticatedState authenticatedState, SessionMError sessionMError) {
-                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated))
+                            if (authenticatedState.equals(SessionMOauthProvider.AuthenticatedState.NotAuthenticated)) {
                                 userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                                refreshUI();
+                            }
                         }
                     });
+                }
             }
         });
     }
@@ -108,7 +99,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ReceiptsManager.getInstance().fetchReceipts(100, 1);
+        refreshUI();
+        if (_sessionMOauthProvider.isAuthenticated())
+            fetchUser();
+    }
+
+    private void fetchUser() {
+        _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+            @Override
+            public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                if (sessionMError != null) {
+                    Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    if (smpUser != null) {
+                        userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                    } else
+                        userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                }
+                refreshUI();
+            }
+        });
+    }
+
+    private void refreshUI() {
+        ReceiptsFragment f = (ReceiptsFragment) getSupportFragmentManager().findFragmentById(R.id.receipts_fragment);
+        f.onRefresh();
     }
 
     @Override

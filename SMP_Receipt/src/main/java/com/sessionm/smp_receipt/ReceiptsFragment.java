@@ -7,7 +7,6 @@ package com.sessionm.smp_receipt;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sessionm.core.api.SessionMError;
-import com.sessionm.receipt.api.ReceiptsListener;
 import com.sessionm.receipt.api.ReceiptsManager;
 import com.sessionm.receipt.api.data.Receipt;
 import com.sessionm.receipt.api.data.ReceiptResult;
@@ -61,48 +59,24 @@ public class ReceiptsFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        _receiptManager.fetchReceipts(100, 1);
-    }
-
-    ReceiptsListener _receiptListener = new ReceiptsListener() {
-        @Override
-        public void onReceiptUploaded(Receipt receipt) {
-        }
-
-        @Override
-        public void onReceiptsFetched(List<Receipt> receipts) {
-            refreshList(receipts);
-        }
-
-        @Override
-        public void onProgress(Receipt receipt) {
-
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            _swipeRefreshLayout.setRefreshing(false);
-            refreshList(new ArrayList<Receipt>());
-            Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        _receiptManager.setListener(_receiptListener);
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
     }
 
     @Override
     public void onRefresh() {
-        _receiptManager.fetchReceipts(100, 1);
+        _receiptManager.fetchReceipts(100, 1, new ReceiptsManager.OnReceiptsFetchedListener() {
+            @Override
+            public void onFetched(List<Receipt> list, SessionMError sessionMError) {
+                _swipeRefreshLayout.setRefreshing(false);
+                if (sessionMError != null) {
+                    refreshList(new ArrayList<Receipt>());
+                    Toast.makeText(getActivity(), "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    refreshList(list);
+                }
+            }
+        });
     }
 
     public void refreshList(List<Receipt> receipts) {

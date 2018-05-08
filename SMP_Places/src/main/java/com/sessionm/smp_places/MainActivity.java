@@ -75,19 +75,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             if (sessionMError != null) {
                                 Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
-                                    @Override
-                                    public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
-                                        if (sessionMError != null) {
-                                            Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            if (smpUser != null) {
-                                                userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
-                                            } else
-                                                userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
-                                        }
-                                    }
-                                });
+                                fetchUser();
                             }
                         }
                     });
@@ -116,6 +104,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
+        if (_sessionMOauthProvider.isAuthenticated())
+            fetchUser();
+    }
+
+    private void fetchUser() {
+        _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+            @Override
+            public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                if (sessionMError != null) {
+                    Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    if (smpUser != null) {
+                        userBalanceTextView.setText(smpUser.getAvailablePoints() + "pts");
+                    } else
+                        userBalanceTextView.setText(getString(R.string.click_here_to_log_in_user));
+                }
+            }
+        });
     }
 
     @Override

@@ -19,6 +19,7 @@ import com.sessionm.core.api.SessionMError;
 import com.sessionm.transaction.api.TransactionsManager;
 import com.sessionm.transaction.api.data.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -81,6 +82,7 @@ public class TransactionsFragment extends Fragment implements SwipeRefreshLayout
                 }
                 if (sessionMError != null) {
                     Toast.makeText(getActivity(), "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                    _transactionsRecAdapter.addTransactions(new ArrayList<Transaction>(), noTransactions);
                 } else {
                     _transactionsRecAdapter.addTransactions(list, noTransactions);
                     noTransactions = false;
