@@ -18,7 +18,7 @@
         >
 
         <fragment
-            android:id="@+id/receipts_fragment"
+            android:id="@+id/loyalty_fragment"
             android:name="com.sessionm.smp_loyalty_card.LoyaltyFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

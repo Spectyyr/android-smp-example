@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import com.sessionm.core.api.SessionMError;
 import com.sessionm.offer.api.OffersManager;
 import com.sessionm.offer.api.data.user.UserOffersFetchedResponse;
 import com.sessionm.smp_offers.R;
+
+import static android.support.v7.widget.RecyclerView.HORIZONTAL;
 
 public class MyOffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -37,6 +40,8 @@ public class MyOffersFragment extends Fragment implements SwipeRefreshLayout.OnR
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         _recyclerView.setLayoutManager(llm);
+        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        _recyclerView.addItemDecoration(itemDecor);
 
         _offersRecAdapter = new MyOffersRecAdapter(this);
         _recyclerView.setAdapter(_offersRecAdapter);

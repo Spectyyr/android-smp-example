@@ -15,7 +15,6 @@ import com.sessionm.core.api.SessionMError;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
-import com.sessionm.identity.api.provider.SessionMOauthProvider;
 import com.sessionm.smp_offers.my_offers.MyOffersFragment;
 import com.sessionm.smp_offers.store_offers.StoreOffersFragment;
 
@@ -101,13 +100,8 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (_userManager.getCurrentUser() != null) {
-            updatePoints(_userManager.getCurrentUser().getAvailablePoints());
-            fetchForPage(_pager.getCurrentItem());
-        } else {
-            _userManager.fetchUser();
-        }
+        if (_sessionMOauthProvider.isAuthenticated())
+            fetchUser();
     }
 
     @Override
@@ -123,23 +117,27 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
                 if (sessionMError != null) {
                     Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
-                    _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
-                        @Override
-                        public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
-                            if (sessionMError != null) {
-                                Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                            } else {
-                                if (smpUser != null) {
-                                    updatePoints(smpUser.getAvailablePoints());
-                                    authenticate.setText("Logout");
-                                    fetchForPage(_pager.getCurrentItem());
-                                } else {
-                                    userBalance.setText("");
-                                    authenticate.setText("Login");
-                                }
-                            }
-                        }
-                    });
+                    fetchUser();
+                }
+            }
+        });
+    }
+
+    private void fetchUser() {
+        _userManager.fetchUser(new UserManager.OnUserFetchedListener() {
+            @Override
+            public void onFetched(SMPUser smpUser, Set<String> set, SessionMError sessionMError) {
+                if (sessionMError != null) {
+                    Toast.makeText(MainActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    if (smpUser != null) {
+                        updatePoints(smpUser.getAvailablePoints());
+                        authenticate.setText("Logout");
+                        fetchForPage(_pager.getCurrentItem());
+                    } else {
+                        userBalance.setText("");
+                        authenticate.setText("Login");
+                    }
                 }
             }
         });

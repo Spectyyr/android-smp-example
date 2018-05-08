@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -55,6 +56,8 @@ public class StoreOffersFragment extends Fragment implements SwipeRefreshLayout.
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         _recyclerView.setLayoutManager(llm);
+        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        _recyclerView.addItemDecoration(itemDecor);
 
         _offersRecAdapter = new StoreOffersRecAdapter(this, _callback);
         _recyclerView.setAdapter(_offersRecAdapter);
