@@ -34,7 +34,7 @@ public class EmailPasswordActivity extends BaseActivity implements
 
     private TextView mStatusTextView;
     private TextView mDetailTextView;
-    private TextView mAuthCodeTextView;
+//    private TextView mAuthCodeTextView;
     private EditText mEmailField;
     private EditText mPasswordField;
 
@@ -49,13 +49,13 @@ public class EmailPasswordActivity extends BaseActivity implements
         // Views
         mStatusTextView = findViewById(R.id.status);
         mDetailTextView = findViewById(R.id.detail);
-        mAuthCodeTextView = findViewById(R.id.auth_code);
+//        mAuthCodeTextView = findViewById(R.id.auth_code);
         mEmailField = findViewById(R.id.field_email);
         mPasswordField = findViewById(R.id.field_password);
 
         // Buttons
         findViewById(R.id.email_sign_in_button).setOnClickListener(this);
-        findViewById(R.id.logged_in_auth_code).setOnClickListener(this);
+//        findViewById(R.id.logged_in_auth_code).setOnClickListener(this);
         findViewById(R.id.email_create_account_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
 
@@ -148,19 +148,20 @@ public class EmailPasswordActivity extends BaseActivity implements
         }
     }
 
-    private void requestAuthCode() {
-        SessionMError error = _sessionMOauthProvider.getAuthCode(null, new SessionMOauthProvider.AuthCodeCallback() {
-            @Override
-            public void onAuthCodeRequested(String s, SessionMError sessionMError) {
-                if (sessionMError != null)
-                    Toast.makeText(EmailPasswordActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
-                else
-                    mAuthCodeTextView.setText(s);
-            }
-        });
-        if (error != null)
-            Toast.makeText(this, "Error: " + error, Toast.LENGTH_LONG).show();
-    }
+    //TODO: Commented out request auth code for now
+//    private void requestAuthCode() {
+//        SessionMError error = _sessionMOauthProvider.getAuthCode(null, new SessionMOauthProvider.AuthCodeCallback() {
+//            @Override
+//            public void onAuthCodeRequested(String s, SessionMError sessionMError) {
+//                if (sessionMError != null)
+//                    Toast.makeText(EmailPasswordActivity.this, sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+//                else
+//                    mAuthCodeTextView.setText(s);
+//            }
+//        });
+//        if (error != null)
+//            Toast.makeText(this, "Error: " + error, Toast.LENGTH_LONG).show();
+//    }
 
     private void signOut() {
         _sessionMOauthProvider.logoutUser(null);
@@ -194,17 +195,17 @@ public class EmailPasswordActivity extends BaseActivity implements
         if (smpUser != null) {
             mStatusTextView.setText(getString(R.string.smp_user_email_fmt, smpUser.getEmail()));
             mDetailTextView.setText(getString(R.string.smp_user_id_fmt, smpUser.getID()));
-            mAuthCodeTextView.setText("Auth Code");
+//            mAuthCodeTextView.setText("Auth Code");
 
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
             findViewById(R.id.email_password_fields).setVisibility(View.GONE);
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
             findViewById(R.id.logged_in_view_profile).setVisibility(View.VISIBLE);
-            findViewById(R.id.logged_in_auth_code).setVisibility(View.VISIBLE);
+//            findViewById(R.id.logged_in_auth_code).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.logged_out);
             mDetailTextView.setText(null);
-            mAuthCodeTextView.setText(null);
+//            mAuthCodeTextView.setText(null);
 
             findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
             findViewById(R.id.email_password_fields).setVisibility(View.VISIBLE);
@@ -220,8 +221,8 @@ public class EmailPasswordActivity extends BaseActivity implements
             createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
         } else if (i == R.id.email_sign_in_button) {
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
-        } else if (i == R.id.logged_in_auth_code) {
-            requestAuthCode();
+//        } else if (i == R.id.logged_in_auth_code) {
+//            requestAuthCode();
         } else if (i == R.id.sign_out_button) {
             signOut();
         }
