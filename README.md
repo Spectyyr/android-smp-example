@@ -1,6 +1,8 @@
 SessionM Platform SDK Example Apps
 ===================
 
+**Note: For 2.x SDK example apps, please switch to sdk-2.x branch.**
+
 Overview
 ------
 Included in this repo are example modules that show how to use the SessionM Platform SDK for Android. Follow the steps below to setup and build a project:
@@ -10,16 +12,14 @@ Included in this repo are example modules that show how to use the SessionM Plat
 
 You should be able to run different modules with default demo server and app.
 
-If you want to change the APP key and server as your custom ones, make the following changes:
-
-- Add your SessionM App API key in res/values/Strings.xml in "app_key" field.
-- set your server url in SEApplication.java: sessionM.setServerType(SessionM.SERVER_TYPE_CUSTOM, "PLEASE_SET_YOUR_CUSTOM_SERVER_HERE");
-
-For more SessionM Platform features, please email us directly.
+If you want to change the APP key and server as your custom ones, replace the config.properties file with yours.
 
 LICENSE: MIT
 
-For more help see https://mmc.sessionm.com/docs/mmc-sdk/
+For more information, see:
+
+- [SessionM SDK Cookbook](http://brands.sessionm.com/SessionMSDKCookbook.pdf)
+- [SessionM SDK API Documentation](https://docs.sessionm.com/mmc-sdk/)
 
 <a name="ToC"/>
 
