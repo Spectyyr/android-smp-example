@@ -1,3 +1,4 @@
+NOTE: This is the legacy branch for 2.x SDK.
 SessionM Platform SDK Example Apps
 ===================
 
