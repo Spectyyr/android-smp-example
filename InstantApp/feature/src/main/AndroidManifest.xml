@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.sessionm.api.ConnectionReceiver">
+        <receiver android:name="com.sessionm.core.api.ConnectionReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE">
                 </action>

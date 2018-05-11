@@ -17,11 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.sessionm.api.SessionM;
-import com.sessionm.api.SessionMError;
-import com.sessionm.api.campaign.CampaignsListener;
-import com.sessionm.api.campaign.CampaignsManager;
-import com.sessionm.api.campaign.data.FeedMessage;
+import com.sessionm.campaign.api.CampaignsManager;
+import com.sessionm.campaign.api.data.FeedMessage;
+import com.sessionm.core.api.SessionMError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +38,7 @@ public class CampaignsFragment extends Fragment implements SwipeRefreshLayout.On
 
     OnDeepLinkTappedListener onDeepLinkTappedListener;
 
-    private CampaignsManager _campaignsManager = SessionM.getInstance().getCampaignsManager();
+    private CampaignsManager _campaignsManager = CampaignsManager.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,7 +48,6 @@ public class CampaignsFragment extends Fragment implements SwipeRefreshLayout.On
         _swipeRefreshLayout = rootView.findViewById(R.id.swipe_refresh_layout);
         _swipeRefreshLayout.setOnRefreshListener(this);
 
-        _campaignsManager.setListener(_campaignsListener);
         _messages = new ArrayList<>(_campaignsManager.getFeedMessages());
 
         _recyclerView = rootView.findViewById(R.id.message_feed_list);
@@ -69,30 +66,9 @@ public class CampaignsFragment extends Fragment implements SwipeRefreshLayout.On
         _campaignsManager.fetchFeedMessages();
     }
 
-    CampaignsListener _campaignsListener = new CampaignsListener() {
-        @Override
-        public void onFeedMessagesFetched(List<FeedMessage> list) {
-            _swipeRefreshLayout.setRefreshing(false);
-            if (_messages == null) {
-                _messages = new ArrayList<>();
-            } else {
-                _messages.clear();
-            }
-            _messages.addAll(list);
-            _campaignsRecAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void onFailure(SessionMError error) {
-            _swipeRefreshLayout.setRefreshing(false);
-            Toast.makeText(getActivity(), "Failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
     @Override
     public void onResume() {
         super.onResume();
-        _campaignsManager.setListener(_campaignsListener);
     }
 
     @Override
@@ -102,7 +78,23 @@ public class CampaignsFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
-        _campaignsManager.fetchFeedMessages();
+        _campaignsManager.fetchFeedMessages(new CampaignsManager.OnMessagesFetchedListener() {
+            @Override
+            public void onFetched(List<FeedMessage> list, SessionMError sessionMError) {
+                _swipeRefreshLayout.setRefreshing(false);
+                if (sessionMError != null)
+                    Toast.makeText(getActivity(), "Failed: " + sessionMError.getMessage(), Toast.LENGTH_SHORT).show();
+                else {
+                    if (_messages == null) {
+                        _messages = new ArrayList<>();
+                    } else {
+                        _messages.clear();
+                    }
+                    _messages.addAll(list);
+                    _campaignsRecAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     public void onItemTapped(FeedMessage.MessageActionType actionType, String actionURL) {

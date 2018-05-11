@@ -7,7 +7,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
 
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -27,8 +27,16 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-project.ext.sessionMSdkVersion = '2.5.0'
-project.ext.supportLibVersion = '26.1.0'
-project.ext.playServicesVersion = '11.4.2'
-project.ext.okHttpVersion = '3.8.0'
+//Compile version
+project.ext.compileSdkVersion = 27
+project.ext.buildToolsVersion = '27.0.3'
+//Default config
+project.ext.minSdkVersion = 16
+project.ext.targetSdkVersion = 27
+
+//Dependencies
+project.ext.sessionMSdkVersion = '3.0.0-b4'
+project.ext.supportLibVersion = '27.1.1'
+project.ext.playServicesVersion = '15.0.0'
+project.ext.okHttpVersion = '3.10.0'
 project.ext.gsonVersion = '2.8.0'

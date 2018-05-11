@@ -6,12 +6,20 @@ package com.sessionm.instantapp.feature;
 
 import android.app.Application;
 
-import com.sessionm.api.SessionM;
+import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.core.api.StartupListener;
 
 public class SEApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        SessionM.getInstance().init(this);
+        //Callback is optional but highly recommended
+        SessionM.start(this, new StartupListener() {
+            @Override
+            public void onStarted(SessionMError sessionMError) {
+                //If sessionMError is not null, something is wrong(Networking, config, etc.)
+            }
+        });
     }
 }
