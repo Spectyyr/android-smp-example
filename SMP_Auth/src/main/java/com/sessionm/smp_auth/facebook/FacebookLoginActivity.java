@@ -1,7 +1,6 @@
 package com.sessionm.smp_auth.facebook;
 
 import android.content.Intent;
-import android.media.FaceDetector;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +15,6 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.sessionm.core.api.SessionM;
 import com.sessionm.core.api.SessionMError;
-import com.sessionm.core.api.provider.AuthenticationProvider;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.provider.SessionMOauthProvider;
@@ -83,13 +81,7 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
             }
         });
 
-        _sessionMOauthProvider = new SessionMOauthProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
-            @Override
-            public void onUpdated(SessionMError sessionMError) {
-
-            }
-        });
+        _sessionMOauthProvider = (SessionMOauthProvider) SessionM.getAuthenticationProvider();
         _userManager = UserManager.getInstance();
     }
 

@@ -114,8 +114,7 @@ public class MainActivity extends AppCompatActivity {
         _tabs.setupWithViewPager(_pager);
 
         _pb = findViewById(R.id.progressBar);
-        _sessionMOauthProvider = new SessionMOauthProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthProvider, null);
+        _sessionMOauthProvider = (SessionMOauthProvider) SessionM.getAuthenticationProvider();
     }
 
     @Override

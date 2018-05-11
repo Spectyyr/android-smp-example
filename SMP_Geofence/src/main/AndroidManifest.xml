@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.sessionm.api.ConnectionReceiver">
+        <receiver android:name="com.sessionm.core.api.ConnectionReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE">
                 </action>
@@ -42,14 +42,14 @@
         </receiver>
 
         <!-- Add geofence service inside application block -->
-        <service android:name="com.sessionm.api.geofence.service.GeofenceIntentService"/>
+        <service android:name="com.sessionm.geofence.service.GeofenceIntentService"/>
 
         <service
-            android:name="com.sessionm.api.geofence.service.GeofenceLocationService"
+            android:name="com.sessionm.geofence.service.GeofenceLocationService"
             android:exported="true">
         </service>
 
-        <receiver android:name="com.sessionm.api.BootReceiver">
+        <receiver android:name="com.sessionm.geofence.api.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
@@ -67,18 +67,18 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.sessionm.api.message.notification.service.NotificationReceiver">
+        <receiver android:name="com.sessionm.message.service.NotificationReceiver">
         </receiver>
 
         <service
-            android:name="com.sessionm.api.message.notification.service.GCMListenerService"
+            android:name="com.sessionm.message.service.GCMListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
             </intent-filter>
         </service>
         <service
-            android:name="com.sessionm.api.message.notification.service.GCMInstanceIDListenerService"
+            android:name="com.sessionm.message.service.GCMInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID"/>

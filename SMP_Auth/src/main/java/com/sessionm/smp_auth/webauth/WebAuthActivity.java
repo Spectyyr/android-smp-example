@@ -52,7 +52,7 @@ public class WebAuthActivity extends BaseActivity implements
         findViewById(R.id.single_sign_out_button).setOnClickListener(this);
 
         _sessionMOauthProvider = new SessionMOauthProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
+        SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSet() {
             @Override
             public void onUpdated(SessionMError sessionMError) {
 

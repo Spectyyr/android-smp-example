@@ -7,12 +7,19 @@ package com.sessionm.smp_campaigns;
 import android.app.Application;
 
 import com.sessionm.core.api.SessionM;
-import com.sessionm.identity.api.provider.SessionMOauthProvider;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.core.api.StartupListener;
 
 public class SEApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        SessionM.start(this, new SessionMOauthProvider());
+        //Callback is optional but highly recommended
+        SessionM.start(this, new StartupListener() {
+            @Override
+            public void onStarted(SessionMError sessionMError) {
+                //If sessionMError is not null, something is wrong(Networking, config, etc.)
+            }
+        });
     }
 }

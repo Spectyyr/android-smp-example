@@ -50,13 +50,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        _sessionMOauthProvider = new SessionMOauthProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
-            @Override
-            public void onUpdated(SessionMError sessionMError) {
-
-            }
-        });
+        _sessionMOauthProvider = (SessionMOauthProvider) SessionM.getAuthenticationProvider();
         _userManager = UserManager.getInstance();
 
         userBalanceTextView = findViewById(R.id.user_balance_textview);

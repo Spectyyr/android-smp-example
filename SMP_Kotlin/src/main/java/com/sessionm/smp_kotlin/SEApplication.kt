@@ -5,13 +5,14 @@
 package com.sessionm.smp_kotlin
 
 import android.app.Application
-
 import com.sessionm.core.api.SessionM
-import com.sessionm.identity.api.provider.SessionMOauthProvider
 
 class SEApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        SessionM.start(this, SessionMOauthProvider())
+        //Callback is optional but highly recommended
+        SessionM.start(this) {
+            //If sessionMError is not null, something is wrong(Networking, config, etc.)
+        }
     }
 }

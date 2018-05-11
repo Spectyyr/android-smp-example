@@ -45,8 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
-        _sessionMOauthProvider = new SessionMOauthProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthProvider, null);
+        _sessionMOauthProvider = (SessionMOauthProvider) SessionM.getAuthenticationProvider();
 
         userBalanceTextView = findViewById(R.id.user_balance_textview);
         userBalanceTextView.setOnClickListener(new View.OnClickListener() {

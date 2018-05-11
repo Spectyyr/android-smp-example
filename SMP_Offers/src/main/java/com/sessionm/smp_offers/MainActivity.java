@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity implements StoreOffersFragme
         setContentView(R.layout.activity_main);
 
         userBalance = findViewById(R.id.user_balance);
-        _sessionMOauthProvider = new SessionMOauthProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthProvider, null);
+        _sessionMOauthProvider = (SessionMOauthProvider) SessionM.getAuthenticationProvider();
         authenticate = findViewById(R.id.authenticate);
         authenticate.setOnClickListener(new View.OnClickListener() {
             @Override

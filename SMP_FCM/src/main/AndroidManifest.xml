@@ -54,7 +54,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="com.sessionm.message.service.NotificationReceiver"></receiver>
+        <receiver android:name="com.sessionm.message.service.NotificationReceiver" />
     </application>
 
 </manifest>

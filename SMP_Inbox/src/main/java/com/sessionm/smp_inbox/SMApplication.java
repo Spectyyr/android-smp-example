@@ -18,6 +18,8 @@ package com.sessionm.smp_inbox;
 import android.app.Application;
 
 import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.core.api.StartupListener;
 
 public class SMApplication extends Application {
 
@@ -29,7 +31,13 @@ public class SMApplication extends Application {
         if (instance == null) {
             instance = this;
         }
-        SessionM.start(this);
+        //Callback is optional but highly recommended
+        SessionM.start(this, new StartupListener() {
+            @Override
+            public void onStarted(SessionMError sessionMError) {
+                //If sessionMError is not null, something is wrong(Networking, config, etc.)
+            }
+        });
     }
 
     public static SMApplication getInstance() {

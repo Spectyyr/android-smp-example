@@ -52,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar actionBar = findViewById(R.id.custom_action_bar);
         setSupportActionBar(actionBar);
-        _sessionMOauthProvider = new SessionMOauthProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthProvider, null);
+        _sessionMOauthProvider = (SessionMOauthProvider) SessionM.getAuthenticationProvider();
 
         viewPager = findViewById(R.id.main_pager);
         viewPager.setAdapter(new SMPagerAdapter(getSupportFragmentManager()));

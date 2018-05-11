@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.sessionm.core.api.SessionM;
 import com.sessionm.core.api.SessionMError;
-import com.sessionm.core.api.provider.AuthenticationProvider;
 import com.sessionm.identity.api.UserManager;
 import com.sessionm.identity.api.data.SMPUser;
 import com.sessionm.identity.api.data.SMPUserCreate;
@@ -64,13 +63,7 @@ public class EmailPasswordActivity extends BaseActivity implements
             }
         });
 
-        _sessionMOauthProvider = new SessionMOauthProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
-            @Override
-            public void onUpdated(SessionMError sessionMError) {
-
-            }
-        });
+        _sessionMOauthProvider = (SessionMOauthProvider) SessionM.getAuthenticationProvider();
         _userManager = UserManager.getInstance();
     }
 

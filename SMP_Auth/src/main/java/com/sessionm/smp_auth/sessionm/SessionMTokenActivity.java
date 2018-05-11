@@ -60,7 +60,7 @@ public class SessionMTokenActivity extends BaseActivity implements
         });
 
         _sessionMOauthProvider = new SessionMOauthProvider();
-        SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSetFromAuthenticationProvider() {
+        SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSet() {
             @Override
             public void onUpdated(SessionMError sessionMError) {
 

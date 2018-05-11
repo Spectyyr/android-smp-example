@@ -7,6 +7,8 @@ package com.sessionm.smp_offers;
 import android.app.Application;
 
 import com.sessionm.core.api.SessionM;
+import com.sessionm.core.api.SessionMError;
+import com.sessionm.core.api.StartupListener;
 
 public class SEApplication extends Application {
 
@@ -14,6 +16,12 @@ public class SEApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        SessionM.start(this);
+        //Callback is optional but highly recommended
+        SessionM.start(this, new StartupListener() {
+            @Override
+            public void onStarted(SessionMError sessionMError) {
+                //If sessionMError is not null, something is wrong(Networking, config, etc.)
+            }
+        });
     }
 }
