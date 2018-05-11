@@ -28,6 +28,9 @@ public class EmailPasswordActivity extends BaseActivity implements
         View.OnClickListener {
 
     private static final String TAG = "EmailPassword";
+    //Sample user to test authentication, if needed
+    private static final String SAMPLE_USER_EMAIL = "sampleuser@sessionm.com";
+    private static final String SAMPLE_USER_PWD = "sessionm1";
 
     private TextView mStatusTextView;
     private TextView mDetailTextView;

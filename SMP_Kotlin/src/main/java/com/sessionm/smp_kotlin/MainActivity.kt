@@ -15,6 +15,8 @@ import com.sessionm.identity.api.provider.SessionMOauthProvider
 import com.sessionm.identity.api.provider.SessionMOauthProviderIDP
 
 class MainActivity : AppCompatActivity(), CampaignsFragment.OnDeepLinkTappedListener {
+    private var SAMPLE_USER_EMAIL = "sampleuser@sessionm.com"
+    private var SAMPLE_USER_PWD = "sessionm1"
     private var userBalanceTextView: TextView? = null
     private var _sessionMOauthProvider: SessionMOauthProvider? = null
     private var _userManager: UserManager? = null
@@ -32,7 +34,7 @@ class MainActivity : AppCompatActivity(), CampaignsFragment.OnDeepLinkTappedList
         userBalanceTextView = findViewById(R.id.user_balance_textview)
         userBalanceTextView!!.setOnClickListener {
             if (UserManager.getInstance().currentUser == null) {
-                _sessionMOauthProvider!!.authenticateUser("test@sessionm.com", "aaaaaaaa1", object : SessionMOauthProviderIDP.SessionMOauthProviderListener {
+                _sessionMOauthProvider!!.authenticateUser(SAMPLE_USER_EMAIL, SAMPLE_USER_PWD, object : SessionMOauthProviderIDP.SessionMOauthProviderListener {
                     override fun onAuthorize(authenticatedState: SessionMOauthProviderIDP.AuthenticatedState, sessionMError: SessionMError?) {
                         if (sessionMError != null) {
                             Toast.makeText(this@MainActivity, sessionMError.message, Toast.LENGTH_SHORT).show()
