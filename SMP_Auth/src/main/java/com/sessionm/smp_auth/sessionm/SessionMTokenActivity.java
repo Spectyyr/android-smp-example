@@ -120,8 +120,8 @@ public class SessionMTokenActivity extends BaseActivity implements
     private void updateUI(SMPUser smpUser) {
         hideProgressDialog();
         if (smpUser != null) {
-            mStatusTextView.setText(getString(R.string.token_status_fmt, smpUser.getEmail()));
-            mDetailTextView.setText(getString(R.string.smp_status_fmt, smpUser.getID()));
+            mStatusTextView.setText(getString(R.string.smp_user_email_fmt, smpUser.getEmail()));
+            mDetailTextView.setText(getString(R.string.smp_user_id_fmt, smpUser.getID()));
 
             findViewById(R.id.authenticate_with_sample_token_button).setVisibility(View.GONE);
             findViewById(R.id.authenticate_with_custom_token_button).setVisibility(View.GONE);

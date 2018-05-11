@@ -77,9 +77,10 @@
 
         <LinearLayout
             android:id="@+id/sign_out_buttons"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
             android:paddingLeft="16dp"
             android:paddingRight="16dp">
 
@@ -92,14 +93,14 @@
                 android:theme="@style/ThemeOverlay.MyDarkButton"
                 android:visibility="gone"/>
 
-            <Button
-                android:id="@+id/single_sign_out_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/single_sign_out"
-                android:theme="@style/ThemeOverlay.MyDarkButton"
-                android:visibility="gone"/>
+            <!--<Button-->
+                <!--android:id="@+id/single_sign_out_button"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="@string/single_sign_out"-->
+                <!--android:theme="@style/ThemeOverlay.MyDarkButton"-->
+                <!--android:visibility="gone"/>-->
         </LinearLayout>
 
     </RelativeLayout>

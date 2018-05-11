@@ -1,7 +1,6 @@
 package com.sessionm.smp_auth.webauth;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +17,6 @@ import com.sessionm.smp_auth.BaseActivity;
 import com.sessionm.smp_auth.R;
 import com.sessionm.smp_auth.UserDetailsActivity;
 
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -49,7 +47,8 @@ public class WebAuthActivity extends BaseActivity implements
         findViewById(R.id.authenticate_with_browser).setOnClickListener(this);
         findViewById(R.id.logged_in_view_profile).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.single_sign_out_button).setOnClickListener(this);
+        //Commented out single sign out for now
+//        findViewById(R.id.single_sign_out_button).setOnClickListener(this);
 
         _sessionMOauthProvider = new SessionMOauthProvider();
         SessionM.setAuthenticationProvider(_sessionMOauthProvider, new AuthenticationProvider.OnAuthenticationProviderSet() {
@@ -111,25 +110,26 @@ public class WebAuthActivity extends BaseActivity implements
         updateUI(null);
     }
 
-    private void singleSignOut() {
-        _sessionMOauthProvider.logoutUser(null);
-        String url = String.format(Locale.US, "https://login-demo.stg-sessionm.com/8c06e928d3082681e1dc40e39bdfac25686f65b9/logout?redirect_uri=sessionmsinglesignout2://test");
-        Intent logOutIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(logOutIntent);
-        finish();
-        updateUI(null);
-    }
+    //Commented out single sign out for now
+//    private void singleSignOut() {
+//        _sessionMOauthProvider.logoutUser(null);
+//        String url = String.format(Locale.US, "https://login-demo.stg-sessionm.com/8c06e928d3082681e1dc40e39bdfac25686f65b9/logout?redirect_uri=sessionmsinglesignout2://test");
+//        Intent logOutIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//        startActivity(logOutIntent);
+//        finish();
+//        updateUI(null);
+//    }
 
     private void updateUI(SMPUser smpUser) {
         hideProgressDialog();
         if (smpUser != null) {
-            mStatusTextView.setText(getString(R.string.token_status_fmt, smpUser.getEmail()));
-            mDetailTextView.setText(getString(R.string.smp_status_fmt, smpUser.getID()));
+            mStatusTextView.setText(getString(R.string.smp_user_email_fmt, smpUser.getEmail()));
+            mDetailTextView.setText(getString(R.string.smp_user_id_fmt, smpUser.getID()));
 
             findViewById(R.id.authenticate_with_custom_tab).setVisibility(View.GONE);
             findViewById(R.id.authenticate_with_browser).setVisibility(View.GONE);
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.single_sign_out_button).setVisibility(View.VISIBLE);
+//            findViewById(R.id.single_sign_out_button).setVisibility(View.VISIBLE);
             findViewById(R.id.logged_in_view_profile).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.logged_out);
@@ -138,7 +138,7 @@ public class WebAuthActivity extends BaseActivity implements
             findViewById(R.id.authenticate_with_custom_tab).setVisibility(View.VISIBLE);
             findViewById(R.id.authenticate_with_browser).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_button).setVisibility(View.GONE);
-            findViewById(R.id.single_sign_out_button).setVisibility(View.GONE);
+//            findViewById(R.id.single_sign_out_button).setVisibility(View.GONE);
             findViewById(R.id.logged_in_view_profile).setVisibility(View.GONE);
         }
     }
@@ -155,7 +155,7 @@ public class WebAuthActivity extends BaseActivity implements
 
         else if (i == R.id.sign_out_button)
             signOut();
-        else if (i == R.id.single_sign_out_button)
-            singleSignOut();
+//        else if (i == R.id.single_sign_out_button)
+//            singleSignOut();
     }
 }

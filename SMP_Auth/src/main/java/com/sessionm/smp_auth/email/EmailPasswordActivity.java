@@ -192,8 +192,8 @@ public class EmailPasswordActivity extends BaseActivity implements
     private void updateUI(SMPUser smpUser) {
         hideProgressDialog();
         if (smpUser != null) {
-            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt, smpUser.getEmail()));
-            mDetailTextView.setText(getString(R.string.smp_status_fmt, smpUser.getID()));
+            mStatusTextView.setText(getString(R.string.smp_user_email_fmt, smpUser.getEmail()));
+            mDetailTextView.setText(getString(R.string.smp_user_id_fmt, smpUser.getID()));
             mAuthCodeTextView.setText("Auth Code");
 
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);

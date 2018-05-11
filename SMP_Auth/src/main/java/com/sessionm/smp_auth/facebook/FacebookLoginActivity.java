@@ -150,11 +150,11 @@ public class FacebookLoginActivity extends BaseActivity implements View.OnClickL
         updateUI(null);
     }
 
-    private void updateUI(SMPUser user) {
+    private void updateUI(SMPUser smpUser) {
         hideProgressDialog();
-        if (user != null) {
-            mStatusTextView.setText(getString(R.string.facebook_status_fmt, user.getEmail()));
-            mDetailTextView.setText(getString(R.string.smp_status_fmt, user.getID()));
+        if (smpUser != null) {
+            mStatusTextView.setText(getString(R.string.smp_user_email_fmt, smpUser.getEmail()));
+            mDetailTextView.setText(getString(R.string.smp_user_id_fmt, smpUser.getID()));
 
             findViewById(R.id.login_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
