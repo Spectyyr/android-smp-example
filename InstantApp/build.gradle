@@ -35,7 +35,7 @@ project.ext.minSdkVersion = 16
 project.ext.targetSdkVersion = 27
 
 //Dependencies
-project.ext.sessionMSdkVersion = '3.0.0-b4'
+project.ext.sessionMSdkVersion = '3.0.0'
 project.ext.supportLibVersion = '27.1.1'
 project.ext.playServicesVersion = '15.0.0'
 project.ext.okHttpVersion = '3.10.0'
